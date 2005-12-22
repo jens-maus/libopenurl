@@ -8,6 +8,7 @@
 **  - Alfonso Ranieri <alforan@tin.it>
 **  - Stefan Kost <ensonic@sonicpulse.de>
 **
+**  Ported to OS4 by Alexandre Balaban <alexandre@balaban.name>
 **
 **  Localization
 */
@@ -49,6 +50,10 @@ initStrings(void)
 {
     if (LocaleBase = (struct LocaleBase *)OpenLibrary("locale.library",36))
     {
+        #if defined(__amigaos4__)
+        if ( NULL == (ILocale = (struct LocaleIFace*)GetInterface((struct Library*)LocaleBase, "main", 1L, NULL)) ) return;
+        #endif
+
         if (g_cat = openCatalog(CATNAME,7,0))
         {
             struct CatCompArrayType *cca;

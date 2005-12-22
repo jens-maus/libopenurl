@@ -8,6 +8,7 @@
 **  - Alfonso Ranieri <alforan@tin.it>
 **  - Stefan Kost <ensonic@sonicpulse.de>
 **
+**  Ported to OS4 by Alexandre Balaban <alexandre@balaban.name>
 **
 **  Main
 */
@@ -17,6 +18,8 @@
 #define CATCOMP_NUMBERS
 #include "loc.h"
 #include <graphics/gfxbase.h>
+
+#include <libraries/openurl.h>
 
 /**************************************************************************/
 
@@ -29,6 +32,16 @@ struct Library         *UtilityBase = NULL;
 struct Library         *IconBase = NULL;
 struct Library         *OpenURLBase = NULL;
 struct LocaleBase      *LocaleBase = NULL;
+
+#if defined(__amigaos4__)
+struct IntuitionIFace  *IIntuition = NULL;
+struct GraphicsIFace   *IGraphics = NULL;
+struct MUIMasterIFace  *IMUIMaster = NULL;
+struct UtilityIFace    *IUtility = NULL;
+struct IconIFace       *IIcon = NULL;
+struct OpenURLIFace    *IOpenURL = NULL;
+struct LocaleIFace     *ILocale = NULL;
+#endif
 
 struct MUI_CustomClass *g_appClass = NULL;
 struct MUI_CustomClass *g_pensClass = NULL;
@@ -57,7 +70,9 @@ openStuff(ULONG *arg0,ULONG *arg1)
         *arg0 = 19;
         return MSG_Err_NoMUI;
     }
-
+#if defined(__amigaos4__)
+    if (!(IMUIMaster = (struct MUIMasterIFace *)GetInterface( MUIMasterBase, "main", 1L, NULL))) return MSG_Err_NoMUI;
+#endif
     if (!(g_pool = CreatePool(MEMF_PUBLIC|MEMF_CLEAR,8192,4196))) return MSG_Err_NoMem;
 
     *arg0 = 37;
@@ -67,14 +82,31 @@ openStuff(ULONG *arg0,ULONG *arg1)
     if (!(UtilityBase = OpenLibrary("utility.library",37))) return MSG_Err_NoUtility;
     if (!(IconBase = OpenLibrary("icon.library",37))) return MSG_Err_NoIcon;
 
-    if (!(OpenURLBase = OpenLibrary(OPENURLNAME,OPENURLVER)) ||
-        ((OpenURLBase->lib_Version==OPENURLREV) && (OpenURLBase->lib_Revision<OPENURLREV)))
+#if defined(__amigaos4__)
+    if (!(IIntuition = (struct IntuitionIFace *)GetInterface( (struct Library*)IntuitionBase, "main", 1L, NULL))) return MSG_Err_NoIntuition;
+    if (!(IGraphics = (struct GraphicsIFace *)GetInterface( (struct Library*)GfxBase, "main", 1L, NULL))) return MSG_Err_NoGfx;
+    if (!(IUtility = (struct UtilityIFace *)GetInterface( UtilityBase, "main", 1L, NULL))) return MSG_Err_NoUtility;
+    if (!(IIcon = (struct IconIFace *)GetInterface( IconBase, "main", 1L, NULL))) return MSG_Err_NoIcon;
+#endif
+
+    if (!(OpenURLBase = OpenLibrary(OPENURLNAME,6)) /*||
+        ((OpenURLBase->lib_Version==OPENURLREV) && (OpenURLBase->lib_Revision<OPENURLREV))*/)
     {
         *arg0 = OPENURLVER;
         *arg1 = OPENURLREV;
 
         return MSG_Err_NoOpenURL;
     }
+
+#if defined(__amigaos4__)
+    if (!(IOpenURL = (struct OpenURLIFace *)GetInterface( OpenURLBase, "main", 1L, NULL)))
+    {
+        *arg0 = OPENURLVER;
+        *arg1 = OPENURLREV;
+
+        return MSG_Err_NoOpenURL;
+    }
+#endif
 
     return 0;
 }
@@ -87,8 +119,45 @@ closeStuff(void)
     if (LocaleBase)
     {
         if (g_cat) CloseCatalog(g_cat);
+
+        #if defined(__amigaos4__)
+        if (ILocale)
+        {
+            DropInterface((struct Interface*)ILocale);
+            ILocale = NULL;
+        }
+        #endif
+
         CloseLibrary((struct Library *)LocaleBase);
     }
+
+#if defined(__amigaos4__)
+    if (IMUIMaster)
+    {
+        DropInterface((struct Interface*)IMUIMaster);
+        IMUIMaster = NULL;
+    }
+    if (IIntuition)
+    {
+        DropInterface((struct Interface*)IIntuition);
+        IIntuition = NULL;
+    }
+    if (IUtility)
+    {
+        DropInterface((struct Interface*)IUtility);
+        IUtility = NULL;
+    }
+    if (IIcon)
+    {
+        DropInterface((struct Interface*)IIcon);
+        IIcon = NULL;
+    }
+    if (IOpenURL)
+    {
+        DropInterface((struct Interface*)IOpenURL);
+        IOpenURL = NULL;
+    }
+#endif
 
     if (OpenURLBase)   CloseLibrary(OpenURLBase);
     if (IconBase)      CloseLibrary(IconBase);

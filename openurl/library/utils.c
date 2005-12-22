@@ -8,6 +8,8 @@
 **  Developed by:
 **  - Alfonso Ranieri <alforan@tin.it>
 **  - Stefan Kost <ensonic@sonicpulse.de>
+**
+**  Ported to OS4 by Alexandre Balaban <alexandre@balaban.name>
 */
 
 
@@ -166,11 +168,11 @@ sendRexxMsg(UBYTE *rxport,UBYTE *rxcmd)
                                   NP_StackSize,    4196,
                                   NP_Name,         (ULONG)"OpenURL - Handler",
                                   NP_CopyVars,     FALSE,
-                                  NP_Input,        NULL,
+											 NP_Input,        (ULONG)NULL,
                                   NP_CloseInput,   FALSE,
-                                  NP_Output,       NULL,
+											 NP_Output,       (ULONG)NULL,
                                   NP_CloseOutput,  FALSE,
-                                  NP_Error,        NULL,
+											 NP_Error,        (ULONG)NULL,
                                   NP_CloseError,   FALSE,
                                   TAG_DONE};
 
@@ -855,13 +857,24 @@ isdigits(UBYTE *str)
 
 /**************************************************************************/
 
-#ifndef __MORPHOS__
+#if !defined(__MORPHOS__) && !defined(__amigaos4__)
 static UWORD fmtfunc[] = { 0x16c0, 0x4e75 };
 void STDARGS
 msprintf(UBYTE *buf,UBYTE *fmt,...)
 {
     RawDoFmt(fmt,&fmt+1,(APTR)fmtfunc,buf);
 }
+#elif defined(__amigaos4__)
+#include <stdarg.h>
+void VARARGS68K
+msprintf(UBYTE *buf,UBYTE *fmt,...)
+{
+    va_list va;
+    va_startlinear(va,fmt);
+    RawDoFmt(fmt, va_getlinearva(va,CONST APTR), (void (*)(void)) 0, buf);
+    va_end(va);
+}
+
 #endif
 
 /**************************************************************************/

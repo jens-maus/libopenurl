@@ -24,14 +24,16 @@
 
 #else /* __MORPHOS__ */
 
+#if !defined(__amigaos4__)
 #define SAVEDS          __saveds
 #define ASM             __asm
 #define REGARGS         __regargs
 #define STDARGS         __stdargs
 #define INLINE          inline
 #define REG(x,p)        register __ ## x p
-#define LIBCALL         SAVEDS ASM
 #define __attribute(a)
+#endif
+#define LIBCALL         SAVEDS ASM
 
 #define M_DISP(n) static ULONG SAVEDS ASM n(REG(a0,struct IClass *cl),REG(a2,Object *obj),REG(a1,Msg msg))
 #define M_DISPSTART

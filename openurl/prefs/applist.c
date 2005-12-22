@@ -8,6 +8,7 @@
 **  - Alfonso Ranieri <alforan@tin.it>
 **  - Stefan Kost <ensonic@sonicpulse.de>
 **
+**  Ported to OS4 by Alexandre Balaban <alexandre@balaban.name>
 **
 **  A clients page
 */
@@ -15,6 +16,11 @@
 #include "OpenURL.h"
 #define CATCOMP_NUMBERS
 #include "loc.h"
+#include "libraries/openurl.h"
+
+#if defined(__amigaos4__)
+    #define stccpy strncpy
+#endif
 
 /**************************************************************************/
 /*
@@ -79,12 +85,12 @@ mLampSets(struct IClass *cl,Object *obj,struct opSet *msg)
             MUI_ReleasePen(muiRenderInfo(obj),data->enabled);
             MUI_ReleasePen(muiRenderInfo(obj),data->disabled);
             MUI_ReleasePen(muiRenderInfo(obj),data->detail);
-
             data->enabled  = MUI_ObtainPen(muiRenderInfo(obj),specs[0],0);
             data->disabled = MUI_ObtainPen(muiRenderInfo(obj),specs[1],0);
             data->detail   = MUI_ObtainPen(muiRenderInfo(obj),specs[2],0);
 
             /* Of course, we don't redraw here */
+        data->flags |= FLG_LampSetup;
         }
     }
 
@@ -97,9 +103,7 @@ static ULONG
 mLampSetup(struct IClass *cl,Object *obj,struct MUIP_Setup *msg)
 {
     struct lampData *data = INST_DATA(cl,obj);
-
     if (!DoSuperMethodA(cl,obj,(APTR)msg)) return FALSE;
-
     data->enabled  = MUI_ObtainPen(muiRenderInfo(obj),data->specs[0],0);
     data->disabled = MUI_ObtainPen(muiRenderInfo(obj),data->specs[1],0);
     data->detail   = MUI_ObtainPen(muiRenderInfo(obj),data->specs[2],0);
@@ -453,7 +457,6 @@ mListSets(struct IClass *cl,Object *obj,struct opSet *msg)
         if (data->olamp)
         {
             struct MUI_PenSpec **specs = (struct MUI_PenSpec **)tag->ti_Data;
-
             set(data->olamp,MUIA_App_Pens,specs);
             tag->ti_Tag = TAG_IGNORE;
 

@@ -8,6 +8,8 @@
 **  Developed by:
 **  - Alfonso Ranieri <alforan@tin.it>
 **  - Stefan Kost <ensonic@sonicpulse.de>
+**
+**  Ported to OS4 by Alexandre Balaban <alexandre@balaban.name>
 */
 
 
@@ -25,6 +27,26 @@ freeBase(void)
         lib_prefs = NULL;
     }
 
+#if defined(__amigaos4__)
+    if( IRexxSys )
+    {
+        DropInterface( (struct Interface*)IRexxSys );
+        IRexxSys = NULL;
+    }
+
+    if (IIFFParse)
+    {
+        DropInterface( (struct Interface*)IIFFParse );
+        IIFFParse = NULL;
+    }
+
+    if( IUtility )
+    {
+        DropInterface( (struct Interface*)IUtility );
+        IUtility = NULL;
+    }
+#endif
+
     if (RexxSysBase)
     {
         CloseLibrary((struct Library *)RexxSysBase);
@@ -41,6 +63,12 @@ freeBase(void)
     {
         CloseLibrary(UtilityBase);
         UtilityBase = NULL;
+    }
+
+    if( IDOS )
+    {
+        DropInterface( (struct Interface*)IDOS );
+        IDOS = NULL;
     }
 
     if (DOSBase)
@@ -68,6 +96,12 @@ initBase(void)
         (UtilityBase = OpenLibrary("utility.library",36)) &&
         (IFFParseBase = OpenLibrary("iffparse.library",36)) &&
         (RexxSysBase = (struct RxsLib *)OpenLibrary("rexxsyslib.library",33)) &&
+#if defined(__amigaos4__)
+		  (IDOS = (struct DOSIFace *) GetInterface( (struct Library*)DOSBase, "main", 1L, NULL )) &&
+        (IUtility = (struct UtilityIFace *) GetInterface( UtilityBase, "main", 1L, NULL)) &&
+        (IIFFParse = (struct IFFParseIFace *) GetInterface( IFFParseBase, "main", 1L, NULL)) &&
+        (IRexxSys = (struct RexxSysIFace *) GetInterface( (struct Library*)RexxSysBase, "main", 1L, NULL)) &&
+#endif
         (lib_prefs = loadPrefsNotFail()))
     {
         lib_flags |= BASEFLG_Init;

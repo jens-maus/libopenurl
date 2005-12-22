@@ -8,6 +8,8 @@
 **  Developed by:
 **  - Alfonso Ranieri <alforan@tin.it>
 **  - Stefan Kost <ensonic@sonicpulse.de>
+**
+**  Ported to OS4 by Alexandre Balaban <alexandre@balaban.name>
 */
 
 
@@ -36,7 +38,7 @@ APTR                   lib_pool = NULL;
 struct URL_Prefs       *lib_prefs = NULL;
 
 struct Library         *lib_base = NULL;
-ULONG                  lib_segList = NULL;
+ULONG                  lib_segList = (ULONG)NULL;
 ULONG                  lib_use = 0;
 ULONG                  lib_flags = 0;
 
@@ -119,23 +121,175 @@ const struct Resident romTag =
 };
 
 const ULONG __abox__ = 1;
+
+#elif defined(__amigaos4__)
+#include <proto/exec.h>
+/* amigaos4 *****************************************************************/
+
+struct ExecIFace       *IExec = NULL;
+struct DOSIFace        *IDOS = NULL;
+struct UtilityIFace    *IUtility = NULL;
+struct IFFParseIFace   *IIFFParse = NULL;
+struct RexxSysIFace    *IRexxSys = NULL;
+
+/* amigaos4 *****************************************************************/
+
+struct Library * SAVEDS ASM initLib (REG(a0,ULONG segList), REG(a6,struct ExecBase *sys), REG(d0, struct Library *base));
+//uint32 libObtain (struct LibraryManagerInterface *Self);
+//uint32 libRelease (struct LibraryManagerInterface *Self);
+struct Library * SAVEDS ASM openLib (REG(a6,struct Library *base));
+ULONG SAVEDS ASM closeLib(REG(a6,struct Library *base));
+ULONG SAVEDS ASM expungeLib (REG(a6,struct Library *base));
+
+struct Library * mgr_Init (struct Library *base, BPTR segList, struct ExecIFace *ISys);
+uint32 mgr_Obtain (struct LibraryManagerInterface *Self);
+uint32 mgr_Release (struct LibraryManagerInterface *Self);
+struct Library * mgr_Open (struct LibraryManagerInterface *Self, uint32 version);
+APTR mgr_Close (struct LibraryManagerInterface *Self);
+APTR mgr_Expunge (struct LibraryManagerInterface *Self);
+
+uint32 VARARGS68K OS4_URL_Obtain( struct OpenURLIFace *Self );
+uint32 VARARGS68K OS4_URL_Release( struct OpenURLIFace *Self );
+
+/* amigaos4 *****************************************************************/
+
+static BOOL bAlreadyHasSemaphore = FALSE;
+
+/* amigaos4 *****************************************************************/
+
+static APTR lib_manager_vectors[] = {
+	mgr_Obtain,
+	mgr_Release,
+	NULL,
+	NULL,
+	mgr_Open,
+	mgr_Close,
+	mgr_Expunge,
+	NULL,
+	(APTR)-1,
+};
+
+static struct TagItem lib_managerTags[] = {
+	{ MIT_Name,		(uint32)"__library"			},
+	{ MIT_VectorTable,	(uint32)lib_manager_vectors	},
+	{ MIT_Version,		1						},
+	{ TAG_END,		0						}
+};
+
+void *main_vectors[] = {
+	(void *) OS4_URL_Obtain,
+	(void *) OS4_URL_Release,
+	(void *) NULL,
+	(void *) NULL,
+    (void *) OS4_URL_OpenA,
+	(void *) OS4_URL_Open,
+    (void *) OS4_URL_OldGetPrefs,
+    (void *) OS4_URL_OldFreePrefs,
+    (void *) OS4_URL_OldSetPrefs,
+    (void *) OS4_URL_OldGetDefaultPrefs,
+    (void *) OS4_URL_OldLaunchPrefsApp,
+    (void *) OS4_dispatch,
+    (void *) OS4_URL_GetPrefsA,
+    (void *) OS4_URL_GetPrefs,
+    (void *) OS4_URL_FreePrefsA,
+    (void *) OS4_URL_FreePrefs,
+    (void *) OS4_URL_SetPrefsA,
+    (void *) OS4_URL_SetPrefs,
+    (void *) OS4_URL_LaunchPrefsAppA,
+    (void *) OS4_URL_LaunchPrefsApp,
+    (void *) OS4_URL_GetAttr,
+    (void *) -1
+};
+
+static struct TagItem lib_mainTags[] = {
+	{ MIT_Name,		    (uint32)"main"			},
+	{ MIT_VectorTable,	(uint32)main_vectors	},
+	{ MIT_Version,		1						},
+	{ TAG_END,		    0						}
+};
+
+static APTR libInterfaces[] = {
+	lib_managerTags,
+	lib_mainTags,
+	NULL
+};
+
+extern uint32 VecTable68K[];
+
+static struct TagItem libCreateTags[] = {
+	{ CLT_DataSize,		(uint32)sizeof(struct Library)	},
+	{ CLT_InitFunc,		(uint32)mgr_Init					 },
+	{ CLT_Interfaces,	(uint32)libInterfaces			},
+    { CLT_Vector68K,    (uint32)VecTable68K			    },
+	{ TAG_END,			0								}
+};
+
+#ifdef __GNUC__
+static struct Resident __attribute__((used)) romTag = {
+#else
+static struct Resident romTag = {
+#endif
+	RTC_MATCHWORD,				// rt_MatchWord
+	&romTag,					// rt_MatchTag
+	&romTag+1,					// rt_EndSkip
+	RTF_NATIVE | RTF_AUTOINIT,	// rt_Flags
+	VERSION,					// rt_Version
+	NT_LIBRARY,					// rt_Type
+	0,							// rt_Pri
+	lib_name,					// rt_Name
+	lib_ver,					// rt_IdString
+	libCreateTags				// rt_Init
+};
+
 #endif
 
 /****************************************************************************/
-
+/*
 #ifdef __MORPHOS__
 static struct Library *initLib(struct Library *base,BPTR segList,struct ExecBase *sys)
+#elif defined(__amigaos4__)
+struct Library * initLib(struct Library *base, BPTR segList, struct ExecIFace *ISys)
 #else
 struct Library *SAVEDS ASM initLib(REG(a0,ULONG segList),REG(a6,struct ExecBase *sys),REG(d0, struct Library *base))
 #endif
 {
-#define SysBase sys
+#if defined(__amigaos4__)
+	base->lib_Node.ln_Type = NT_LIBRARY;
+	base->lib_Node.ln_Pri = 0;
+	base->lib_Node.ln_Name = lib_name;
+	base->lib_Flags = LIBF_SUMUSED|LIBF_CHANGED;
+	base->lib_Version = lib_version;
+	base->lib_Revision = lib_revision;
+	base->lib_IdString = lib_ver;
+
+	IExec = ISys;
+	//IExec->Obtain();
+	SysBase = (struct ExecBase*)ISys->Data.LibBase;
+#else
+    SysBase = sys;
+#endif
+
     InitSemaphore(&lib_sem);
     InitSemaphore(&lib_prefsSem);
     InitSemaphore(&lib_memSem);
-#undef SysBase
 
+    lib_segList = segList;
+
+    return lib_base = base;
+}
+*/
+#ifdef __MORPHOS__
+static struct Library *initLib(struct Library *base,BPTR segList,struct ExecBase *sys)
+#else
+struct Library * SAVEDS ASM initLib (REG(a0,ULONG segList), REG(a6,struct ExecBase *sys), REG(d0, struct Library *base))
+#endif
+{
     SysBase     = sys;
+
+    InitSemaphore(&lib_sem);
+    InitSemaphore(&lib_prefsSem);
+    InitSemaphore(&lib_memSem);
+
     lib_segList = segList;
 
     return lib_base = base;
@@ -184,21 +338,35 @@ ULONG SAVEDS ASM expungeLib(REG(a6,struct Library *base))
 
     ULONG res;
 
+#if defined(__amigaos4__)
+	// prevents a deadlock if called from closeLib
+	 if( !bAlreadyHasSemaphore )
+#endif
     ObtainSemaphore(&lib_sem);
 
-    if (!(base->lib_OpenCnt || lib_use))
+	 if (!base->lib_OpenCnt && !lib_use)
     {
         Remove((struct Node *)base);
+
+#if defined(__amigaos4__)
+		  DeleteLibrary(base);
+		  //IExec->Release();
+#else
         FreeMem((UBYTE *)base-base->lib_NegSize,base->lib_NegSize+base->lib_PosSize);
+#endif
 
         res = lib_segList;
     }
     else
     {
         base->lib_Flags |= LIBF_DELEXP;
-        res = NULL;
+        res = (ULONG)NULL;
     }
 
+#if defined(__amigaos4__)
+	// prevents a deadlock if called from closeLib
+	 if( !bAlreadyHasSemaphore )
+#endif
     ReleaseSemaphore(&lib_sem);
 
     return res;
@@ -215,20 +383,28 @@ ULONG SAVEDS ASM closeLib(REG(a6,struct Library *base))
 {
 #endif
 
-    ULONG res = NULL;
+    ULONG res = (ULONG)NULL;
 
     ObtainSemaphore(&lib_sem);
 
-    if (!(--base->lib_OpenCnt || lib_use))
+	 base->lib_OpenCnt--;
+
+	 if (!base->lib_OpenCnt && !lib_use)
     {
         freeBase();
 
         if (base->lib_Flags & LIBF_DELEXP)
         {
+#if defined(__amigaos4__)
+			bAlreadyHasSemaphore = TRUE;
+			res = (ULONG)expungeLib( base );
+			bAlreadyHasSemaphore = FALSE;
+#else
             Remove((struct Node *)base);
             FreeMem((UBYTE *)base-base->lib_NegSize,base->lib_NegSize+base->lib_PosSize);
 
             res = lib_segList;
+#endif
         }
     }
 

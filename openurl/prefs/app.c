@@ -8,6 +8,7 @@
 **  - Alfonso Ranieri <alforan@tin.it>
 **  - Stefan Kost <ensonic@sonicpulse.de>
 **
+**  Ported to OS4 by Alexandre Balaban <alexandre@balaban.name>
 **
 **  Handle the all thing
 */
@@ -17,6 +18,7 @@
 #define CATCOMP_NUMBERS
 #include "loc.h"
 #include "OpenURL_rev.h"
+#include "libraries/openurl.h"
 
 /**************************************************************************/
 
@@ -191,7 +193,7 @@ mSets(struct IClass *cl,Object *obj,struct opSet *msg)
 {
     struct MUI_PenSpec **specs;
 
-    if (specs = (struct MUI_PenSpec **)GetTagData(MUIA_App_Pens,NULL,msg->ops_AttrList))
+    if (specs = (struct MUI_PenSpec **)GetTagData(MUIA_App_Pens,(ULONG)NULL,msg->ops_AttrList))
     {
         struct data *data = INST_DATA(cl,obj);
 

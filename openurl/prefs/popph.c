@@ -8,6 +8,7 @@
 **  - Alfonso Ranieri <alforan@tin.it>
 **  - Stefan Kost <ensonic@sonicpulse.de>
 **
+**  Ported to OS4 by Alexandre Balaban <alexandre@balaban.name>
 **
 **  Popplaceholder replacement
 */
@@ -16,6 +17,10 @@
 #include "OpenURL.h"
 #include <exec/execbase.h>
 #include <libraries/asl.h>
+
+#if defined(__amigaos4__)
+    #define stccpy strncpy
+#endif
 
 /**************************************************************************/
 /*
@@ -91,8 +96,8 @@ mListNew(struct IClass *cl,Object *obj,struct opSet *msg)
     struct TagItem *attrs = msg->ops_AttrList;
     UBYTE          **phs, **names;
 
-    phs   = (UBYTE **)GetTagData(MUIA_Popph_Syms,NULL,attrs);
-    names = (UBYTE **)GetTagData(MUIA_Popph_Names,NULL,attrs);
+    phs   = (UBYTE **)GetTagData(MUIA_Popph_Syms,(ULONG)NULL,attrs);
+    names = (UBYTE **)GetTagData(MUIA_Popph_Names,(ULONG)NULL,attrs);
     if (!phs || !names) return 0;
 
     if (obj = (Object *)DoSuperNew(cl,obj,
@@ -245,7 +250,7 @@ mNew(struct IClass *cl,Object *obj,struct opSet *msg)
     struct TagItem *attrs = msg->ops_AttrList;
     UBYTE          **phs, **names;
 
-    phs   = (UBYTE **)GetTagData(MUIA_Popph_Syms,NULL,attrs);
+    phs   = (UBYTE **)GetTagData(MUIA_Popph_Syms,(ULONG)NULL,attrs);
     if (!phs) return 0;
 
     names = (UBYTE **)GetTagData(MUIA_Popph_Names,FALSE,attrs);
@@ -256,7 +261,7 @@ mNew(struct IClass *cl,Object *obj,struct opSet *msg)
             MUIA_Group_HorizSpacing, 1,
 
             Child, PopobjectObject,
-                MUIA_Popstring_String, str = ostring(GetTagData(MUIA_Popph_MaxLen,0,attrs),GetTagData(MUIA_Popph_Key,NULL,attrs),0),
+                MUIA_Popstring_String, str = ostring(GetTagData(MUIA_Popph_MaxLen,0,attrs),GetTagData(MUIA_Popph_Key,(ULONG)NULL,attrs),0),
                 MUIA_Popstring_Button, opopbutton(MUII_PopUp,0),
                 MUIA_Popobject_Object, lv = ListviewObject,
                     MUIA_Listview_List, listObject,

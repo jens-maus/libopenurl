@@ -8,6 +8,8 @@
 **  - Alfonso Ranieri <alforan@tin.it>
 **  - Stefan Kost <ensonic@sonicpulse.de>
 **
+**  Ported to OS4 by Alexandre Balaban <alexandre@balaban.name>
+**
 **  Main window
 */
 
@@ -15,6 +17,7 @@
 #include "OpenURL.h"
 #define CATCOMP_NUMBERS
 #include "loc.h"
+#include "libraries/openurl.h"
 
 /**************************************************************************/
 
@@ -141,7 +144,6 @@ mNew(struct IClass *cl,Object *obj,struct opSet *msg)
                     End,
                 End,
             End,
-
             /* Buttons */
             Child, HGroup,
                 Child, temp.save = obutton(MSG_Win_Save,MSG_Win_Save_Help),
@@ -189,7 +191,7 @@ mSets(struct IClass *cl,Object *obj,struct opSet *msg)
 {
     struct MUI_PenSpec **specs;
 
-    if (specs = (struct MUI_PenSpec **)GetTagData(MUIA_App_Pens,NULL,msg->ops_AttrList))
+    if (specs = (struct MUI_PenSpec **)GetTagData(MUIA_App_Pens,0L,msg->ops_AttrList))
     {
         struct data *data = INST_DATA(cl,obj);
 
@@ -425,6 +427,7 @@ M_DISP(dispatcher)
         case MUIM_Win_StorePrefs: return mStorePrefs(cl,obj,(APTR)msg);
         case MUIM_Win_Delete:     return mDelete(cl,obj,(APTR)msg);
         case MUIM_App_CheckSave:  return mCheckSave(cl,obj,(APTR)msg);
+		  //case 0x80426771:  return FALSE;
 
         default:                  return DoSuperMethodA(cl,obj,msg);
     }

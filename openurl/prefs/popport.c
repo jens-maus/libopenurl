@@ -8,13 +8,19 @@
 **  - Alfonso Ranieri <alforan@tin.it>
 **  - Stefan Kost <ensonic@sonicpulse.de>
 **
+**  Ported to OS4 by Alexandre Balaban <alexandre@balaban.name>
 **
 **  Pop public ports object
 */
 
 
 #include "OpenURL.h"
+#include "libraries/openurl.h"
 #include <exec/execbase.h>
+
+#if defined(__amigaos4__)
+    #define stccpy strncpy
+#endif
 
 /**************************************************************************/
 /*

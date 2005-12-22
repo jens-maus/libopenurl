@@ -8,6 +8,7 @@
 **  - Alfonso Ranieri <alforan@tin.it>
 **  - Stefan Kost <ensonic@sonicpulse.de>
 **
+**  Ported to OS4 by Alexandre Balaban <alexandre@balaban.name>
 **
 **  Edit browser window
 */
@@ -16,6 +17,7 @@
 #include "OpenURL.h"
 #define CATCOMP_NUMBERS
 #include "loc.h"
+#include "libraries/openurl.h"
 
 /**************************************************************************/
 
@@ -71,10 +73,10 @@ mNew(struct IClass *cl,Object *obj,struct opSet *msg)
 
     memset(&temp,0,sizeof(temp));
 
-    temp.browserList  = (Object *)GetTagData(MUIA_BrowserEditWin_ListObj,NULL,attrs);
+    temp.browserList  = (Object *)GetTagData(MUIA_BrowserEditWin_ListObj,(ULONG)NULL,attrs);
     if (!temp.browserList) return 0;
 
-    bn = temp.bn = (struct URL_BrowserNode *)GetTagData(MUIA_BrowserEditWin_Browser,NULL,attrs);
+    bn = temp.bn = (struct URL_BrowserNode *)GetTagData(MUIA_BrowserEditWin_Browser,(ULONG)NULL,attrs);
     if (!bn) return 0;
 
 

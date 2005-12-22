@@ -8,6 +8,8 @@
 **  Developed by:
 **  - Alfonso Ranieri <alforan@tin.it>
 **  - Stefan Kost <ensonic@sonicpulse.de>
+**
+**  Ported to OS4 by Alexandre Balaban <alexandre@balaban.name>
 */
 
 
@@ -44,6 +46,9 @@
 #define DEF_DefBringToFront TRUE
 #define DEF_DefNewWindow    FALSE
 #define DEF_DefLaunch       TRUE
+
+// ABA, TO BE ABLE TO COMPILE, DON'T KNOW WHY, SEEMS SOMETHING MESSED IN OPENURL.H
+#define URL_GetPrefs_Default URL_GetPrefs_Mode
 
 /**************************************************************************/
 

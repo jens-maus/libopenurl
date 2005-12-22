@@ -7,12 +7,15 @@
 **  Developed by:
 **  - Alfonso Ranieri <alforan@tin.it>
 **  - Stefan Kost <ensonic@sonicpulse.de>
+**
+**  Ported to OS4 by Alexandre Balaban <alexandre@balaban.name>
 */
 
 
 #include "OpenURL.h"
 
 /***********************************************************************/
+#if !defined(__amigaos4__)
 
 APTR
 NewObject(struct IClass *classPtr,UBYTE *classID,... )
@@ -41,20 +44,30 @@ MUI_NewObject(UBYTE *classID,... )
 
     return res;
 }
+#endif
 
 /***********************************************************************/
 
-APTR
+#if defined(__amigaos4__)
+#include <stdarg.h>
+#endif
+
+ULONG VARARGS68K
 DoSuperNew(struct IClass *cl,Object *obj,...)
 {
     APTR    res;
     va_list va;
 
+#if defined(__amigaos4__)
+    va_startlinear(va,obj);
+    res = (APTR)DoSuperMethod(cl,obj,OM_NEW,va_getlinearva(va,ULONG),NULL);
+#else
     va_start(va,obj);
     res = (APTR)DoSuperMethod(cl,obj,OM_NEW,(ULONG)va->overflow_arg_area,NULL);
+#endif
     va_end(va);
 
-    return res;
+    return (ULONG)res;
 }
 
 /***********************************************************************/

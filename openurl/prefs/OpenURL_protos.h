@@ -7,6 +7,9 @@
 **  Developed by:
 **  - Alfonso Ranieri <alforan@tin.it>
 **  - Stefan Kost <ensonic@sonicpulse.de>
+**
+**  Ported to OS4 by Alexandre Balaban <alexandre@balaban.name>
+**
 */
 
 
@@ -21,8 +24,12 @@ ULONG getKeyChar ( UBYTE *string , ULONG id );
 #ifdef __MORPHOS__
 #define msprintf(to, fmt, ...) ({ ULONG _tags[] = { __VA_ARGS__ }; RawDoFmt(fmt, _tags, (void (*)(void)) 0, to); })
 int msnprintf ( UBYTE *buf , int size , UBYTE *fmt , ... ) __attribute((varargs68k));
+#elif defined(__amigaos4__)
+ULONG DoSuperNew ( struct IClass *cl , Object *obj , ... ) VARARGS68K;
+void msprintf ( UBYTE *to , UBYTE *fmt , ... ) VARARGS68K;
+int msnprintf ( UBYTE *buf , int size , UBYTE *fmt , ... ) VARARGS68K;
 #else
-ULONG STDARGS DoSuperNew ( struct IClass *cl , Object *obj , ULONG tag1 , ... );
+ULONG STDARGS DoSuperNew ( struct IClass *cl , Object *obj , ... );
 void STDARGS msprintf ( UBYTE *to , UBYTE *fmt , ... );
 int STDARGS msnprintf ( UBYTE *buf , int size , UBYTE *fmt , ... );
 #endif

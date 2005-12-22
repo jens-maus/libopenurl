@@ -8,6 +8,7 @@
 **  - Alfonso Ranieri <alforan@tin.it>
 **  - Stefan Kost <ensonic@sonicpulse.de>
 **
+**  Ported to OS4 by Alexandre Balaban <alexandre@balaban.name>
 **
 **  Edit mailer window
 */
@@ -16,6 +17,7 @@
 #include "OpenURL.h"
 #define CATCOMP_NUMBERS
 #include "loc.h"
+#include "libraries/openurl.h"
 
 /**************************************************************************/
 
@@ -78,10 +80,10 @@ mNew(struct IClass *cl,Object *obj,struct opSet *msg)
 
     memset(&temp,0,sizeof(temp));
 
-    temp.mailerList = (Object *)GetTagData(MUIA_MailerEditWin_ListObj,NULL,attrs);
+    temp.mailerList = (Object *)GetTagData(MUIA_MailerEditWin_ListObj,(ULONG)NULL,attrs);
     if (!temp.mailerList) return 0;
 
-    mn = temp.mn  = (struct URL_MailerNode *)GetTagData(MUIA_MailerEditWin_Mailer,NULL,attrs);
+    mn = temp.mn  = (struct URL_MailerNode *)GetTagData(MUIA_MailerEditWin_Mailer,(ULONG)NULL,attrs);
     if (!mn) return 0;
 
     if (obj = (Object *)DoSuperNew(cl,obj,

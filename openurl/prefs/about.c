@@ -8,6 +8,7 @@
 **  - Alfonso Ranieri <alforan@tin.it>
 **  - Stefan Kost <ensonic@sonicpulse.de>
 **
+**  Ported to OS4 by Alexandre Balaban <alexandre@balaban.name>
 **
 **  About window
 */
@@ -19,6 +20,7 @@
 #include "loc.h"
 
 #include "OpenURL_rev.h"
+#include "libraries/openurl.h"
 
 /***********************************************************************/
 /*
@@ -212,6 +214,7 @@ mNew(struct IClass *cl,Object *obj,struct opSet *msg)
                             Child, HGroup, Child, ourltext("mailto:troels@thule.no","Troels Walsted Hansen"), Child, HSpace(0), End,
                             Child, HGroup, Child, ourltext("mailto:alforan@tin.it","Alfonso Ranieri"), Child, HSpace(0), End,
                             Child, HGroup, Child, ourltext("mailto:ensonic@sonicpulse.de","Stefan Kost"), Child, HSpace(0), End,
+									 Child, HGroup, Child, ourltext("mailto:alexandrec@balaban.name","OS4 Port by Alexandre Balaban"), Child, HSpace(0), End,
                         End,
 
                         /* Support */
@@ -280,7 +283,7 @@ mNew(struct IClass *cl,Object *obj,struct opSet *msg)
 
     	set(obj,MUIA_Window_ActiveObject,ok);
 
-        win = (Object *)GetTagData(MUIA_Window_RefWindow,NULL,attrs);
+        win = (Object *)GetTagData(MUIA_Window_RefWindow,(ULONG)NULL,attrs);
         DoMethod(mui,MUIM_Notify,MUIA_Pressed,FALSE,MUIV_Notify_Application,2,MUIM_Application_AboutMUI,(ULONG)win);
 
         DoMethod(ok,MUIM_Notify,MUIA_Pressed,FALSE,(ULONG)obj,3,MUIM_Set,MUIA_Window_CloseRequest,TRUE);

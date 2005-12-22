@@ -8,6 +8,7 @@
 **  - Alfonso Ranieri <alforan@tin.it>
 **  - Stefan Kost <ensonic@sonicpulse.de>
 **
+**  Ported to OS4 by Alexandre Balaban <alexandre@balaban.name>
 **
 **  Edit FTP client window
 */
@@ -16,6 +17,7 @@
 #include "OpenURL.h"
 #define CATCOMP_NUMBERS
 #include "loc.h"
+#include "libraries/openurl.h"
 
 /**************************************************************************/
 
@@ -71,10 +73,10 @@ mNew(struct IClass *cl,Object *obj,struct opSet *msg)
 
     memset(&temp,0,sizeof(temp));
 
-    temp.FTPList = (Object *)GetTagData(MUIA_FTPEditWin_ListObj,NULL,attrs);
+    temp.FTPList = (Object *)GetTagData(MUIA_FTPEditWin_ListObj,(ULONG)NULL,attrs);
     if (!temp.FTPList) return 0;
 
-    fn = temp.fn  = (struct URL_FTPNode *)GetTagData(MUIA_FTPEditWin_FTP,NULL,attrs);
+    fn = temp.fn  = (struct URL_FTPNode *)GetTagData(MUIA_FTPEditWin_FTP,(ULONG)NULL,attrs);
     if (!fn) return 0;
 
 

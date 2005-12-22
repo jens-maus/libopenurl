@@ -8,6 +8,8 @@
 **  Developed by:
 **  - Alfonso Ranieri <alforan@tin.it>
 **  - Stefan Kost <ensonic@sonicpulse.de>
+**
+**  Ported to OS4 by Alexandre Balaban <alexandre@balaban.name>
 */
 
 
@@ -21,6 +23,10 @@
 
 #ifndef DOS_DOS_H
 #include <dos/dos.h>
+#endif
+
+#if defined(__amigaos4__) && !defined(EXEC_INTERFACES_H)
+ #include <exec/interfaces.h>
 #endif
 
 /***************************************************************************/

@@ -8,6 +8,8 @@
 **  Developed by:
 **  - Alfonso Ranieri <alforan@tin.it>
 **  - Stefan Kost <ensonic@sonicpulse.de>
+**
+**  Ported to OS4 by Alexandre Balaban <alexandre@balaban.name>
 */
 
 
@@ -46,6 +48,26 @@ struct URL_Prefs *LIB_URL_OldGetDefaultPrefs ( void );
 ULONG LIB_URL_LaunchPrefsAppA ( void );
 ULONG LIB_URL_OldLaunchPrefsApp ( void );
 ULONG LIB_URL_GetAttr ( void );
+#elif defined(__amigaos4__)
+#include <interfaces/openurl.h>
+ULONG              VARARGS68K OS4_URL_OpenA ( struct OpenURLIFace * Self, STRPTR url, struct TagItem *attrs );
+ULONG              VARARGS68K OS4_URL_Open ( struct OpenURLIFace * Self, STRPTR url, ... );
+struct URL_Prefs * VARARGS68K OS4_URL_GetPrefsA ( struct OpenURLIFace * Self, struct TagItem *attrs );
+struct URL_Prefs * VARARGS68K OS4_URL_GetPrefs ( struct OpenURLIFace * Self, ... );
+struct URL_Prefs * VARARGS68K OS4_URL_OldGetPrefs ( struct OpenURLIFace * Self );
+void               VARARGS68K OS4_URL_FreePrefsA ( struct OpenURLIFace * Self, struct URL_Prefs *up, struct TagItem *attrs );
+void               VARARGS68K OS4_URL_FreePrefs ( struct OpenURLIFace * Self, struct URL_Prefs *up, ... );
+void               VARARGS68K OS4_URL_OldFreePrefs ( struct OpenURLIFace * Self, struct URL_Prefs *up );
+ULONG              VARARGS68K OS4_URL_SetPrefsA ( struct OpenURLIFace * Self, struct URL_Prefs *p, struct TagItem *attrs );
+ULONG              VARARGS68K OS4_URL_SetPrefs ( struct OpenURLIFace * Self, struct URL_Prefs *p, ... );
+ULONG              VARARGS68K OS4_URL_OldSetPrefs ( struct OpenURLIFace * Self, struct URL_Prefs *p , ULONG permanent );
+struct URL_Prefs * VARARGS68K OS4_URL_OldGetDefaultPrefs ( struct OpenURLIFace * Self );
+ULONG              VARARGS68K OS4_URL_LaunchPrefsAppA ( struct OpenURLIFace * Self, struct TagItem *attrs );
+ULONG              VARARGS68K OS4_URL_LaunchPrefsApp ( struct OpenURLIFace * Self, ... );
+ULONG              VARARGS68K OS4_URL_OldLaunchPrefsApp ( struct OpenURLIFace * Self );
+ULONG              VARARGS68K OS4_URL_GetAttr ( struct OpenURLIFace * Self, ULONG attr , ULONG *storage );
+LONG               VARARGS68K OS4_dispatch ( struct OpenURLIFace * Self, struct RexxMsg *msg, UBYTE **resPtr );
+
 #endif
 
 /* handler.c */
@@ -76,6 +98,8 @@ APTR allocVecPooled ( ULONG size );
 void freeVecPooled ( APTR mem );
 #ifdef __MORPHOS__
 #define msprintf(to, fmt, ...) ({ ULONG _tags[] = { __VA_ARGS__ }; RawDoFmt(fmt, _tags, (void (*)(void)) 0, to); })
+#elif defined(__amigaos4__)
+void VARARGS68K msprintf ( UBYTE *to , UBYTE *fmt , ...);
 #else
 void STDARGS msprintf ( UBYTE *to , UBYTE *fmt , ...);
 #endif

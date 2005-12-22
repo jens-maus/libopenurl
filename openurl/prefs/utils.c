@@ -7,10 +7,17 @@
 **  Developed by:
 **  - Alfonso Ranieri <alforan@tin.it>
 **  - Stefan Kost <ensonic@sonicpulse.de>
+**
+**  Ported to OS4 by Alexandre Balaban <alexandre@balaban.name>
+**
 */
 
 
 #include "OpenURL.h"
+
+#if defined(__amigaos4__)
+#include <stdarg.h>
+#endif
 
 /**************************************************************************/
 
@@ -19,7 +26,7 @@
 
 /***********************************************************************/
 
-#ifndef __MORPHOS__
+#if !defined(__MORPHOS__) && !defined(__amigaos4__)
 ULONG STDARGS
 DoSuperNew(struct IClass *cl,Object *obj,ULONG tag1,...)
 {
@@ -236,7 +243,14 @@ static ULONG fmtfunc = 0x16C04E75;
 void STDARGS
 msprintf(UBYTE *to,UBYTE *fmt,...)
 {
+    #if defined(__amigaos4__)
+    va_list       va;
+    va_startlinear(va,fmt);
+    RawDoFmt(fmt,va_getlinearva(va,CONST APTR),(APTR)&fmtfunc,to);
+    va_end(va);
+    #else
     RawDoFmt(fmt,&fmt+1,(APTR)&fmtfunc,to);
+    #endif
 }
 #endif
 
@@ -276,8 +290,9 @@ msnprintfStuff(REG(d0,UBYTE c),REG(a3,struct stream *s))
 static struct EmulLibEntry msnprintfStuffTrap = {TRAP_LIB,0,(void *)&msnprintfStuff};
 #endif
 
+
 int
-#ifndef __MORPHOS__
+#if !defined( __MORPHOS__ )
 STDARGS
 #endif
 msnprintf(UBYTE *buf,int size,UBYTE *fmt,...)
@@ -286,6 +301,9 @@ msnprintf(UBYTE *buf,int size,UBYTE *fmt,...)
     #ifdef __MORPHOS__
     va_list       va;
     va_start(va,fmt);
+    #elif defined(__amigaos4__)
+    va_list       va;
+    va_startlinear(va,fmt);
     #endif
 
     s.buf     = buf;
@@ -295,6 +313,9 @@ msnprintf(UBYTE *buf,int size,UBYTE *fmt,...)
 
     #ifdef __MORPHOS__
     RawDoFmt(fmt,va->overflow_arg_area,(APTR)&msnprintfStuffTrap,&s);
+    va_end(va);
+    #elif defined(__amigaos4__)
+    RawDoFmt(fmt,va_getlinearva(va,CONST APTR),(APTR)msnprintfStuff,&s);
     va_end(va);
     #else
     RawDoFmt(fmt,&fmt+1,(APTR)msnprintfStuff,&s);
