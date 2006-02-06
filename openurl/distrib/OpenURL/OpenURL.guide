@@ -1,5 +1,5 @@
 @database OpenURL
-@author Alfonso Ranieri
+@author OpenURL Team
 
 @Node "Main" "OpenURL"
 
@@ -30,7 +30,7 @@
 
   @{fg fill}Requirements@{fg text}
 
-    - AmigaOS 3.0 or higher.
+    - AmigaOS 3.0 or higher, AmigaOS 4.0 or MorphOS.
     - MUI 3.8 or higher, for the preference program only.
 
 
@@ -88,6 +88,9 @@
 
 
   @{fg fill}Authors@{fg text}
+    Since version 7.2 :
+    @{fg shine}OpenURL Team @{fg text}
+      Web: http://sourceforge.net/openurllib
 
     @{fg shine}Troels Walsted Hansen@{fg text}
       SnailMail: O.L. Aunesgate 15

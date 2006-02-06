@@ -1,3 +1,8 @@
+OpenURL 7.2
+
+- OpenURL is now open source and further developped by the
+OpenURL Team, on Sourceforge.
+
 OpenURL 7.0
 
 - Many to tell you
