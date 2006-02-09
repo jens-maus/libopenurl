@@ -10,7 +10,7 @@
 
     (target "")
 
-    (executable "Langages:Sources/OpenURL/Cmd-v6.3/OpenURL")
+    (executable "Langages:Sources/OpenURL/Cmd/OpenURL")
 
-    (arguments "www.free.fr")
+    (arguments "")
 )
