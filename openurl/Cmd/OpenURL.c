@@ -6,7 +6,8 @@
  *
  * Based on material provided by Troels Walsted Hansen <troels@thule.no>
  *
- * Ported to OS4 by Alexandre Balaban <alexandre@balaban.name>
+ * Ported to OS4 by Alexandre Balaban <alexandre -@- balaban -.- name>
+ * Argument handling fix by Jeff Gilpin
  */
 
 #define __USE_SYSBASE
@@ -25,7 +26,7 @@
 #include "SmartReadArgs.h"
 #include "OpenURL_rev.h"
 
-static const char version[] = VERSTAG;
+static const char __attribute__((used)) version[] = VERSTAG;
 
 /**************************************************************************/
 
@@ -76,6 +77,7 @@ int main(int argc,char **argv)
       if( (IOpenURL = (struct OpenURLIFace *)GetInterface(OpenURLBase,"main",1L,NULL)) )
       {
       #endif
+      struct TagItem tags[8] = {0};
       struct SmartArgs smart_args = {NULL};
       LONG             args[A_MAX] = {0};
       STRPTR           real_url = NULL, filename = NULL;
@@ -163,14 +165,35 @@ int main(int argc,char **argv)
 
          if (error_code==0)
          {
-            /* Really show it */
-            if (URL_Open(real_url,
-                         URL_Launch,        !args[A_NOLAUNCH],
-                         URL_Show,          !args[A_NOSHOW],
-                         URL_BringToFront,  !args[A_NOFRONT],
-                         URL_NewWindow,     args[A_NEWWIN],
-                         URL_PubScreenName, args[A_PUBSCREEN],
-                         TAG_DONE))
+            int i = 0;
+            if ((args[A_NOSHOW]) != 0)
+            {
+               tags[i].ti_Tag = URL_Show;
+               tags[i].ti_Data = FALSE; i++;
+            }
+            if ((args[A_NOFRONT]) != 0)
+            {
+               tags[i].ti_Tag = URL_BringToFront;
+               tags[i].ti_Data = FALSE; i++;
+            }
+            if ((args[A_NEWWIN]) != 0)
+            {
+               tags[i].ti_Tag = URL_NewWindow;
+               tags[i].ti_Data = TRUE; i++;
+            }
+            if ((args[A_NOLAUNCH]) != 0)
+            {
+               tags[i].ti_Tag = URL_Launch;
+               tags[i].ti_Data = FALSE; i++;
+            }
+            if (args[A_PUBSCREEN])
+            {
+               tags[i].ti_Tag = URL_PubScreenName;
+               tags[i].ti_Data = args[A_PUBSCREEN]; i++;
+            }
+            tags[i].ti_Tag = TAG_DONE; tags[i].ti_Data = 0;
+
+            if (URL_OpenA(real_url, tags))
             {
                return_code = RETURN_OK;
             }
@@ -201,7 +224,7 @@ int main(int argc,char **argv)
       if (real_url) FreeVec(real_url);
 
       #if defined(__amigaos4__)
-      DropInterface(IOpenURL);
+      DropInterface((struct Interface*)IOpenURL);
       IOpenURL = NULL;
       }
       else
