@@ -37,6 +37,9 @@ openurl.library/URL_SetPrefsA
       - Alfonso Ranieri <alforan@tin.it>
       - Stefan Kost <ensonic@sonicpulse.de>
 
+      Since version 7.2, OpenURL has been made open source and
+      is developped by the OpenURL Team.
+
 openurl.library/--rexxhost--
 
     HOST INTERFACE
@@ -291,7 +294,7 @@ openurl.library/URL_SetPrefsA
     EXAMPLE
      See the included OpenURL.c.
 
-openurl.library/URL_SetPrefs
+openurl.library/URL_SetPrefsA
 
     NAME
       URL_SetPrefsA - Set openurl.library preferences.            (V1)
@@ -332,4 +335,4 @@ openurl.library/URL_SetPrefsA
 
     SEE ALSO
       URL_GetPrefsA()
-
+
