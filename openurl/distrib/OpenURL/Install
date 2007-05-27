@@ -47,6 +47,16 @@
     )
 )
 
+; Copy OpenURL command
+
+(copyfiles
+	(prompt "Installing the optional commandline tool")
+	(help "This is a small tool that allows you to open URLs from the commandline.")
+	(source "C/OpenURL")
+	(dest "C:")
+	(confirm)
+)
+
 ; Set environment variable
 
 (run "Echo SYS:Prefs/OpenURL >ENV:OpenURL_Prefs_Path")
