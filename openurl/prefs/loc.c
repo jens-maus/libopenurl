@@ -18,14 +18,18 @@
 #define CATCOMP_ARRAY
 #include "loc.h"
 
+#include <proto/exec.h>
+
 /***********************************************************************/
 
 #define CATNAME "OpenURL.catalog"
 
+struct CatCompArrayType * privateCatCompArray = NULL;
+
 /***********************************************************************/
 
 static struct Catalog *
-openCatalog(UBYTE *name,ULONG minVer,ULONG minRev)
+openCatalog(STRPTR name,ULONG minVer,ULONG minRev)
 {
     struct Catalog *cat;
 
@@ -54,18 +58,29 @@ initStrings(void)
         if ( NULL == (ILocale = (struct LocaleIFace*)GetInterface((struct Library*)LocaleBase, "main", 1L, NULL)) ) return;
         #endif
 
+        // to be on the safe side, we initialize our CatCompArray to point on the CatComp's one
+        privateCatCompArray = (struct CatCompArrayType *)CatCompArray;
+
         if (g_cat = openCatalog(CATNAME,7,0))
         {
             struct CatCompArrayType *cca;
             int                     cnt;
 
-            for (cnt = (sizeof(CatCompArray)/sizeof(struct CatCompArrayType))-1, cca = (struct CatCompArrayType *)CatCompArray+cnt;
-                 cnt>=0;
-                 cnt--, cca--)
+            // OK we managed to open the catalog, now go to initialize our own CatComArray
+            privateCatCompArray = (struct CatCompArrayType *) AllocVec( sizeof(CatCompArray), MEMF_ANY );
+            if( privateCatCompArray )
             {
-                UBYTE *s;
+                // ok we have allocated our memory, go for initialization : we copy the whole memory into it
+                CopyMem(CatCompArray,privateCatCompArray,sizeof(CatCompArray));
 
-                if (s = GetCatalogStr(g_cat,cca->cca_ID,cca->cca_Str)) cca->cca_Str = s;
+                for (cnt = (sizeof(CatCompArray)/sizeof(struct CatCompArrayType))-1, cca = (struct CatCompArrayType *)privateCatCompArray+cnt;
+                     cnt>=0;
+                     cnt--, cca--)
+                {
+                    CONST_STRPTR s;
+
+                    if (s = GetCatalogStr(g_cat,cca->cca_ID,cca->cca_Str)) cca->cca_Str = (STRPTR)s;
+                }
             }
 
         }
@@ -74,13 +89,25 @@ initStrings(void)
 
 /***********************************************************************/
 
-UBYTE *
+void
+uninitStrings(void)
+{
+    if( LocaleBase )
+    {
+        FreeVec( privateCatCompArray );
+    }
+    privateCatCompArray = NULL;
+}
+
+/***********************************************************************/
+
+STRPTR
 getString(ULONG id)
 {
     struct CatCompArrayType *cca;
     int                     cnt;
 
-    for (cnt = (sizeof(CatCompArray)/sizeof(struct CatCompArrayType))-1, cca = (struct CatCompArrayType *)CatCompArray+cnt;
+    for (cnt = (sizeof(CatCompArray)/sizeof(struct CatCompArrayType))-1, cca = (struct CatCompArrayType *)privateCatCompArray+cnt;
          cnt>=0;
          cnt--, cca--) if (cca->cca_ID==id) return cca->cca_Str;
 
@@ -90,9 +117,9 @@ getString(ULONG id)
 /***********************************************************************/
 
 void
-localizeStrings(UBYTE **s)
+localizeStrings(STRPTR *s)
 {
-    for (; *s; s++) *s = (UBYTE *)getString((ULONG)*s);
+    for (; *s; s++) *s = getString((ULONG)*s);
 }
 
 /***********************************************************************/
@@ -102,7 +129,7 @@ localizeNewMenu(struct NewMenu *nm)
 {
     for ( ; nm->nm_Type!=NM_END; nm++)
         if (nm->nm_Label!=NM_BARLABEL)
-            nm->nm_Label = (UBYTE *)getString((ULONG)nm->nm_Label);
+            nm->nm_Label = (STRPTR)getString((ULONG)nm->nm_Label);
 }
 
 /***********************************************************************/

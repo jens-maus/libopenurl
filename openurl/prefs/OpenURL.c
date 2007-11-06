@@ -118,6 +118,8 @@ closeStuff(void)
 {
     if (LocaleBase)
     {
+        uninitStrings();
+
         if (g_cat) CloseCatalog(g_cat);
 
         #if defined(__amigaos4__)
@@ -244,7 +246,7 @@ main(int argc,char **argv)
 
     if (error)
     {
-        UBYTE buf[256];
+        TEXT buf[256];
 
         msnprintf(buf,sizeof(buf),getString(error),arg0,arg1);
 
