@@ -35,6 +35,26 @@ DoSuperNew(struct IClass *cl,Object *obj,ULONG tag1,...)
 #endif
 
 /**************************************************************************/
+
+#ifdef __amigaos4__
+int stccpy(char *dst, const char *src, int m)
+{
+    char c;
+    int  j = m;
+
+    while((c = *src++) != '\0')
+    {
+        if (--j > 0)
+            *dst++ = c;
+        else
+            break;
+    }
+    *dst = '\0';
+    return m - j;
+}
+#endif /* __amigaos4__ */
+
+/**************************************************************************/
 ULONG
 xget(Object *obj,ULONG attribute)
 {
@@ -203,7 +223,7 @@ opopport(ULONG maxLen,ULONG key,ULONG help)
 /***********************************************************************/
 
 Object *
-opopph(UBYTE **syms,UBYTE **names,ULONG maxLen,ULONG key,ULONG asl,ULONG help)
+opopph(STRPTR *syms,STRPTR *names,ULONG maxLen,ULONG key,ULONG asl,ULONG help)
 {
     return popphObject,
         _HELP(help),
@@ -241,7 +261,7 @@ openWindow(Object *app,Object *win)
 static ULONG fmtfunc = 0x16C04E75;
 
 void STDARGS
-msprintf(UBYTE *to,UBYTE *fmt,...)
+msprintf(STRPTR to, STRPTR fmt,...)
 {
     #if defined(__amigaos4__)
     va_list       va;
@@ -258,7 +278,7 @@ msprintf(UBYTE *to,UBYTE *fmt,...)
 
 struct stream
 {
-    UBYTE   *buf;
+    STRPTR  buf;
     int     size;
     int     counter;
     int     stop;
@@ -269,10 +289,10 @@ static void
 msnprintfStuff(void)
 {
     register struct stream *s = (struct stream *)REG_A3;
-    register UBYTE         c  = (UBYTE)REG_D0;
+    register UBYTE         c  = (TEXT)REG_D0;
 #else
 static void SAVEDS ASM
-msnprintfStuff(REG(d0,UBYTE c),REG(a3,struct stream *s))
+msnprintfStuff(REG(d0,TEXT c),REG(a3,struct stream *s))
 {
 #endif
     if (!s->stop)
@@ -295,7 +315,7 @@ int
 #if !defined( __MORPHOS__ )
 STDARGS
 #endif
-msnprintf(UBYTE *buf,int size,UBYTE *fmt,...)
+msnprintf(STRPTR buf,int size, STRPTR fmt,...)
 {
     struct stream s;
     #ifdef __MORPHOS__
