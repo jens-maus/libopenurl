@@ -60,12 +60,12 @@ enum
 
 /**************************************************************************/
 
-static UBYTE *tabs[] =
+static STRPTR tabs[] =
 {
-    (UBYTE *)MSG_Win_Labels_Browsers,
-    (UBYTE *)MSG_Win_Labels_Mailers,
-    (UBYTE *)MSG_Win_Labels_FTPs,
-    (UBYTE *)MSG_Win_Labels_Misc,
+    (STRPTR)MSG_Win_Labels_Browsers,
+    (STRPTR)MSG_Win_Labels_Mailers,
+    (STRPTR)MSG_Win_Labels_FTPs,
+    (STRPTR)MSG_Win_Labels_Misc,
     NULL
 };
 
@@ -235,8 +235,8 @@ mGetPrefs(struct IClass *cl,Object *obj,struct MUIP_Win_GetPrefs *msg)
 
     if (error)
     {
-        MUI_Request(_app(obj),NULL,0,(UBYTE *)getString(MSG_ErrReqTitle),
-                                     (UBYTE *)getString(MSG_ErrReqGadget),
+        MUI_Request(_app(obj),NULL,0,getString(MSG_ErrReqTitle),
+                                     getString(MSG_ErrReqGadget),
                                      getString(error),
                                      p ? p->up_Version : 0);
 
@@ -375,7 +375,7 @@ mStorePrefs(struct IClass *cl,Object *obj,struct MUIP_Win_StorePrefs *msg)
 
     /* Save to disk */
     if (!URL_SetPrefs(&up,URL_SetPrefs_Save,msg->How==MUIV_Win_StorePrefs_Save,TAG_DONE))
-        MUI_RequestA(_app(obj),obj,0,(UBYTE *)getString(MSG_ErrReqTitle),(UBYTE *)getString(MSG_ErrReqGadget),(UBYTE *)getString(MSG_Err_FailedSave),NULL);
+        MUI_RequestA(_app(obj),obj,0,getString(MSG_ErrReqTitle),getString(MSG_ErrReqGadget),getString(MSG_Err_FailedSave),NULL);
 
     set(_app(obj),MUIA_Application_Sleep,FALSE);
 

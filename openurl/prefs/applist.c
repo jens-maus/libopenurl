@@ -18,10 +18,6 @@
 #include "loc.h"
 #include "libraries/openurl.h"
 
-#if defined(__amigaos4__)
-    #define stccpy strncpy
-#endif
-
 /**************************************************************************/
 /*
 ** Little lamp class for enabled/disabled
@@ -266,13 +262,13 @@ struct listData
 {
     Object *olamp;
     APTR   lamp;
-    UBYTE  col0buf[NAME_LEN+16];
+    TEXT   col0buf[NAME_LEN+16];
 
     ULONG  nameOfs;
     ULONG  pathOfs;
     ULONG  nodeSize;
 
-    UBYTE  format[64];
+    TEXT  format[64];
 	
     ULONG  flags;
 };
@@ -286,7 +282,7 @@ enum
 struct listIO
 {
     ULONG len;
-    UBYTE format[64];
+    TEXT format[64];
 };
 
 /**************************************************************************/
@@ -356,11 +352,11 @@ static void
 dispFun(void)
 {
     struct Hook     *hook = (struct Hook *)REG_a0;
-    UBYTE           **array = (UBYTE **)REG_A2;
+    STRPTR          *array = (STRPTR *)REG_A2;
     struct URL_Node *node = (struct URL_Node *)REG_A1;
 #else
 static void SAVEDS ASM
-dispFun(REG(a0,struct Hook *hook),REG(a2,UBYTE **array),REG(a1,struct URL_Node *node))
+dispFun(REG(a0,struct Hook *hook),REG(a2,STRPTR *array),REG(a1,struct URL_Node *node))
 {
 #endif
     struct listData *data = hook->h_Data;
@@ -377,14 +373,14 @@ dispFun(REG(a0,struct Hook *hook),REG(a2,UBYTE **array),REG(a1,struct URL_Node *
         else *array++ = "+";
         //msprintf(data->col0buf,"%s %s",(ULONG)((node->Flags & UNF_DISABLED) ? " " : ">"),(ULONG)
 
-        *array++ = (UBYTE *)node+data->nameOfs;
-        *array   = (UBYTE *)node+data->pathOfs;
+        *array++ = (STRPTR)node+data->nameOfs;
+        *array   = (STRPTR)node+data->pathOfs;
     }
     else
     {
         *array++ = " ";
-        *array++ = (UBYTE *)getString(MSG_Edit_ListName);
-        *array   = (UBYTE *)getString(MSG_Edit_ListPath);
+        *array++ = getString(MSG_Edit_ListName);
+        *array   = getString(MSG_Edit_ListPath);
     }
 }
 
@@ -547,7 +543,7 @@ mListExport(struct IClass *cl,Object *obj,struct MUIP_Import *msg)
     if (id = (muiNotifyData(obj)->mnd_ObjectID))
     {
         struct listIO io;
-        UBYTE         *f;
+        STRPTR        f;
 
         get(obj,MUIA_List_Format,&f);
         io.len = strlen(f)+1;
@@ -636,7 +632,7 @@ struct data
     ULONG          editAttr;
     ULONG          listAttr;
 
-    UBYTE          *newNodeName;
+    STRPTR         newNodeName;
 };
 
 /**************************************************************************/
@@ -646,7 +642,7 @@ mNew(struct IClass *cl,Object *obj,struct opSet *msg)
 {
     Object        *appl, *addb, *editb, *cloneb, *deleteb, *disableb, *upb, *downb;
     struct IClass *editWinClass;
-    UBYTE         *nodeName, *helpNode;
+    STRPTR         nodeName, helpNode;
     ULONG         nameOfs, pathOfs, nodeSize, editWinAttr, listAttr, help, id;
 
     /* What we are  */
@@ -809,7 +805,7 @@ mAdd(struct IClass *cl,Object *obj,Msg msg)
     if (!(node = AllocPooled(g_pool,data->nodeSize))) return FALSE;
 
     memset(node,0,data->nodeSize);
-    strcpy((UBYTE *)node+data->nameOfs,data->newNodeName);
+    strcpy((STRPTR)node+data->nameOfs,data->newNodeName);
 
     node->Flags = UNF_NEW|UNF_NTALLOC;
 

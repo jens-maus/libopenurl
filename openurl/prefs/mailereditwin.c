@@ -48,7 +48,7 @@ enum
 
 /**************************************************************************/
 
-static UBYTE *syms[] =
+static STRPTR syms[] =
 {
     "%a",
     "%s",
@@ -59,14 +59,14 @@ static UBYTE *syms[] =
     NULL
 };
 
-static UBYTE *names[] =
+static STRPTR names[] =
 {
-    (UBYTE *)MSG_Mailer_PopAddress,
-    (UBYTE *)MSG_Mailer_Popsubject,
-    (UBYTE *)MSG_Mailer_PopBodyText,
-    (UBYTE *)MSG_Mailer_PopBodyFile,
-    (UBYTE *)MSG_Edit_PopURL,
-    (UBYTE *)MSG_Edit_PopScreen,
+    (STRPTR)MSG_Mailer_PopAddress,
+    (STRPTR)MSG_Mailer_Popsubject,
+    (STRPTR)MSG_Mailer_PopBodyText,
+    (STRPTR)MSG_Mailer_PopBodyFile,
+    (STRPTR)MSG_Edit_PopURL,
+    (STRPTR)MSG_Edit_PopScreen,
     NULL
 };
 
@@ -192,13 +192,13 @@ mUse(struct IClass *cl,Object *obj,Msg msg)
 
     mn->umn_Flags &= ~UNF_NEW;
 
-    strcpy(mn->umn_Name,(UBYTE *)xget(data->name,MUIA_String_Contents));
-    strcpy(mn->umn_Path,(UBYTE *)xget(data->path,MUIA_String_Contents));
-    strcpy(mn->umn_Port,(UBYTE *)xget(data->port,MUIA_String_Contents));
+    strcpy((STRPTR)mn->umn_Name,(STRPTR)xget(data->name,MUIA_String_Contents));
+    strcpy((STRPTR)mn->umn_Path,(STRPTR)xget(data->path,MUIA_String_Contents));
+    strcpy((STRPTR)mn->umn_Port,(STRPTR)xget(data->port,MUIA_String_Contents));
 
-    strcpy(mn->umn_ShowCmd,(UBYTE *)xget(data->show,MUIA_String_Contents));
-    strcpy(mn->umn_ToFrontCmd,(UBYTE *)xget(data->toFront,MUIA_String_Contents));
-    strcpy(mn->umn_WriteMailCmd,(UBYTE *)xget(data->write,MUIA_String_Contents));
+    strcpy((STRPTR)mn->umn_ShowCmd,(STRPTR)xget(data->show,MUIA_String_Contents));
+    strcpy((STRPTR)mn->umn_ToFrontCmd,(STRPTR)xget(data->toFront,MUIA_String_Contents));
+    strcpy((STRPTR)mn->umn_WriteMailCmd,(STRPTR)xget(data->write,MUIA_String_Contents));
 
     get(data->mailerList,MUIA_List_Visible,&visible);
     if (visible != -1)

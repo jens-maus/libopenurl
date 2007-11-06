@@ -18,10 +18,6 @@
 #include <exec/execbase.h>
 #include <libraries/asl.h>
 
-#if defined(__amigaos4__)
-    #define stccpy strncpy
-#endif
-
 /**************************************************************************/
 /*
 ** Place holders list
@@ -172,8 +168,8 @@ struct data
     struct Hook          closeHook;
     struct FileRequester *req;
 
-    UBYTE                **phs;
-    UBYTE                **names;
+    STRPTR               *phs;
+    STRPTR               *names;
 };
 
 /**************************************************************************/
@@ -219,7 +215,7 @@ closeFun(REG(a0,struct Hook *hook),REG(a2,Object *list),REG(a1,Object *str))
     get(list,MUIA_List_Active,&a);
     if (a>=0)
     {
-        UBYTE *buf, *x;
+        STRPTR buf, x;
         ULONG pos, lx, l;
 
         get(str,MUIA_String_BufferPos,&pos);
@@ -248,12 +244,12 @@ mNew(struct IClass *cl,Object *obj,struct opSet *msg)
 {
     Object         *str, *lv;
     struct TagItem *attrs = msg->ops_AttrList;
-    UBYTE          **phs, **names;
+    STRPTR         *phs, *names;
 
-    phs   = (UBYTE **)GetTagData(MUIA_Popph_Syms,(ULONG)NULL,attrs);
+    phs   = (STRPTR*)GetTagData(MUIA_Popph_Syms,(ULONG)NULL,attrs);
     if (!phs) return 0;
 
-    names = (UBYTE **)GetTagData(MUIA_Popph_Names,FALSE,attrs);
+    names = (STRPTR*)GetTagData(MUIA_Popph_Names,FALSE,attrs);
     if (!names) return 0;
 
     if (obj = (Object *)DoSuperNew(cl,obj,
@@ -354,7 +350,7 @@ mRequestFile(struct IClass *cl,Object *obj,Msg msg)
 {
     struct data *data = INST_DATA(cl,obj);
     struct Hook reqIntuiHook = {0};
-    UBYTE       path[256], *x, *file, *p;
+    TEXT       path[256], *x, *file, *p;
 
     set(_app(obj),MUIA_Application_Sleep,TRUE);
 
@@ -383,7 +379,7 @@ mRequestFile(struct IClass *cl,Object *obj,Msg msg)
                            ASLFR_Flags1,            FRF_INTUIFUNC,
                            TAG_DONE))
     {
-        UBYTE buf[256];
+        TEXT buf[256];
 
         strcpy(buf,data->req->fr_Drawer);
         AddPart(buf,data->req->fr_File,sizeof(buf));

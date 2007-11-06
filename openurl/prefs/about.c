@@ -72,7 +72,7 @@
 */
 
 static Object *
-ourltext(UBYTE *url,UBYTE *text)
+ourltext(STRPTR url,STRPTR text)
 {
     Object *o;
 
@@ -124,7 +124,7 @@ othirdMUI(Object **mui)
 */
 
 static Object *
-othird(ULONG stuff,UBYTE *author,UBYTE *url)
+othird(ULONG stuff,STRPTR author,STRPTR url)
 {
     Object *g, *o[8];
 
@@ -166,9 +166,9 @@ mNew(struct IClass *cl,Object *obj,struct opSet *msg)
 {
     Object         *g, *o[8], *mui, *ok;
     struct TagItem *attrs = msg->ops_AttrList;
-    UBYTE          *lver;
+    STRPTR          lver;
 
-    if (!URL_GetAttr(URL_GetAttr_VerString,(ULONG *)&lver)) lver = "";
+    if (!URL_GetAttr(URL_GetAttr_VerString,(ULONG*)(&lver))) lver = "";
 
     if (obj = (Object *)DoSuperNew(cl,obj,
             MUIA_HelpNode,              "WRID",
@@ -214,12 +214,12 @@ mNew(struct IClass *cl,Object *obj,struct opSet *msg)
                             Child, HGroup, Child, ourltext("mailto:troels@thule.no","Troels Walsted Hansen"), Child, HSpace(0), End,
                             Child, HGroup, Child, ourltext("mailto:alforan@tin.it","Alfonso Ranieri"), Child, HSpace(0), End,
                             Child, HGroup, Child, ourltext("mailto:ensonic@sonicpulse.de","Stefan Kost"), Child, HSpace(0), End,
-									 Child, HGroup, Child, ourltext("mailto:alexandrec@balaban.name","OS4 Port by Alexandre Balaban"), Child, HSpace(0), End,
+                            Child, HGroup, Child, ourltext("mailto:alexandrec@balaban.name","OS4 Port by Alexandre Balaban"), Child, HSpace(0), End,
                         End,
 
                         /* Support */
                         Child, olabel(MSG_About_Support),
-                        Child, ourltext("http://alfie.altervista.org",NULL),
+                        Child, ourltext("https://sourceforge.net/projects/openurllib",NULL),
 
                         /* Version */
                         Child, VGroup,
@@ -263,7 +263,7 @@ mNew(struct IClass *cl,Object *obj,struct opSet *msg)
             TAG_MORE,attrs))
     {
         Object *win, *space;
-        UBYTE  *tn;
+        STRPTR  tn;
 
         /*
         ** If there are the translator stuff

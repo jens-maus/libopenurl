@@ -50,17 +50,17 @@ enum
 
 /**************************************************************************/
 
-static UBYTE *syms[] =
+static STRPTR syms[] =
 {
     "%u",
     "%p",
     NULL
 };
 
-static UBYTE *names[] =
+static STRPTR names[] =
 {
-    (UBYTE *)MSG_Edit_PopURL,
-    (UBYTE *)MSG_Edit_PopScreen,
+    (STRPTR)MSG_Edit_PopURL,
+    (STRPTR)MSG_Edit_PopScreen,
     NULL
 };
 
@@ -196,16 +196,16 @@ mUse(struct IClass *cl,Object *obj,Msg msg)
 
     fn->ufn_Flags &= ~UNF_NEW;
 
-    strcpy(fn->ufn_Name,(UBYTE *)xget(data->name,MUIA_String_Contents));
-    strcpy(fn->ufn_Path,(UBYTE *)xget(data->path,MUIA_String_Contents));
-    strcpy(fn->ufn_Port,(UBYTE *)xget(data->port,MUIA_String_Contents));
+    strcpy((STRPTR)fn->ufn_Name,(STRPTR)xget(data->name,MUIA_String_Contents));
+    strcpy((STRPTR)fn->ufn_Path,(STRPTR)xget(data->path,MUIA_String_Contents));
+    strcpy((STRPTR)fn->ufn_Port,(STRPTR)xget(data->port,MUIA_String_Contents));
     if (xget(data->removeScheme,MUIA_Selected)) fn->ufn_Flags |= UFNF_REMOVEFTP;
     else fn->ufn_Flags &= ~UFNF_REMOVEFTP;
 
-    strcpy(fn->ufn_ShowCmd,(UBYTE *)xget(data->show,MUIA_String_Contents));
-    strcpy(fn->ufn_ToFrontCmd,(UBYTE *)xget(data->toFront,MUIA_String_Contents));
-    strcpy(fn->ufn_OpenURLCmd,(UBYTE *)xget(data->openURL,MUIA_String_Contents));
-    strcpy(fn->ufn_OpenURLWCmd,(UBYTE *)xget(data->openURLNW,MUIA_String_Contents));
+    strcpy((STRPTR)fn->ufn_ShowCmd,(STRPTR)xget(data->show,MUIA_String_Contents));
+    strcpy((STRPTR)fn->ufn_ToFrontCmd,(STRPTR)xget(data->toFront,MUIA_String_Contents));
+    strcpy((STRPTR)fn->ufn_OpenURLCmd,(STRPTR)xget(data->openURL,MUIA_String_Contents));
+    strcpy((STRPTR)fn->ufn_OpenURLWCmd,(STRPTR)xget(data->openURLNW,MUIA_String_Contents));
 
     get(data->FTPList,MUIA_List_Visible,&visible);
     if (visible!=-1)

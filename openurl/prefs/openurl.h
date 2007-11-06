@@ -391,10 +391,10 @@ enum
 ** Macros
 **/
 
-#define MTITLE(t) {NM_TITLE,(UBYTE *)(t),0,0,0,(APTR)(t)}
-#define MTITEM(t) {NM_ITEM,(UBYTE *)(t),0,CHECKIT|MENUTOGGLE,0,(APTR)(t)}
-#define MITEM(t)  {NM_ITEM,(UBYTE *)(t),0,0,0,(APTR)(t)}
-#define MBAR      {NM_ITEM,(UBYTE *)NM_BARLABEL,0,0,0,NULL}
+#define MTITLE(t) {NM_TITLE,(STRPTR)(t),0,0,0,(APTR)(t)}
+#define MTITEM(t) {NM_ITEM,(STRPTR)(t),0,CHECKIT|MENUTOGGLE,0,(APTR)(t)}
+#define MITEM(t)  {NM_ITEM,(STRPTR)(t),0,0,0,(APTR)(t)}
+#define MBAR      {NM_ITEM,(STRPTR)NM_BARLABEL,0,0,0,NULL}
 #define MEND      {NM_END,NULL,0,0,0,NULL}
 
 #undef set

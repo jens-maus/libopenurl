@@ -66,7 +66,7 @@ static struct NewMenu menu[] =
 ** Used classes
 */
 
-static UBYTE *usedClasses[] =
+static STRPTR usedClasses[] =
 {
     "Textinput.mcc",
     "Urltext.mcc",

@@ -15,23 +15,25 @@
 
 /* loc.c */
 void initStrings ( void );
-UBYTE * getString ( ULONG id );
-void localizeStrings ( UBYTE **s );
+void uninitStrings( void );
+STRPTR getString ( ULONG id );
+void localizeStrings ( STRPTR *s );
 void localizeNewMenu ( struct NewMenu *nm );
 ULONG getKeyChar ( UBYTE *string , ULONG id );
 
 /* utils.c */
 #ifdef __MORPHOS__
 #define msprintf(to, fmt, ...) ({ ULONG _tags[] = { __VA_ARGS__ }; RawDoFmt(fmt, _tags, (void (*)(void)) 0, to); })
-int msnprintf ( UBYTE *buf , int size , UBYTE *fmt , ... ) __attribute((varargs68k));
+int msnprintf ( STRPTR buf , int size , STRPTR fmt , ... ) __attribute((varargs68k));
 #elif defined(__amigaos4__)
+int stccpy(char *dst, const char *src, int m);
 ULONG DoSuperNew ( struct IClass *cl , Object *obj , ... ) VARARGS68K;
-void msprintf ( UBYTE *to , UBYTE *fmt , ... ) VARARGS68K;
-int msnprintf ( UBYTE *buf , int size , UBYTE *fmt , ... ) VARARGS68K;
+void msprintf ( STRPTR to , STRPTR fmt , ... ) VARARGS68K;
+int msnprintf ( STRPTR buf , int size , STRPTR fmt , ... ) VARARGS68K;
 #else
 ULONG STDARGS DoSuperNew ( struct IClass *cl , Object *obj , ... );
-void STDARGS msprintf ( UBYTE *to , UBYTE *fmt , ... );
-int STDARGS msnprintf ( UBYTE *buf , int size , UBYTE *fmt , ... );
+void STDARGS msprintf ( STRPTR to , STRPTR fmt , ... );
+int STDARGS msnprintf ( STRPTR buf , int size , STRPTR fmt , ... );
 #endif
 ULONG xget ( Object *obj , ULONG attribute );
 Object *olabel ( ULONG id );
@@ -47,7 +49,7 @@ Object *ocheckmark ( ULONG key , ULONG help );
 Object *opopbutton ( ULONG img , ULONG help );
 Object *ostring ( ULONG maxlen , ULONG key , ULONG help );
 Object *opopport ( ULONG maxLen , ULONG key , ULONG help );
-Object *opopph ( UBYTE **syms , UBYTE **names , ULONG maxLen , ULONG key , ULONG asl , ULONG help );
+Object *opopph ( STRPTR *syms , STRPTR *names , ULONG maxLen , ULONG key , ULONG asl , ULONG help );
 ULONG openWindow ( Object *app , Object *win );
 ULONG delEntry ( Object *obj , APTR entry );
 

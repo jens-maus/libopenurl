@@ -50,17 +50,17 @@ enum
 
 /**************************************************************************/
 
-static UBYTE *syms[] =
+static STRPTR syms[] =
 {
     "%u",
     "%p",
     NULL
 };
 
-static UBYTE *names[] =
+static STRPTR names[] =
 {
-    (UBYTE *)MSG_Edit_PopURL,
-    (UBYTE *)MSG_Edit_PopScreen,
+    (STRPTR)MSG_Edit_PopURL,
+    (STRPTR)MSG_Edit_PopScreen,
     NULL
 };
 
@@ -188,14 +188,14 @@ mUse(struct IClass *cl,Object *obj,Msg msg)
 
     bn->ubn_Flags &= ~UNF_NEW;
 
-    strcpy(bn->ubn_Name,(UBYTE *)xget(data->name,MUIA_String_Contents));
-    strcpy(bn->ubn_Path,(UBYTE *)xget(data->path,MUIA_String_Contents));
-    strcpy(bn->ubn_Port,(UBYTE *)xget(data->port,MUIA_String_Contents));
+    strcpy((STRPTR)bn->ubn_Name,(STRPTR)xget(data->name,MUIA_String_Contents));
+    strcpy((STRPTR)bn->ubn_Path,(STRPTR)xget(data->path,MUIA_String_Contents));
+    strcpy((STRPTR)bn->ubn_Port,(STRPTR)xget(data->port,MUIA_String_Contents));
 
-    strcpy(bn->ubn_ShowCmd,(UBYTE *)xget(data->show,MUIA_String_Contents));
-    strcpy(bn->ubn_ToFrontCmd,(UBYTE *)xget(data->toFront,MUIA_String_Contents));
-    strcpy(bn->ubn_OpenURLCmd,(UBYTE *)xget(data->openURL,MUIA_String_Contents));
-    strcpy(bn->ubn_OpenURLWCmd,(UBYTE *)xget(data->openURLNW,MUIA_String_Contents));
+    strcpy((STRPTR)bn->ubn_ShowCmd,(STRPTR)xget(data->show,MUIA_String_Contents));
+    strcpy((STRPTR)bn->ubn_ToFrontCmd,(STRPTR)xget(data->toFront,MUIA_String_Contents));
+    strcpy((STRPTR)bn->ubn_OpenURLCmd,(STRPTR)xget(data->openURL,MUIA_String_Contents));
+    strcpy((STRPTR)bn->ubn_OpenURLWCmd,(STRPTR)xget(data->openURLNW,MUIA_String_Contents));
 
     get(data->browserList,MUIA_List_Visible,&visible);
     if (visible!=-1)

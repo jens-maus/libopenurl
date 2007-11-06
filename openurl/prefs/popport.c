@@ -18,10 +18,6 @@
 #include "libraries/openurl.h"
 #include <exec/execbase.h>
 
-#if defined(__amigaos4__)
-    #define stccpy strncpy
-#endif
-
 /**************************************************************************/
 /*
 ** Public ports list
@@ -135,10 +131,10 @@ static ULONG SAVEDS ASM
 openFun(REG(a0,struct Hook *hook),REG(a2,Object *list),REG(a1,Object *str))
 {
 #endif
-    UBYTE *s, *x;
+    STRPTR s, x;
     int   i;
 
-    s = (UBYTE *)xget(str,MUIA_String_Contents);
+    s = (STRPTR)xget(str,MUIA_String_Contents);
 
     for (i = 0; ;i++)
     {
@@ -179,12 +175,12 @@ static void SAVEDS ASM
 closeFun(REG(a0,struct Hook *hook),REG(a2,Object *list),REG(a1,Object *str))
 {
 #endif
-    UBYTE *port;
+    STRPTR port;
 
     DoMethod(list,MUIM_List_GetEntry,MUIV_List_GetEntry_Active,(ULONG)&port);
     if (port)
     {
-        UBYTE buf[PORT_LEN], *dot, *digit;
+        TEXT buf[PORT_LEN], *dot, *digit;
 
         dot = strrchr(port,'.');
 
