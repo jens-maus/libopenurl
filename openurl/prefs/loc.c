@@ -92,7 +92,7 @@ initStrings(void)
 void
 uninitStrings(void)
 {
-    if( LocaleBase )
+    if( privateCatCompArray != CatCompArray )
     {
         FreeVec( privateCatCompArray );
     }

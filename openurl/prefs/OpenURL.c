@@ -134,6 +134,7 @@ closeStuff(void)
         #endif
 
         CloseLibrary((struct Library *)LocaleBase);
+        LocaleBase = NULL;
     }
 
 #if defined(__amigaos4__)
