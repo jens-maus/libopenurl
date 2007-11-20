@@ -27,6 +27,7 @@ ULONG getKeyChar ( UBYTE *string , ULONG id );
 int msnprintf ( STRPTR buf , int size , STRPTR fmt , ... ) __attribute((varargs68k));
 #elif defined(__amigaos4__)
 int stccpy(char *dst, const char *src, int m);
+void SetAmiUpdateENVVariable( CONST_STRPTR varname );
 ULONG DoSuperNew ( struct IClass *cl , Object *obj , ... ) VARARGS68K;
 void msprintf ( STRPTR to , STRPTR fmt , ... ) VARARGS68K;
 int msnprintf ( STRPTR buf , int size , STRPTR fmt , ... ) VARARGS68K;

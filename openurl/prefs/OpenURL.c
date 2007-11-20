@@ -106,6 +106,9 @@ openStuff(ULONG *arg0,ULONG *arg1)
 
         return MSG_Err_NoOpenURL;
     }
+
+    // setup the AmiUpdate variable
+    SetAmiUpdateENVVariable( "Open URL" );
 #endif
 
     return 0;
