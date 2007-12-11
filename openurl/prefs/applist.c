@@ -365,7 +365,7 @@ dispFun(REG(a0,struct Hook *hook),REG(a2,STRPTR *array),REG(a1,struct URL_Node *
     {
         if (data->lamp)
         {
-            set(data->lamp,MUIA_Lamp_Disabled,node->Flags & UNF_DISABLED);
+            set(data->olamp,MUIA_Lamp_Disabled,node->Flags & UNF_DISABLED);
             //msprintf(data->col0buf,"\33O[%08lx] %s",(ULONG)data->lamp,(ULONG)((UBYTE *)node+data->nameOfs));
             msprintf(data->col0buf,"\33O[%08lx]",(ULONG)data->lamp);
             *array++ = data->col0buf;
