@@ -69,7 +69,7 @@ int main(int argc,char **argv)
    register LONG             error_code = 0;
    register STRPTR           error_cause = NULL;
    register struct WBStartup *wb_startup = NULL;
-   register UBYTE            error_buffer[MAXIMUM_ERROR_LENGTH] = {NULL};
+   TEXT                      error_buffer[MAXIMUM_ERROR_LENGTH] = "";
 
    if (OpenURLBase = OpenLibrary("openurl.library",OPENURL_VERSION))
    {
