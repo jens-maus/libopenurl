@@ -45,16 +45,16 @@ URL_OpenA(REG(a0,UBYTE *URL),REG(a1,struct TagItem *attrs))
     /* prepend "http://" if URL has no method */
     if (lib_prefs->up_Flags & UPF_PREPENDHTTP)
     {
-        UBYTE *colon;
+        TEXT *colon;
 
-        colon = strchr(URL,':');
+        colon = strchr((STRPTR)URL,':');
 
         if (!colon) httpPrepend = TRUE;
         else
         {
-            UBYTE *p;
+            TEXT *p;
 
-            for (p = URL; p<colon; p++)
+            for (p = (STRPTR)URL; p<colon; p++)
             {
                 if (!isalnum(*p) && (*p!='+') && (*p!='-'))
                 {
@@ -67,23 +67,23 @@ URL_OpenA(REG(a0,UBYTE *URL),REG(a1,struct TagItem *attrs))
 
     if (httpPrepend)
     {
-        ULONG len = strlen(URL)+8;
+        ULONG len = strlen((STRPTR)URL)+8;
 
         if (len>sizeof(buf))
         {
-            if (!(fullURL = allocVecPooled(strlen(URL)+8))) goto done;
+            if (!(fullURL = allocVecPooled(strlen((STRPTR)URL)+8))) goto done;
         }
         else fullURL = buf;
 
-        msprintf(fullURL,"http://%s",(ULONG)URL);
+        msprintf(fullURL,(UBYTE*)"http://%s",(ULONG)URL);
     }
     else fullURL = URL;
 
     /* Be case insensitive - Piru */
-    if ((lib_prefs->up_Flags & UPF_DOMAILTO) && !Strnicmp(URL,"mailto:",7))
+    if ((lib_prefs->up_Flags & UPF_DOMAILTO) && !Strnicmp((STRPTR)URL,"mailto:",7))
         res = sendToMailer(fullURL,&portList,show,toFront,launch,pubScreenName);
     else
-        if ((lib_prefs->up_Flags & UPF_DOFTP) && !Strnicmp(URL,"ftp://",6))
+        if ((lib_prefs->up_Flags & UPF_DOFTP) && !Strnicmp((STRPTR)URL,"ftp://",6))
             res = sendToFTP(fullURL,&portList,show,toFront,newWindow,launch,pubScreenName);
         else res = sendToBrowser(fullURL,&portList,show,toFront,newWindow,launch,pubScreenName);
 
@@ -197,11 +197,11 @@ URL_SetPrefsA(REG(a0,struct URL_Prefs *p),REG(a1,struct TagItem *attrs))
             URL_FreePrefsA(lib_prefs,NULL);
             lib_prefs = newp;
 
-            if (res = savePrefs(DEF_ENV,lib_prefs))
+            if (res = savePrefs((UBYTE*)DEF_ENV,lib_prefs))
             {
                 if (GetTagData(URL_SetPrefs_Save,FALSE,attrs))
                 {
-                    res = savePrefs(DEF_ENVARC,lib_prefs);
+                    res = savePrefs((UBYTE*)DEF_ENVARC,lib_prefs);
                 }
             }
         }
@@ -247,22 +247,41 @@ URL_LaunchPrefsAppA(REG(a0,struct TagItem *attrs))
 
         if (out = Open("NIL:",MODE_OLDFILE))
         {
-            UBYTE      name[256];
-            struct TagItem stags[] = {SYS_Input,       0,
-                                      SYS_Output,      0,
-                                      NP_StackSize,    16000,
-                                      SYS_Asynch,      TRUE,
-                                      #ifdef __MORPHOS__
-                                      NP_PPCStackSize, 32000,
-                                      #endif
-                                      TAG_DONE};
+            TEXT           name[256]={'\0'};
+            static struct TagItem stags[] = {   SYS_Input,       0,
+                                                SYS_Output,      0,
+                                                #ifdef __amigaos4__
+                                                NP_StackSize,    48000,
+                                                #else
+                                                NP_StackSize,    16000,
+                                                #endif
+                                                //SYS_Asynch,      TRUE,
+                                                #ifdef __MORPHOS__
+                                                NP_PPCStackSize, 32000,
+                                                #endif
+                                                TAG_END};
 
-            if (GetVar("OpenURL_Prefs_Path",name,sizeof(name),GVF_GLOBAL_ONLY)<=0)
-                strcpy(name,"Sys:Prefs/OpenURL");
+            LONG len = GetVar("AppPath/OpenURL",name,sizeof(name),GVF_GLOBAL_ONLY);
+            if (len<=0)
+            {
+                // Ok let's try to be backward compatible
+                if(GetVar("OpenURL_Prefs_Path",name,sizeof(name),GVF_GLOBAL_ONLY)<=0)
+                {
+                    strcpy(name,"Sys:Prefs/Open URL");
+                }
+            }
+            else
+            {
+                strcpy(name+len,"/Open URL\0");
+                name[len+10]='\0';
+            }
 
             stags[0].ti_Data = (ULONG)in;
             stags[1].ti_Data = (ULONG)out;
             SystemTagList(name,stags);
+
+            Close(out);
+            Close(in);
 
             return TRUE;
         }
@@ -313,7 +332,7 @@ LONG ASM SAVEDS dispatch(REG(a0,struct RexxMsg *msg),REG(a1,UBYTE **resPtr))
 {
 #endif
 
-    UBYTE  *fun = msg->rm_Args[0];
+    TEXT  *fun = msg->rm_Args[0];
     ULONG  res, na = msg->rm_Action & RXARGMASK;
 
     if (!stricmp(fun,"OPENURL"))
@@ -322,12 +341,12 @@ LONG ASM SAVEDS dispatch(REG(a0,struct RexxMsg *msg),REG(a1,UBYTE **resPtr))
         else
         {
             struct TagItem tags[MAXRMARG+1];
-            UBYTE          *url;
+            TEXT          *url;
             int            i, j;
 
             for (i = na, j = 0, url = NULL; i>0; i--)
             {
-                UBYTE *arg = msg->rm_Args[i];
+                TEXT *arg = msg->rm_Args[i];
                 Tag   tag;
 
                 if (!arg || !*arg) continue;
@@ -348,7 +367,7 @@ LONG ASM SAVEDS dispatch(REG(a0,struct RexxMsg *msg),REG(a1,UBYTE **resPtr))
 
             tags[j].ti_Tag = TAG_END;
 
-            res = url && URL_OpenA(url,tags);
+            res = url && URL_OpenA((UBYTE*)url,tags);
         }
     }
     else
@@ -365,7 +384,7 @@ LONG ASM SAVEDS dispatch(REG(a0,struct RexxMsg *msg),REG(a1,UBYTE **resPtr))
 #ifdef __MORPHOS__
     return (REG_A0 = (ULONG)CreateArgstring(res ? "1" : "0",1)) ? 0 : 3;
 #else
-    return (*resPtr = CreateArgstring(res ? "1" : "0",1)) ? 0 : 3;
+    return (*resPtr = (UBYTE*)CreateArgstring(res ? "1" : "0",1)) ? 0 : 3;
 #endif
 }
 
