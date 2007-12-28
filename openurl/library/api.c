@@ -248,40 +248,36 @@ URL_LaunchPrefsAppA(REG(a0,struct TagItem *attrs))
         if (out = Open("NIL:",MODE_OLDFILE))
         {
             TEXT           name[256]={'\0'};
-            static struct TagItem stags[] = {   SYS_Input,       0,
-                                                SYS_Output,      0,
-                                                #ifdef __amigaos4__
-                                                NP_StackSize,    48000,
-                                                #else
-                                                NP_StackSize,    16000,
-                                                #endif
-                                                //SYS_Asynch,      TRUE,
-                                                #ifdef __MORPHOS__
-                                                NP_PPCStackSize, 32000,
-                                                #endif
-                                                TAG_END};
 
-            LONG len = GetVar("AppPath/OpenURL",name,sizeof(name),GVF_GLOBAL_ONLY);
+            LONG len = GetVar("AppPaths/OpenURL",name+1,sizeof(name)-1,GVF_GLOBAL_ONLY);
             if (len<=0)
             {
                 // Ok let's try to be backward compatible
                 if(GetVar("OpenURL_Prefs_Path",name,sizeof(name),GVF_GLOBAL_ONLY)<=0)
                 {
-                    strcpy(name,"Sys:Prefs/Open URL");
+                    strcpy(name,"\"Sys:Prefs/Open URL\"");
                 }
             }
             else
             {
-                strcpy(name+len,"/Open URL\0");
-                name[len+10]='\0';
+                name[0]='\"';
+                strcpy(name+1+len,"/Open URL\"");
+                name[len+11]='\0';
             }
 
-            stags[0].ti_Data = (ULONG)in;
-            stags[1].ti_Data = (ULONG)out;
-            SystemTagList(name,stags);
-
-            Close(out);
-            Close(in);
+            SystemTags( name,   SYS_Input,       (ULONG)in,
+                                SYS_Output,      (ULONG)out,
+                                #ifdef __amigaos4__
+                                SYS_Error,       0,
+                                NP_StackSize,    48000,
+                                #else
+                                NP_StackSize,    16000,
+                                #endif /* __amigaos4__ */
+                                SYS_Asynch,      TRUE,
+                                #ifdef __MORPHOS__
+                                NP_PPCStackSize, 32000,
+                                #endif /* __MORPHOS__ */
+                                TAG_END);
 
             return TRUE;
         }
