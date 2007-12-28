@@ -108,7 +108,7 @@ openStuff(ULONG *arg0,ULONG *arg1)
     }
 
     // setup the AmiUpdate variable
-    SetAmiUpdateENVVariable( "Open URL" );
+    SetAmiUpdateENVVariable( "OpenURL" );
 #endif
 
     return 0;
