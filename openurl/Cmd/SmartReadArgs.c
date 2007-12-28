@@ -298,6 +298,10 @@ LONG SmartReadArgs(struct WBStartup * wb_startup, struct SmartArgs * args)
 {
    LONG error;
 
+#if defined(__amigaos4__)
+   struct ExecIFace *IExec = (struct ExecIFace *)(((struct ExecBase *)SysBase)->MainInterface);
+#endif
+
    args->sa_Flags = 0;
 
    D(bug("UtilityBase = 0x%lx\n", (ULONG) UtilityBase));
@@ -455,6 +459,8 @@ LONG SmartReadArgs(struct WBStartup * wb_startup, struct SmartArgs * args)
       args->sa_Flags |= SAF_WORKBENCH;
    }
 
+   SetIoErr(0);
+
    args->sa_FreeArgs = ReadArgs(args->sa_Template, args->sa_Parameter, args->sa_RDArgs);
 
    if (SetSignal(0L, SIGBREAKF_CTRL_C) & SIGBREAKF_CTRL_C)
@@ -528,14 +534,14 @@ static struct DiskObject *smart_get_icon(struct SmartArgs *args, struct WBStartu
    struct WBArg *wbarg = wb_startup->sm_ArgList;
    ULONG num = wb_startup->sm_NumArgs;
 
-   UBYTE work_name[MAXIMUM_FILENAME_LENGTH];
+   TEXT work_name[MAXIMUM_FILENAME_LENGTH];
    BPTR old_lock, new_lock;
 
    /* Copy the WBArg contents */
    strncpy(work_name, wbarg->wa_Name, MAXIMUM_FILENAME_LENGTH);
 
    new_lock = DupLock(wbarg->wa_Lock);
-   if (new_lock != NULL)
+   if (new_lock != ZERO)
    {
       D(bug("work_name : \"%s\"\n", work_name));
 
