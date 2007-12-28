@@ -2,8 +2,8 @@
 #define PRAGMAS_OPENURL_PRAGMAS_H
 
 /*
-**  $VER: openurl_pragmas.h 7.1 (1.12.2005)
-**  Includes Release 7.2
+**  $VER: openurl_pragmas.h 7.2 (28.12.2007)
+**  Includes Release 7.3
 **
 **  Direct ROM interface (pragma) definitions.
 **
@@ -13,10 +13,11 @@
 **  Written by Troels Walsted Hansen <troels@thule.no>
 **  Placed in the public domain.
 **
-**  Developed by:
+**  Versions 3.1 to 7.1 were developed by:
 **  - Alfonso Ranieri <alforan@tin.it>
 **  - Stefan Kost <ensonic@sonicpulse.de>
 **
+**  Copyright (C) 2006-2007 OpenURL Team
 */
 
 #ifndef CLIB_OPENURL_PROTOS_H

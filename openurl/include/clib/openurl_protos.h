@@ -2,7 +2,7 @@
 #define CLIB_OPENURL_PROTOS_H
 
 /*
-**  $VER: openurl_protos.h 7.2 (1.12.2005)
+**  $VER: openurl_protos.h 7.3 (28.12.2007)
 **
 **  C prototypes. For use with 32 bit integers only.
 **
@@ -12,10 +12,11 @@
 **  Written by Troels Walsted Hansen <troels@thule.no>
 **  Placed in the public domain.
 **
-**  Developed by:
+**  Versions 3.1 to 7.1 were developed by:
 **  - Alfonso Ranieri <alforan@tin.it>
 **  - Stefan Kost <ensonic@sonicpulse.de>
 **
+**  Copyright (C) 2006-2007 OpenURL Team
 */
 
 #ifndef LIBRARIES_OPENURL_H

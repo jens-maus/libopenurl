@@ -2,8 +2,8 @@
 #define LIBRARIES_OPENURL_H
 
 /*
-**  $VER: openurl.h 7.2 (1.12.2005)
-**  Includes Release 7.2
+**  $VER: openurl.h 7.3 (28.12.2007)
+**  Includes Release 7.3
 **
 **  openurl.library - universal URL display and browser
 **  launcher library
@@ -11,10 +11,11 @@
 **  Written by Troels Walsted Hansen <troels@thule.no>
 **  Placed in the public domain.
 **
-**  Developed by:
+**  Versions 3.1 to 7.1 were developed by:
 **  - Alfonso Ranieri <alforan@tin.it>
 **  - Stefan Kost <ensonic@sonicpulse.de>
 **
+**  Copyright (C) 2006-2007 OpenURL Team
 */
 
 #ifndef EXEC_TYPES_H
