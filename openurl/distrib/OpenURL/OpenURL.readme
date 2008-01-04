@@ -1,7 +1,11 @@
-Short:    OpenURL - Get that URL!
-Uploader: OpenURL Team
-Author:   OpenURL Team on sourceforge
-Type:     com/www
+Short:        OpenURL - Get that URL!
+Author:       OpenURL Team on sourceforge
+Uploader:     alexandre@balaban.fr <Alexandre Balaban>
+Type:         com/www
+Architecture: ppc-amigaos
+Version:      7.3
+Requires:     MUI 3.8+ for the Prefs Program
+Replaces:     comm/www/OpenURL-OS4.lha
 
 This library was created to make it easier for application
 programmers to include clickable URLs in their applications,
@@ -10,4 +14,23 @@ are to launch an ARexx script or just support a few webbrowsers,
 with no room for configuration. This leads to countless
 reinventions of the wheel (how many SendURLToBrowser.rexx scripts
 do you have on your harddisk?).
+
+Icons are courtesy of Martin Merz.
+
+New since v7.2 :
+
+- OpenURL prefs program now renamed as "Open URL" to prevent
+  confusion with C:OpenURL when both are in the path
+- Fixed a bug in OpenURL's prefs program that lead to crash when used
+  with languages other than english
+- Fixed a bug in OpenURL's prefs program that inserted garbage in file
+  requesters (thanks TetiSoft for pointing the bug and giving the fix)
+- Now pref program supports english, french, german, italian and swedish
+- Fixed a bug in argument handling of commandline (thanks Jeff Gilpin)
+- Fixed a bug in argument reading in commandline that lead to not executing
+  the command and returning an error
+- Added support for AmiUpdate
+- Fixed some warnings
+
+For additionnal informations, see included Changelog.
 
