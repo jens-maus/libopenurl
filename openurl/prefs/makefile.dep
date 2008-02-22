@@ -1,0 +1,12 @@
+OpenURL.o: OpenURL.c OpenURL.h OpenURL_protos.h loc.h
+loc.o: loc.c OpenURL.h OpenURL_protos.h loc.h
+utils.o: utils.c OpenURL.h OpenURL_protos.h
+popport.o: popport.c OpenURL.h OpenURL_protos.h
+popph.o: popph.c OpenURL.h OpenURL_protos.h
+ftpeditwin.o: ftpeditwin.c OpenURL.h OpenURL_protos.h loc.h
+mailereditwin.o: mailereditwin.c OpenURL.h OpenURL_protos.h loc.h
+browsereditwin.o: browsereditwin.c OpenURL.h OpenURL_protos.h loc.h
+applist.o: applist.c OpenURL.h OpenURL_protos.h loc.h
+win.o: win.c OpenURL.h OpenURL_protos.h loc.h
+about.o: about.c OpenURL.h OpenURL_protos.h loc.h OpenURL_rev.h
+app.o: app.c OpenURL.h OpenURL_protos.h loc.h OpenURL_rev.h

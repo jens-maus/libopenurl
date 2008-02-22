@@ -1,59 +1,98 @@
-# OpenURL Preferences Application smake file
+#
+# OpenURL SASC smakefile
+#
 
-# Target
-TARGET = OpenURL
+# OpenURL
+TARGET = OpenURL68k
+ODIR   = .sascobjs
 
-# Compiler
-C_COMPILER = sc
+# Objs
+OBJS = $(ODIR)/OpenURL.o $(ODIR)/loc.o $(ODIR)/utils.o $(ODIR)/popport.o $(ODIR)/popph.o\
+       $(ODIR)/ftpeditwin.o $(ODIR)/mailereditwin.o $(ODIR)/browsereditwin.o $(ODIR)/applist.o\
+       $(ODIR)/win.o $(ODIR)/about.o $(ODIR)/app.o
 
-C_OPTIMIZE = OPTIMIZE OPTSCHEDULE NOOPTSIZE OPTTIME\
+# Commands
+CC 	   = sc
+MKDIR  = makedir
+COPY   = copy
+RM	   = delete >NIL:
+FLUSH  = avail flush
+FC	   = flexcat
+LD     = slink
+
+# Options
+CFLAGS = OPTIMIZE OPTSCHEDULE NOOPTSIZE OPTTIME\
 OPTINLINE OPTINLOCAL OPTLOOP NOOPTALIAS OPTPEEP\
-OPTRDEPTH=5 OPTDEPTH=5 OPTCOMPLEXITY=8
+OPTRDEPTH=5 OPTDEPTH=5 OPTCOMPLEXITY=8\
+PARAMS=r NOCHECKABORT NOSTACKCHECK NOSTACKEXTEND STRINGMERGE IDLEN=128\
+COMMENTNEST INCLUDEDIR=/include
 
-C_COMPILER_OPTS = PARAMS=r NOCHECKABORT NOSTACKCHECK NOSTACKEXTEND STRINGMERGE\
-COMMENTNEST IDLEN=128 IGNORE=315 IGNORE=317 INCLUDEDIR=/include\
-$(C_OPTIMIZE)
+# Main target
+.PHONY: all
+all: $(TARGET)
 
-# Assembler
-ASSEMBLER = a68k
-ASSEMBLER_OPTS = -iainc:
+# Build
+$(TARGET): $(ODIR) $(OBJS)
+	@echo "    LD $@"
+	@$(LD) LIB:c.o $(OBJS) TO $(TARGET) LIB LIB:sc.lib lib:amiga.lib lib:debug.lib SC SD ND NOICONS
 
-# Linker
-LINKER = slink
-LINKER_OPTS = NOICONS SC SD ND
+# Compile
+$(OBJS):
+	@echo "    CC $<"
+	@$(CC) $(CFLAGS) $< OBJNAME=$@
 
-# Objects
-OBJECTS = OpenURL.o loc.o utils.o popport.o popph.o ftpeditwin.o mailereditwin.o browsereditwin.o applist.o win.o pens.o about.o app.o
+# Make dir
+$(ODIR):
+	@$(MKDIR) $(ODIR)
 
-# Libs
-LIBS = LIB:sc.lib LIB:amiga.lib
+# Loc.h
+loc.h: OpenURL.cd
+	@echo "    FC $<"
+	@$(FC) OpenURL.cd loc.h=loc_h.sd
 
-# Built module
-$(TARGET): $(OBJECTS) $(LIBS)
-         $(LINKER) <with <
-FROM LIB:c.o $(OBJECTS) TO $(TARGET) LIB $(LIBS) $(LINKER_OPTS)
-<
-         avail flush
+# Abouts
+abouts.h: crunch abouts.dat
+	@echo "    => Generating about strings..."
+	@crunch abouts.dat abouts.h
+	@echo "    <= Done"
 
-# Rules
-.c.o:
-        $(C_COMPILER) $*.c $(C_COMPILER_OPTS)
+# crunch
+crunch: crunch.c
+	@echo "    CC $<"
+	@sc $< LINK NOICONS
+	-@$(RM) crunch.o crunch.lnk 
 
-.asm.o:
-        $(ASSEMBLER) $(ASSEMBLER_OPTS) $*.asm
+# Clean
+.PHONY: clean
+clean:
+	@echo "    => Cleaning all..."
+	-@$(RM) $(ODIR)/*.o
+	-@$(RM) $(TARGET)
+	-@$(RM) crunch
+	@echo "    <= Done"
 
-# Dependences
-OpenURL.o: 	  OpenURL.c OpenURL.h loc.h OpenURL_protos.h
-loc.o: 		  loc.c OpenURL.h loc.h OpenURL_protos.h
-utils.o: 	  utils.c OpenURL.h OpenURL_protos.h
-popport.o: 	  popport.c OpenURL.h OpenURL_protos.h
-popph.o: 	  popph.c OpenURL.h OpenURL_protos.h
-ftpeditwin.o: 	  ftpeditwin.c OpenURL.h loc.h OpenURL_protos.h
-mailereditwin.o:  mailereditwin.c OpenURL.h loc.h OpenURL_protos.h
-browsereditwin.o: browsereditwin.c OpenURL.h loc.h OpenURL_protos.h
-applist.o: 	  applist.c OpenURL.h loc.h OpenURL_protos.h
-win.o: 	     	  win.c OpenURL.h loc.h OpenURL_protos.h
-pens.o: 	  pens.c OpenURL.h loc.h OpenURL_protos.h
-about.o: 	  about.c OpenURL.h loc.h OpenURL_rev.h OpenURL_protos.h
-app.o: 		  app.c OpenURL.h loc.h OpenURL_rev.h OpenURL_protos.h
+# Help
+.PHONY: help
+help:
+	@echo "Usage: make [target]"
+	@echo " target:"
+	@echo "   help     display this information"
+	@echo "   all      make $(TARGET)"
+	@echo "   depend   create the dependencies file"
+	@echo "   clean    clean stuff"
+	@echo "   dump     create a dump file"
+	@echo ""
+
+$(ODIR)/OpenURL.o: OpenURL.c OpenURL.h OpenURL_protos.h loc.h
+$(ODIR)/loc.o: loc.c OpenURL.h OpenURL_protos.h loc.h
+$(ODIR)/utils.o: utils.c OpenURL.h OpenURL_protos.h
+$(ODIR)/popport.o: popport.c OpenURL.h OpenURL_protos.h
+$(ODIR)/popph.o: popph.c OpenURL.h OpenURL_protos.h
+$(ODIR)/ftpeditwin.o: ftpeditwin.c OpenURL.h OpenURL_protos.h loc.h
+$(ODIR)/mailereditwin.o: mailereditwin.c OpenURL.h OpenURL_protos.h loc.h
+$(ODIR)/browsereditwin.o: browsereditwin.c OpenURL.h OpenURL_protos.h loc.h
+$(ODIR)/applist.o: applist.c OpenURL.h OpenURL_protos.h loc.h
+$(ODIR)/win.o: win.c OpenURL.h OpenURL_protos.h loc.h
+$(ODIR)/about.o: about.c OpenURL.h OpenURL_protos.h loc.h OpenURL_rev.h
+$(ODIR)/app.o: app.c OpenURL.h OpenURL_protos.h loc.h OpenURL_rev.h
 
