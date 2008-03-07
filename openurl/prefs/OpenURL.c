@@ -56,7 +56,7 @@ struct MUI_CustomClass *g_popphClass = NULL;
 
 APTR                   g_pool = NULL;
 struct Catalog         *g_cat = NULL;
-//ULONG                  g_MUI4 = FALSE;
+ULONG                  g_MUI4 = FALSE;
 
 /**************************************************************************/
 
@@ -65,11 +65,16 @@ openStuff(ULONG *arg0,ULONG *arg1)
 {
     *arg1 = 0;
 
-    if (!(MUIMasterBase = OpenLibrary("muimaster.library",19)) || (MUIMasterBase->lib_Version<19))
+    if (!(MUIMasterBase = OpenLibrary("muimaster.library",19)))
     {
         *arg0 = 19;
         return MSG_Err_NoMUI;
     }
+
+    if (MUIMasterBase->lib_Version<20) g_MUI4 = FALSE;
+    else if (MUIMasterBase->lib_Version==20) g_MUI4 = MUIMasterBase->lib_Revision>5341;
+    else g_MUI4 = TRUE;
+
 #if defined(__amigaos4__)
     if (!(IMUIMaster = (struct MUIMasterIFace *)GetInterface( MUIMasterBase, "main", 1L, NULL))) return MSG_Err_NoMUI;
 #endif
@@ -89,8 +94,9 @@ openStuff(ULONG *arg0,ULONG *arg1)
     if (!(IIcon = (struct IconIFace *)GetInterface( IconBase, "main", 1L, NULL))) return MSG_Err_NoIcon;
 #endif
 
-    if (!(OpenURLBase = OpenLibrary(OPENURLNAME,6)) /*||
-        ((OpenURLBase->lib_Version==OPENURLREV) && (OpenURLBase->lib_Revision<OPENURLREV))*/)
+    if (!(OpenURLBase = OpenLibrary(OPENURLNAME,OPENURLVER)) ||
+        ((OpenURLBase->lib_Version==7) && (OpenURLBase->lib_Revision<1)))
+        //((OpenURLBase->lib_Version==OPENURLREV) && (OpenURLBase->lib_Revision<OPENURLREV)))
     {
         *arg0 = OPENURLVER;
         *arg1 = OPENURLREV;
@@ -212,13 +218,8 @@ disposeClasses(void)
 
 /**************************************************************************/
 
-#ifdef __MORPHOS__
 int
-realMain(int argc,char **argv)
-#else
-int
-main(int argc,char **argv)
-#endif
+main(void)
 {
     ULONG error, arg0, arg1;
     int   res = RETURN_FAIL;
@@ -235,7 +236,7 @@ main(int argc,char **argv)
             {
                 ULONG signals;
 
-                for (signals = 0; DoMethod(app,MUIM_Application_NewInput,(ULONG)&signals)!=MUIV_Application_ReturnID_Quit; )
+                for (signals = 0; (LONG)DoMethod(app,MUIM_Application_NewInput,(ULONG)&signals)!=MUIV_Application_ReturnID_Quit; )
                     if (signals && ((signals = Wait(signals | SIGBREAKF_CTRL_C)) & SIGBREAKF_CTRL_C)) break;
 
                 MUI_DisposeObject(app);
@@ -274,43 +275,3 @@ main(int argc,char **argv)
 }
 
 /**************************************************************************/
-
-#ifdef __MORPHOS__
-#define MIN68KSTACKSIZE 16000
-
-int
-main(int argc,char **argv)
-{
-    struct Task *me = FindTask(NULL);
-    ULONG       size;
-
-    if (!NewGetTaskAttrsA(me,&size,sizeof(size),TASKINFOTYPE_STACKSIZE_M68K,NULL))
-    return RETURN_ERROR;
-
-    if (size<MIN68KSTACKSIZE)
-    {
-        struct StackSwapStruct *sss;
-
-        if (sss = AllocMem(sizeof(*sss)+MIN68KSTACKSIZE,MEMF_PUBLIC))
-        {
-            int res;
-
-            sss->stk_Lower   = sss+1;
-            sss->stk_Upper   = (ULONG)(((UBYTE *)(sss + 1))+MIN68KSTACKSIZE);
-            sss->stk_Pointer = (APTR)sss->stk_Upper;
-            StackSwap(sss);
-            res = realMain(argc,argv);
-            StackSwap(sss);
-            FreeMem(sss,sizeof(*sss)+MIN68KSTACKSIZE);
-
-            return res;
-        }
-    }
-
-    return realMain(argc,argv);
-}
-
-#endif
-
-/***********************************************************************/
-

@@ -168,13 +168,13 @@ sendRexxMsg(UBYTE *rxport,UBYTE *rxcmd)
                                   NP_StackSize,    4196,
                                   NP_Name,         (ULONG)"OpenURL - Handler",
                                   NP_CopyVars,     FALSE,
-											 NP_Input,        (ULONG)NULL,
+                                  NP_Input,        (ULONG)NULL,
                                   NP_CloseInput,   FALSE,
-											 NP_Output,       (ULONG)NULL,
+                                  NP_Output,       (ULONG)NULL,
                                   NP_CloseOutput,  FALSE,
-											 NP_Error,        (ULONG)NULL,
+                                  NP_Error,        (ULONG)NULL,
                                   NP_CloseError,   FALSE,
-                                  TAG_DONE};
+                                  TAG_DONE,        TAG_DONE};
 
         if (proc = CreateNewProcTagList(attrs))
         {
@@ -305,6 +305,7 @@ sendToBrowser(UBYTE *URL,
         error = SystemTags(cmd,SYS_Asynch,    TRUE,
                                SYS_Input,     Open("NIL:",MODE_NEWFILE),
                                SYS_Output,    NULL,
+                               SYS_Error,     NULL,
                                lock ? NP_CurrentDir : TAG_IGNORE, lock,
                                TAG_DONE);
 
@@ -456,6 +457,7 @@ sendToFTP(UBYTE *URL,
         error = SystemTags(cmd,SYS_Asynch,    TRUE,
                                SYS_Input,     Open("NIL:",MODE_NEWFILE),
                                SYS_Output,    NULL,
+                               SYS_Error,     NULL,
                                lock ? NP_CurrentDir : TAG_IGNORE, lock,
                                TAG_DONE);
 
@@ -732,6 +734,7 @@ sendToMailer(UBYTE *URL,
         error = SystemTags(cmd,SYS_Asynch,    TRUE,
                                SYS_Input,     Open("NIL:", MODE_NEWFILE),
                                SYS_Output,    NULL,
+                               SYS_Error,     NULL,
                                lock ? NP_CurrentDir : TAG_IGNORE, lock,
                                TAG_DONE);
 
@@ -857,24 +860,34 @@ isdigits(UBYTE *str)
 
 /**************************************************************************/
 
-#if !defined(__MORPHOS__) && !defined(__amigaos4__)
-static UWORD fmtfunc[] = { 0x16c0, 0x4e75 };
-void STDARGS
-msprintf(UBYTE *buf,UBYTE *fmt,...)
+#if defined(__MORPHOS__)
+void
+msprintf(STRPTR buf, STRPTR fmt,...)
 {
-    RawDoFmt(fmt,&fmt+1,(APTR)fmtfunc,buf);
+    va_list va;
+
+    va_start(va,fmt);
+    VNewRawDoFmt(fmt,(APTR)0,buf,va);
+    va_end(va);
 }
 #elif defined(__amigaos4__)
 #include <stdarg.h>
 void VARARGS68K
-msprintf(UBYTE *buf,UBYTE *fmt,...)
+msprintf(STRPTR buf, STRPTR fmt,...)
 {
     va_list va;
     va_startlinear(va,fmt);
     RawDoFmt(fmt, va_getlinearva(va,CONST APTR), (void (*)(void)) 0, buf);
     va_end(va);
 }
+#else
+static UWORD fmtfunc[] = { 0x16c0, 0x4e75 };
 
+void
+msprintf(STRPTR buf,STRPTR fmt,...)
+{
+    RawDoFmt(fmt,&fmt+1,(APTR)fmtfunc,buf);
+}
 #endif
 
 /**************************************************************************/
@@ -883,6 +896,8 @@ APTR
 allocPooled(ULONG size)
 {
     ULONG *mem;
+
+    if (!size) return NULL;
 
     ObtainSemaphore(&lib_memSem);
     mem = AllocPooled(lib_pool,size);
@@ -896,9 +911,12 @@ allocPooled(ULONG size)
 void
 freePooled(APTR mem,ULONG size)
 {
-    ObtainSemaphore(&lib_memSem);
-    FreePooled(lib_pool,mem,size);
-    ReleaseSemaphore(&lib_memSem);
+    if (mem && size)
+    {
+        ObtainSemaphore(&lib_memSem);
+        FreePooled(lib_pool,mem,size);
+        ReleaseSemaphore(&lib_memSem);
+    }
 }
 
 /****************************************************************************/
@@ -907,6 +925,8 @@ APTR
 allocVecPooled(ULONG size)
 {
     ULONG *mem;
+
+    if (!size) return NULL;
 
     ObtainSemaphore(&lib_memSem);
     if (mem = AllocPooled(lib_pool,size = size+sizeof(ULONG))) *mem++ = size;
@@ -920,9 +940,12 @@ allocVecPooled(ULONG size)
 void
 freeVecPooled(APTR mem)
 {
-    ObtainSemaphore(&lib_memSem);
-    FreePooled(lib_pool,(ULONG *)mem-1,*((ULONG *)mem-1));
-    ReleaseSemaphore(&lib_memSem);
+    if (mem)
+    {
+        ObtainSemaphore(&lib_memSem);
+        FreePooled(lib_pool,(ULONG *)mem-1,*((ULONG *)mem-1));
+        ReleaseSemaphore(&lib_memSem);
+    }
 }
 
 /****************************************************************************/

@@ -24,39 +24,6 @@
 
 /***********************************************************************/
 /*
-** These makes the About window look nicer
-*/
-
-#ifndef MUIA_Window_ShowPopup
-#define MUIA_Window_ShowPopup 0x8042324e
-#endif
-
-#ifndef MUIA_Window_ShowSnapshot
-#define MUIA_Window_ShowSnapshot 0x80423c55
-#endif
-
-#ifndef MUIA_Window_ShowPrefs
-#define MUIA_Window_ShowPrefs 0x8042e262
-#endif
-
-#ifndef MUIA_Window_ShowIconify
-#define MUIA_Window_ShowIconify 0x8042bc26
-#endif
-
-#ifndef MUIA_Window_ShowAbout
-#define MUIA_Window_ShowAbout 0x80429c1e
-#endif
-
-#ifndef MUIA_Window_ShowJump
-#define MUIA_Window_ShowJump 0x80422f40
-#endif
-
-#ifndef MUIA_Window_Frontdrop
-#define MUIA_Window_Frontdrop 0x80426411
-#endif
-
-/***********************************************************************/
-/*
 ** Some local MUI macro
 */
 
@@ -168,20 +135,19 @@ mNew(struct IClass *cl,Object *obj,struct opSet *msg)
     struct TagItem *attrs = msg->ops_AttrList;
     STRPTR          lver;
 
-    if (!URL_GetAttr(URL_GetAttr_VerString,(ULONG*)(&lver))) lver = "";
+    if (!URL_GetAttr(URL_GetAttr_VerString,(ULONG*)((void *)&lver))) lver = "";
 
     if (obj = (Object *)DoSuperNew(cl,obj,
             MUIA_HelpNode,              "WRID",
             MUIA_Window_Title,          getString(MSG_About_WinTitle),
-        	MUIA_Window_ScreenTitle, 	getString(MSG_App_ScreenTitle),
-	        MUIA_Window_ShowIconify,    FALSE,
-	        MUIA_Window_ShowPopup,      FALSE,
-	        MUIA_Window_ShowSnapshot,   FALSE,
-	        MUIA_Window_ShowPrefs,      FALSE,
-	        MUIA_Window_SizeGadget,     FALSE,
-	        MUIA_Window_CloseGadget,    FALSE,
+            MUIA_Window_ScreenTitle,    getString(MSG_App_ScreenTitle),
+            MUIA_Window_IconifyGadget,  FALSE,
+            MUIA_Window_MenuGadget,     FALSE,
+            MUIA_Window_SnapshotGadget, FALSE,
+            MUIA_Window_ConfigGadget,   FALSE,
+            MUIA_Window_SizeGadget,     FALSE,
+            MUIA_Window_CloseGadget,    FALSE,
             MUIA_Window_AllowTopMenus,  FALSE,
-            MUIA_Window_ShowJump,       FALSE,
 
             WindowContents, VGroup,
 

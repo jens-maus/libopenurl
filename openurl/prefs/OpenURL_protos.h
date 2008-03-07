@@ -12,6 +12,19 @@
 **
 */
 
+#if !defined(__amigaos4__)
+#  undef VARARGS68K
+#  define VARARGS68K
+#endif /* !__amigaos4__ */
+
+#ifdef __MORPHOS__
+#  undef NewObject
+#  undef MUI_NewObject
+#  undef DoSuperNew
+   APTR STDARGS NewObject ( struct IClass *classPtr , STRPTR classID , ...);
+   APTR STDARGS MUI_NewObject ( char classID[] , ...);
+#endif /* __MORPHOS__ */
+APTR STDARGS DoSuperNew ( struct IClass *cl , Object *obj , ...) VARARGS68K;
 
 /* loc.c */
 void initStrings ( void );
@@ -22,19 +35,9 @@ void localizeNewMenu ( struct NewMenu *nm );
 ULONG getKeyChar ( UBYTE *string , ULONG id );
 
 /* utils.c */
-#ifdef __MORPHOS__
-#define msprintf(to, fmt, ...) ({ ULONG _tags[] = { __VA_ARGS__ }; RawDoFmt(fmt, _tags, (void (*)(void)) 0, to); })
-int msnprintf ( STRPTR buf , int size , STRPTR fmt , ... ) __attribute((varargs68k));
-#elif defined(__amigaos4__)
-int stccpy(char *dst, const char *src, int m);
-void SetAmiUpdateENVVariable( CONST_STRPTR varname );
-ULONG DoSuperNew ( struct IClass *cl , Object *obj , ... ) VARARGS68K;
-void msprintf ( STRPTR to , STRPTR fmt , ... ) VARARGS68K;
-int msnprintf ( STRPTR buf , int size , STRPTR fmt , ... ) VARARGS68K;
-#else
-ULONG STDARGS DoSuperNew ( struct IClass *cl , Object *obj , ... );
-void STDARGS msprintf ( STRPTR to , STRPTR fmt , ... );
-int STDARGS msnprintf ( STRPTR buf , int size , STRPTR fmt , ... );
+#if defined(__amigaos4__)
+   int stccpy(char *dst, const char *src, int m);
+   void SetAmiUpdateENVVariable( CONST_STRPTR varname );
 #endif
 ULONG xget ( Object *obj , ULONG attribute );
 Object *olabel ( ULONG id );
@@ -53,6 +56,8 @@ Object *opopport ( ULONG maxLen , ULONG key , ULONG help );
 Object *opopph ( STRPTR *syms , STRPTR *names , ULONG maxLen , ULONG key , ULONG asl , ULONG help );
 ULONG openWindow ( Object *app , Object *win );
 ULONG delEntry ( Object *obj , APTR entry );
+void STDARGS msprintf ( STRPTR to , STRPTR fmt , ... ) VARARGS68K;
+int STDARGS msnprintf ( STRPTR buf , int size , STRPTR fmt , ... ) VARARGS68K;
 
 /* ftpeditwin.c */
 ULONG initFTPEditWinClass ( void );
@@ -97,14 +102,3 @@ void disposePensClass ( void );
 /* about.c */
 ULONG initAboutClass ( void );
 void disposeAboutClass ( void );
-
-#ifdef __MORPHOS__
-/* stubs.c */
-#undef NewObject
-#undef MUI_NewObject
-#undef DoSuperNew
-APTR NewObject ( struct IClass *classPtr , UBYTE *classID , ...) __attribute((varargs68k));
-APTR MUI_NewObject ( UBYTE *classID , ...) __attribute((varargs68k));
-APTR DoSuperNew ( struct IClass *cl , Object *obj , ...) __attribute((varargs68k));
-#endif
-

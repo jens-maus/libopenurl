@@ -33,7 +33,7 @@ openCatalog(STRPTR name,ULONG minVer,ULONG minRev)
 {
     struct Catalog *cat;
 
-    if (cat = OpenCatalogA(NULL,name,NULL))
+    if (cat = OpenCatalog(NULL,name,OC_BuiltInLanguage,(ULONG)"english",TAG_DONE))
     {
         ULONG ver = cat->cat_Version;
 

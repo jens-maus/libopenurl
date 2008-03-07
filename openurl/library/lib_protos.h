@@ -96,11 +96,8 @@ APTR allocPooled ( ULONG size );
 void freePooled ( APTR mem , ULONG size );
 APTR allocVecPooled ( ULONG size );
 void freeVecPooled ( APTR mem );
-#ifdef __MORPHOS__
-#define msprintf(to, fmt, ...) ({ ULONG _tags[] = { __VA_ARGS__ }; RawDoFmt(fmt, _tags, (void (*)(void)) 0, to); })
-#elif defined(__amigaos4__)
-void VARARGS68K msprintf ( UBYTE *to , UBYTE *fmt , ...);
+#if defined __amigaos4__
+void VARARGS68K msprintf ( STRPTR buff , STRPTR fmt , ...);
 #else
-void STDARGS msprintf ( UBYTE *to , UBYTE *fmt , ...);
+void msprintf ( STRPTR buff , STRPTR fmt , ...);
 #endif
-

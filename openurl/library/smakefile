@@ -1,54 +1,83 @@
-# openurl.library smake file
+#
+# OpenURL SASC smakefile
+#
 
-# Target
-TARGET = openurl.library
+# OpenURL
+TARGET = openurl.library68K
+ODIR   = .sascobjs
 
-# Compiler
-C_COMPILER = sc
+# Objs
+OBJS = $(ODIR)/libent.o $(ODIR)/libinit.o $(ODIR)/endcode.o $(ODIR)/init.o $(ODIR)/api.o\
+       $(ODIR)/handler.o $(ODIR)/prefs.o $(ODIR)/utils.o
 
-C_OPTIMIZE = OPTIMIZE OPTSCHEDULE NOOPTSIZE OPTTIME\
+# Commands
+CC 	    = sc
+MKDIR   = makedir
+COPY    = copy
+RM	    = delete >NIL:
+FLUSH   = avail flush
+FC	    = flexcat
+LD      = slink
+ASM     = a68k
+ASMOPTS = -iainc:
+
+# Options
+CFLAGS = OPTIMIZE OPTSCHEDULE NOOPTSIZE OPTTIME\
 OPTINLINE OPTINLOCAL OPTLOOP NOOPTALIAS OPTPEEP\
-OPTRDEPTH=5 OPTDEPTH=5 OPTCOMPLEXITY=8
+OPTRDEPTH=5 OPTDEPTH=5 OPTCOMPLEXITY=8\
+PARAMS=r NOCHECKABORT NOSTACKCHECK NOSTACKEXTEND STRINGMERGE IDLEN=128\
+COMMENTNEST INCLUDEDIR=/include
 
-C_COMPILER_OPTS = PARAMS=r NOCHECKABORT NOSTACKCHECK NOSTACKEXTEND STRINGMERGE\
-COMMENTNEST IDLEN=128 IGNORE=315 IGNORE=317 INCLUDEDIR=/include\
-$(C_OPTIMIZE)
+# Main target
+.PHONY: all
+all: $(TARGET)
 
-# Assembler
-ASSEMBLER = a68k
-ASSEMBLER_OPTS = -iainc:
+# Build
+$(TARGET): $(ODIR) $(OBJS)
+	@echo "    LD $@"
+	@$(LD) $(OBJS) TO $(TARGET) LIB LIB:sc.lib lib:amiga.lib lib:debug.lib SC SD ND NOICONS
 
-# Linker
-LINKER = slink
-LINKER_OPTS = NOICONS SC SD ND
-
-# Objects
-OBJECTS = libent.o libinit.o endcode.o init.o api.o handler.o prefs.o utils.o
-
-# Libs
-LIBS = LIB:sc.lib LIB:amiga.lib lib:debug.lib
-
-# Built module
-$(TARGET): $(OBJECTS) $(LIBS)
-         $(LINKER) <with <
-FROM $(OBJECTS) TO $(TARGET) LIB $(LIBS) $(LINKER_OPTS)
-<
-         avail flush
-
-# Rules
+# Compile
 .c.o:
-        $(C_COMPILER) $*.c $(C_COMPILER_OPTS)
+	@echo "    CC $<"
+	@$(CC) $(CFLAGS) $< OBJNAME=$@
 
 .asm.o:
-        $(ASSEMBLER) $(ASSEMBLER_OPTS) $*.asm
+	@echo "    ASM $<"
+	@$(ASM) $(ASMOPTS) $< -o$@
 
-# Dependences
-libent.o:  libent.asm openurl.library_rev.i
-libinit.o: libinit.c lib.h openurl.library_rev.h base.h lib_protos.h
-endcode.o: endcode.asm
-api.o:     api.c lib.h openurl.library_rev.h base.h lib_protos.h
-handler.o: handler.c lib.h base.h lib_protos.h
-init.o:    init.c lib.h base.h lib_protos.h
-prefs.o:   prefs.c lib.h base.h lib_protos.h
-utils.o:   utils.c lib.h base.h lib_protos.h
+# Make dir
+$(ODIR):
+	@$(MKDIR) $(ODIR)
+
+# Clean
+.PHONY: clean
+clean:
+	@echo "    => Cleaning all..."
+	-@$(RM) $(ODIR)/*.o
+	-@$(RM) $(TARGET)
+	-@$(RM) crunch
+	@echo "    <= Done"
+
+# Help
+.PHONY: help
+help:
+	@echo "Usage: make [target]"
+	@echo " target:"
+	@echo "   help     display this information"
+	@echo "   all      make $(TARGET)"
+	@echo "   depend   create the dependencies file"
+	@echo "   clean    clean stuff"
+	@echo "   dump     create a dump file"
+	@echo ""
+
+$(ODIR)/libent.o: libent.asm openurl.library_rev.i
+$(ODIR)/libinit.o: libinit.c lib.h openurl.library_rev.h base.h lib_protos.h
+$(ODIR)/endcode.o: endcode.asm
+$(ODIR)/init.o: init.c lib.h base.h lib_protos.h
+$(ODIR)/api.o: api.c lib.h base.h lib_protos.h openurl.library_rev.h
+$(ODIR)/handler.o: handler.c lib.h base.h lib_protos.h
+$(ODIR)/prefs.o: prefs.c lib.h base.h lib_protos.h
+$(ODIR)/utils.o: utils.c lib.h base.h lib_protos.h
+$(ODIR)/morphos.o: morphos.c lib.h base.h lib_protos.h
 

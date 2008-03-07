@@ -12,7 +12,6 @@
 **  Main includes and definitions
 */
 
-
 #define __NOLIBBASE__
 #define __USE_SYSBASE
 
@@ -73,7 +72,7 @@ extern struct MUI_CustomClass *g_popphClass;
 
 extern struct Catalog         *g_cat;
 extern APTR                   g_pool;
-//extern ULONG                  g_MUI4;
+extern ULONG                  g_MUI4;
 
 /**************************************************************************/
 /*
@@ -400,7 +399,7 @@ enum
 #undef set
 #undef get
 #undef nnset
-#define get(obj,attr,store)            GetAttr((ULONG)(attr),(Object *)obj,(ULONG *)(store))
+#define get(obj,attr,store)            GetAttr((ULONG)(attr),(Object *)obj,(ULONG *)(void *)(store))
 #define set(obj,attr,value)            SetAttrs((Object *)(obj),(ULONG)(attr),(ULONG)(value),TAG_DONE)
 #define nnset(obj,attr,value)          SetAttrs((Object *)(obj),MUIA_NoNotify,TRUE,(ULONG)(attr),(ULONG)(value),TAG_DONE)
 #define superset(cl,obj,attr,value)    SetSuperAttrs((APTR)(cl),(Object *)(obj),(ULONG)(attr),(ULONG)(value),TAG_DONE)
@@ -409,6 +408,40 @@ enum
 #define nfset(obj,attr,value)          SetAttrs((Object *)(obj),(ULONG)(attr),(ULONG)(value),MUIA_Group_Forward,FALSE,TAG_DONE)
 
 #define wspace(w) RectangleObject, MUIA_Weight, w, End
+
+/***********************************************************************/
+
+#ifndef MUIA_Text_HiCharIdx
+#define MUIA_Text_HiCharIdx 0x804214f5
+#endif
+
+#ifndef MUIA_Window_AllowTopMenus
+#define MUIA_Window_AllowTopMenus 0x8042fe69
+#endif
+
+#ifndef MUIA_Window_IconifyGadget
+#define MUIA_Window_IconifyGadget 0x8042BC26
+#endif
+
+#ifndef MUIA_Window_MenuGadget
+#define MUIA_Window_MenuGadget 0x8042324E
+#endif
+
+#ifndef MUIA_Window_SnapshotGadget
+#define MUIA_Window_SnapshotGadget 0x80423C55
+#endif
+
+#ifndef MUIA_Window_ConfigGadget
+#define MUIA_Window_ConfigGadget 0x8042E262
+#endif
+
+#ifndef MUIM_Window_Setup
+#define MUIM_Window_Setup 0x8042c34c
+#endif
+
+#ifndef MUIA_Application_UsedClasses 	
+#define MUIA_Application_UsedClasses 0x8042E9A7
+#endif
 
 /***********************************************************************/
 /*

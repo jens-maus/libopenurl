@@ -34,8 +34,8 @@ Can't create AppClass
 MSG_Err_NoWinClass (//)
 Can't create WinClass
 ;
-MSG_Err_Available (//)
-Available
+MSG_Err_NoPensClass (//)
+Can't create PensClass
 ;
 MSG_Err_NoAppListClass (//)
 Can't create AppListClass
@@ -110,8 +110,8 @@ R\0Restore
 MSG_Menu_Defaults (//)
 D\0Defaults settings
 ;
-MSG_Menu_Available (//)
-Available
+MSG_Menu_Pens (//)
+P\0Adjust pens...
 ;
 MSG_Menu_MUI (//)
 M\0MUI Setting...
@@ -380,13 +380,70 @@ _Launch browser if one isn't running
 MSG_Misc_Launch_Help (//)
 If selected, a new application is run, if none is found.
 ;
+MSG_Pens_WinTitle (1000//)
+Adjust pens
+;
+MSG_Pens_EnabledPen (//)
+_Enabled
+;
+MSG_Pens_EnabledPen_Help (//)
+Pen used for enabled entries lamp.
+;
+MSG_Pens_EnabledPen_WinTitle (//)
+Enabled pen
+;
+MSG_Pens_DisabledPen (//)
+_Disabled
+;
+MSG_Pens_DisabledPen_Help (//)
+Pen used for disabled entries lamp.
+;
+MSG_Pens_DisabledPen_WinTitle (//)
+Disabled pen
+;
+MSG_Pens_DetailPen (//)
+Deta_il
+;
+MSG_Pens_DetailPen_Help (//)
+Pen used for lamp details.
+;
+MSG_Pens_DetailPen_WinTitle (//)
+Detail pen
+;
 MSG_About_WinTitle (1100//)
 About OpenURL
 ;
-MSG_About_OK (1111//)
+MSG_About_Info  (1102//)
+Information
+;
+MSG_About_Version (//)
+Version:
+;
+MSG_About_Authors (//)
+Authors:
+;
+MSG_About_Support (//)
+Support:
+;
+MSG_About_ThirdParts (//)
+Third parts
+;
+MSG_About_OfCourse (//)
+, of course!
+;
+MSG_About_Translation (//)
+
+;
+MSG_About_Translator (//)
+
+;
+MSG_About_TranslatorURL (//)
+
+;
+MSG_About_OK (//)
 _OK
 ;
-MSG_About_Descr (1112//)
+MSG_About_Descr (//)
 \33bOpenURL\33n is a shared library for easily sending\n\
 URLs from applications to browsers, mailers\n\
 and FTP clients. Originally written by \33bTroels\n\

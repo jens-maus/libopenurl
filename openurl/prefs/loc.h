@@ -33,7 +33,7 @@
 #define MSG_Err_NoOpenURL 9
 #define MSG_Err_NoAppClass 10
 #define MSG_Err_NoWinClass 11
-#define MSG_Err_Available 12
+#define MSG_Err_NoPensClass 12
 #define MSG_Err_NoAppListClass 13
 #define MSG_Err_NoBrowserEditWinClass 14
 #define MSG_Err_NoMailerEditWinClass 15
@@ -58,7 +58,7 @@
 #define MSG_Menu_LastSaveds 208
 #define MSG_Menu_Restore 209
 #define MSG_Menu_Defaults 210
-#define MSG_Menu_Available 211
+#define MSG_Menu_Pens 211
 #define MSG_Menu_MUI 212
 #define MSG_Win_WinTitle 300
 #define MSG_Win_Labels_Browsers 301
@@ -142,7 +142,26 @@
 #define MSG_Misc_Open_Help 913
 #define MSG_Misc_Launch 914
 #define MSG_Misc_Launch_Help 915
+#define MSG_Pens_WinTitle 1000
+#define MSG_Pens_EnabledPen 1001
+#define MSG_Pens_EnabledPen_Help 1002
+#define MSG_Pens_EnabledPen_WinTitle 1003
+#define MSG_Pens_DisabledPen 1004
+#define MSG_Pens_DisabledPen_Help 1005
+#define MSG_Pens_DisabledPen_WinTitle 1006
+#define MSG_Pens_DetailPen 1007
+#define MSG_Pens_DetailPen_Help 1008
+#define MSG_Pens_DetailPen_WinTitle 1009
 #define MSG_About_WinTitle 1100
+#define MSG_About_Info 1102
+#define MSG_About_Version 1103
+#define MSG_About_Authors 1104
+#define MSG_About_Support 1105
+#define MSG_About_ThirdParts 1106
+#define MSG_About_OfCourse 1107
+#define MSG_About_Translation 1108
+#define MSG_About_Translator 1109
+#define MSG_About_TranslatorURL 1110
 #define MSG_About_OK 1111
 #define MSG_About_Descr 1112
 
@@ -163,7 +182,7 @@
 #define MSG_Err_NoOpenURL_STR "Can't open openurl.library %ld.%ld or higher"
 #define MSG_Err_NoAppClass_STR "Can't create AppClass"
 #define MSG_Err_NoWinClass_STR "Can't create WinClass"
-#define MSG_Err_Available_STR "Available"
+#define MSG_Err_NoPensClass_STR "Can't create PensClass"
 #define MSG_Err_NoAppListClass_STR "Can't create AppListClass"
 #define MSG_Err_NoBrowserEditWinClass_STR "Can't create BrowserEditWinClass"
 #define MSG_Err_NoMailerEditWinClass_STR "Can't create MailerEditWinClass"
@@ -189,7 +208,7 @@
 #define MSG_Menu_LastSaveds_STR "L\000Last saveds"
 #define MSG_Menu_Restore_STR "R\000Restore"
 #define MSG_Menu_Defaults_STR "D\000Defaults settings"
-#define MSG_Menu_Available_STR "Available"
+#define MSG_Menu_Pens_STR "P\000Adjust pens..."
 #define MSG_Menu_MUI_STR "M\000MUI Setting..."
 #define MSG_Win_WinTitle_STR "OpenURL"
 #define MSG_Win_Labels_Browsers_STR "Browsers"
@@ -287,7 +306,26 @@
 	"is opened, before sending the URL."
 #define MSG_Misc_Launch_STR "_Launch browser if one isn't running"
 #define MSG_Misc_Launch_Help_STR "If selected, a new application is run, if none is found."
+#define MSG_Pens_WinTitle_STR "Adjust pens"
+#define MSG_Pens_EnabledPen_STR "_Enabled"
+#define MSG_Pens_EnabledPen_Help_STR "Pen used for enabled entries lamp."
+#define MSG_Pens_EnabledPen_WinTitle_STR "Enabled pen"
+#define MSG_Pens_DisabledPen_STR "_Disabled"
+#define MSG_Pens_DisabledPen_Help_STR "Pen used for disabled entries lamp."
+#define MSG_Pens_DisabledPen_WinTitle_STR "Disabled pen"
+#define MSG_Pens_DetailPen_STR "Deta_il"
+#define MSG_Pens_DetailPen_Help_STR "Pen used for lamp details."
+#define MSG_Pens_DetailPen_WinTitle_STR "Detail pen"
 #define MSG_About_WinTitle_STR "About OpenURL"
+#define MSG_About_Info_STR "Information"
+#define MSG_About_Version_STR "Version:"
+#define MSG_About_Authors_STR "Authors:"
+#define MSG_About_Support_STR "Support:"
+#define MSG_About_ThirdParts_STR "Third parts"
+#define MSG_About_OfCourse_STR ", of course!"
+#define MSG_About_Translation_STR ""
+#define MSG_About_Translator_STR ""
+#define MSG_About_TranslatorURL_STR ""
 #define MSG_About_OK_STR "_OK"
 #define MSG_About_Descr_STR "\033bOpenURL\033n is a shared library for easily sending\n"\
 	"URLs from applications to browsers, mailers\n"\
@@ -305,7 +343,7 @@
 
 struct CatCompArrayType
 {
-    LONG   cca_ID;
+    ULONG  cca_ID;
     STRPTR cca_Str;
 };
 
@@ -322,7 +360,7 @@ static const struct CatCompArrayType CatCompArray[] =
     {MSG_Err_NoOpenURL,(STRPTR)MSG_Err_NoOpenURL_STR},
     {MSG_Err_NoAppClass,(STRPTR)MSG_Err_NoAppClass_STR},
     {MSG_Err_NoWinClass,(STRPTR)MSG_Err_NoWinClass_STR},
-    {MSG_Err_Available,(STRPTR)MSG_Err_Available_STR},
+    {MSG_Err_NoPensClass,(STRPTR)MSG_Err_NoPensClass_STR},
     {MSG_Err_NoAppListClass,(STRPTR)MSG_Err_NoAppListClass_STR},
     {MSG_Err_NoBrowserEditWinClass,(STRPTR)MSG_Err_NoBrowserEditWinClass_STR},
     {MSG_Err_NoMailerEditWinClass,(STRPTR)MSG_Err_NoMailerEditWinClass_STR},
@@ -347,7 +385,7 @@ static const struct CatCompArrayType CatCompArray[] =
     {MSG_Menu_LastSaveds,(STRPTR)MSG_Menu_LastSaveds_STR},
     {MSG_Menu_Restore,(STRPTR)MSG_Menu_Restore_STR},
     {MSG_Menu_Defaults,(STRPTR)MSG_Menu_Defaults_STR},
-    {MSG_Menu_Available,(STRPTR)MSG_Menu_Available_STR},
+    {MSG_Menu_Pens,(STRPTR)MSG_Menu_Pens_STR},
     {MSG_Menu_MUI,(STRPTR)MSG_Menu_MUI_STR},
     {MSG_Win_WinTitle,(STRPTR)MSG_Win_WinTitle_STR},
     {MSG_Win_Labels_Browsers,(STRPTR)MSG_Win_Labels_Browsers_STR},
@@ -431,7 +469,26 @@ static const struct CatCompArrayType CatCompArray[] =
     {MSG_Misc_Open_Help,(STRPTR)MSG_Misc_Open_Help_STR},
     {MSG_Misc_Launch,(STRPTR)MSG_Misc_Launch_STR},
     {MSG_Misc_Launch_Help,(STRPTR)MSG_Misc_Launch_Help_STR},
+    {MSG_Pens_WinTitle,(STRPTR)MSG_Pens_WinTitle_STR},
+    {MSG_Pens_EnabledPen,(STRPTR)MSG_Pens_EnabledPen_STR},
+    {MSG_Pens_EnabledPen_Help,(STRPTR)MSG_Pens_EnabledPen_Help_STR},
+    {MSG_Pens_EnabledPen_WinTitle,(STRPTR)MSG_Pens_EnabledPen_WinTitle_STR},
+    {MSG_Pens_DisabledPen,(STRPTR)MSG_Pens_DisabledPen_STR},
+    {MSG_Pens_DisabledPen_Help,(STRPTR)MSG_Pens_DisabledPen_Help_STR},
+    {MSG_Pens_DisabledPen_WinTitle,(STRPTR)MSG_Pens_DisabledPen_WinTitle_STR},
+    {MSG_Pens_DetailPen,(STRPTR)MSG_Pens_DetailPen_STR},
+    {MSG_Pens_DetailPen_Help,(STRPTR)MSG_Pens_DetailPen_Help_STR},
+    {MSG_Pens_DetailPen_WinTitle,(STRPTR)MSG_Pens_DetailPen_WinTitle_STR},
     {MSG_About_WinTitle,(STRPTR)MSG_About_WinTitle_STR},
+    {MSG_About_Info,(STRPTR)MSG_About_Info_STR},
+    {MSG_About_Version,(STRPTR)MSG_About_Version_STR},
+    {MSG_About_Authors,(STRPTR)MSG_About_Authors_STR},
+    {MSG_About_Support,(STRPTR)MSG_About_Support_STR},
+    {MSG_About_ThirdParts,(STRPTR)MSG_About_ThirdParts_STR},
+    {MSG_About_OfCourse,(STRPTR)MSG_About_OfCourse_STR},
+    {MSG_About_Translation,(STRPTR)MSG_About_Translation_STR},
+    {MSG_About_Translator,(STRPTR)MSG_About_Translator_STR},
+    {MSG_About_TranslatorURL,(STRPTR)MSG_About_TranslatorURL_STR},
     {MSG_About_OK,(STRPTR)MSG_About_OK_STR},
     {MSG_About_Descr,(STRPTR)MSG_About_Descr_STR},
 };

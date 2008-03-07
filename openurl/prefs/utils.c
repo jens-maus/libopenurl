@@ -26,11 +26,24 @@
 
 /***********************************************************************/
 
-#if !defined(__MORPHOS__) && !defined(__amigaos4__)
-ULONG STDARGS
+#if defined(__amigaos4__)
+APTR VARARGS68K
+DoSuperNew(struct IClass *cl,Object *obj,...)
+{
+    APTR    res;
+    va_list va;
+
+    va_startlinear(va,obj);
+    res = (APTR)DoSuperMethod(cl,obj,OM_NEW,va_getlinearva(va,ULONG),NULL);
+    va_end(va);
+
+    return res;
+}
+#elif !defined(__MORPHOS__)
+APTR STDARGS
 DoSuperNew(struct IClass *cl,Object *obj,ULONG tag1,...)
 {
-    return DoSuperMethod(cl,obj,OM_NEW,&tag1,NULL);
+    return (APTR)DoSuperMethod(cl,obj,OM_NEW,&tag1,NULL);
 }
 #endif
 
@@ -309,7 +322,17 @@ openWindow(Object *app,Object *win)
 
 /***********************************************************************/
 
-#ifndef __MORPHOS__
+#ifdef __MORPHOS__
+void
+msprintf(STRPTR buf,STRPTR fmt,...)
+{
+    va_list va;
+
+    va_start(va,fmt);
+    VNewRawDoFmt(fmt,(APTR)0,buf,va);
+    va_end(va);
+}
+#else
 static ULONG fmtfunc = 0x16C04E75;
 
 void STDARGS
@@ -326,7 +349,7 @@ msprintf(STRPTR to, STRPTR fmt,...)
 }
 #endif
 
-/**************************************************************************/
+/***********************************************************************/
 
 struct stream
 {
@@ -336,25 +359,22 @@ struct stream
     int     stop;
 };
 
-#ifdef __MORPHOS__
 static void
-msnprintfStuff(void)
+#ifdef __MORPHOS__
+msnprintfStuff(struct stream *st,UBYTE c)
 {
-    register struct stream *s = (struct stream *)REG_A3;
-    register UBYTE         c  = (TEXT)REG_D0;
 #else
-static void SAVEDS ASM
-msnprintfStuff(REG(d0,TEXT c),REG(a3,struct stream *s))
+ASM msnprintfStuff(REG(d0,UBYTE c),REG(a3,struct stream *st))
 {
 #endif
-    if (!s->stop)
+    if (!st->stop)
     {
-        if (++s->counter>=s->size)
+        if (++st->counter>=st->size)
         {
-            *(s->buf) = 0;
-            s->stop   = 1;
+            *(st->buf) = 0;
+            st->stop   = 1;
         }
-        else *(s->buf++) = c;
+        else *(st->buf++) = c;
     }
 }
 
@@ -363,45 +383,57 @@ static struct EmulLibEntry msnprintfStuffTrap = {TRAP_LIB,0,(void *)&msnprintfSt
 #endif
 
 
+#if defined(__MORPHOS__) || defined(__amigaos4__)
 int
-#if !defined( __MORPHOS__ )
-STDARGS
-#endif
-msnprintf(STRPTR buf,int size, STRPTR fmt,...)
+msnprintf(STRPTR buf,int size,STRPTR fmt,...)
 {
-    struct stream s;
-    #ifdef __MORPHOS__
+    struct stream st;
     va_list       va;
-    va_start(va,fmt);
-    #elif defined(__amigaos4__)
-    va_list       va;
+
+    #if defined(__amigaos4__)
     va_startlinear(va,fmt);
-    #endif
-
-    s.buf     = buf;
-    s.size    = size;
-    s.counter = 0;
-    s.stop    = 0;
-
-    #ifdef __MORPHOS__
-    RawDoFmt(fmt,va->overflow_arg_area,(APTR)&msnprintfStuffTrap,&s);
-    va_end(va);
-    #elif defined(__amigaos4__)
-    RawDoFmt(fmt,va_getlinearva(va,CONST APTR),(APTR)msnprintfStuff,&s);
-    va_end(va);
     #else
-    RawDoFmt(fmt,&fmt+1,(APTR)msnprintfStuff,&s);
+    va_start(va,fmt);
     #endif
 
-    return s.counter-1;
+    st.buf     = buf;
+    st.size    = size;
+    st.counter = 0;
+    st.stop    = 0;
+
+    #if defined(__amigaos4__)
+    RawDoFmt(fmt,va_getlinearva(va,CONST APTR),(APTR)msnprintfStuff,&st);
+    #else
+    VNewRawDoFmt(fmt,(APTR)msnprintfStuff,(STRPTR)&st,va);
+    #endif
+
+    va_end(va);
+
+    return st.counter-1;
 }
+#else
+int
+msnprintf(STRPTR buf,int size,STRPTR fmt,...)
+{
+    struct stream st;
+
+    st.buf     = buf;
+    st.size    = size;
+    st.counter = 0;
+    st.stop    = 0;
+
+    RawDoFmt(fmt,&fmt+1,(APTR)msnprintfStuff,&st);
+
+    return st.counter-1;
+}
+#endif
 
 /**************************************************************************/
 
 ULONG
 delEntry(Object *obj,APTR entry)
 {
-    APTR e;
+    APTR e = NULL;
     int  i;
 
     for (i = 0; ;i++)
