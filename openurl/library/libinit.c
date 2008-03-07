@@ -30,9 +30,9 @@ struct Library         *UtilityBase = NULL;
 struct Library         *IFFParseBase = NULL;
 struct RxsLib          *RexxSysBase = NULL;
 
-struct SignalSemaphore lib_sem = {0};
-struct SignalSemaphore lib_prefsSem = {0};
-struct SignalSemaphore lib_memSem = {0};
+struct SignalSemaphore lib_sem = {0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+struct SignalSemaphore lib_prefsSem = {0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+struct SignalSemaphore lib_memSem = {0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
 APTR                   lib_pool = NULL;
 struct URL_Prefs       *lib_prefs = NULL;
@@ -135,8 +135,6 @@ struct RexxSysIFace    *IRexxSys = NULL;
 /* amigaos4 *****************************************************************/
 
 struct Library * SAVEDS ASM initLib (REG(a0,ULONG segList), REG(a6,struct ExecBase *sys), REG(d0, struct Library *base));
-//uint32 libObtain (struct LibraryManagerInterface *Self);
-//uint32 libRelease (struct LibraryManagerInterface *Self);
 struct Library * SAVEDS ASM openLib (REG(a6,struct Library *base));
 ULONG SAVEDS ASM closeLib(REG(a6,struct Library *base));
 ULONG SAVEDS ASM expungeLib (REG(a6,struct Library *base));
@@ -177,28 +175,28 @@ static struct TagItem lib_managerTags[] = {
 };
 
 void *main_vectors[] = {
-	(void *) OS4_URL_Obtain,
-	(void *) OS4_URL_Release,
-	(void *) NULL,
-	(void *) NULL,
-    (void *) OS4_URL_OpenA,
-	(void *) OS4_URL_Open,
-    (void *) OS4_URL_OldGetPrefs,
-    (void *) OS4_URL_OldFreePrefs,
-    (void *) OS4_URL_OldSetPrefs,
-    (void *) OS4_URL_OldGetDefaultPrefs,
-    (void *) OS4_URL_OldLaunchPrefsApp,
-    (void *) OS4_dispatch,
-    (void *) OS4_URL_GetPrefsA,
-    (void *) OS4_URL_GetPrefs,
-    (void *) OS4_URL_FreePrefsA,
-    (void *) OS4_URL_FreePrefs,
-    (void *) OS4_URL_SetPrefsA,
-    (void *) OS4_URL_SetPrefs,
-    (void *) OS4_URL_LaunchPrefsAppA,
-    (void *) OS4_URL_LaunchPrefsApp,
-    (void *) OS4_URL_GetAttr,
-    (void *) -1
+   (void *) OS4_URL_Obtain,
+   (void *) OS4_URL_Release,
+   (void *) NULL,
+   (void *) NULL,
+   (void *) OS4_URL_OpenA,
+   (void *) OS4_URL_Open,
+   (void *) OS4_URL_OldGetPrefs,
+   (void *) OS4_URL_OldFreePrefs,
+   (void *) OS4_URL_OldSetPrefs,
+   (void *) OS4_URL_OldGetDefaultPrefs,
+   (void *) OS4_URL_OldLaunchPrefsApp,
+   (void *) OS4_dispatch,
+   (void *) OS4_URL_GetPrefsA,
+   (void *) OS4_URL_GetPrefs,
+   (void *) OS4_URL_FreePrefsA,
+   (void *) OS4_URL_FreePrefs,
+   (void *) OS4_URL_SetPrefsA,
+   (void *) OS4_URL_SetPrefs,
+   (void *) OS4_URL_LaunchPrefsAppA,
+   (void *) OS4_URL_LaunchPrefsApp,
+   (void *) OS4_URL_GetAttr,
+   (void *) -1
 };
 
 static struct TagItem lib_mainTags[] = {
@@ -244,40 +242,7 @@ static struct Resident romTag = {
 #endif
 
 /****************************************************************************/
-/*
-#ifdef __MORPHOS__
-static struct Library *initLib(struct Library *base,BPTR segList,struct ExecBase *sys)
-#elif defined(__amigaos4__)
-struct Library * initLib(struct Library *base, BPTR segList, struct ExecIFace *ISys)
-#else
-struct Library *SAVEDS ASM initLib(REG(a0,ULONG segList),REG(a6,struct ExecBase *sys),REG(d0, struct Library *base))
-#endif
-{
-#if defined(__amigaos4__)
-	base->lib_Node.ln_Type = NT_LIBRARY;
-	base->lib_Node.ln_Pri = 0;
-	base->lib_Node.ln_Name = lib_name;
-	base->lib_Flags = LIBF_SUMUSED|LIBF_CHANGED;
-	base->lib_Version = lib_version;
-	base->lib_Revision = lib_revision;
-	base->lib_IdString = lib_ver;
 
-	IExec = ISys;
-	//IExec->Obtain();
-	SysBase = (struct ExecBase*)ISys->Data.LibBase;
-#else
-    SysBase = sys;
-#endif
-
-    InitSemaphore(&lib_sem);
-    InitSemaphore(&lib_prefsSem);
-    InitSemaphore(&lib_memSem);
-
-    lib_segList = segList;
-
-    return lib_base = base;
-}
-*/
 #ifdef __MORPHOS__
 static struct Library *initLib(struct Library *base,BPTR segList,struct ExecBase *sys)
 #else

@@ -327,7 +327,7 @@ loadPrefs(struct URL_Prefs *p,ULONG mode)
 
                 for (;;)
                 {
-                    ULONG error;
+                    LONG error;
 
                     error = ParseIFF(iffh,IFFPARSE_SCAN);
                     if (error==IFFERR_EOF) break;

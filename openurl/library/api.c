@@ -22,7 +22,8 @@ ULONG LIBCALL
 URL_OpenA(REG(a0,UBYTE *URL),REG(a1,struct TagItem *attrs))
 {
     struct List portList;
-    UBYTE       buf[256], *fullURL = NULL, *pubScreenName;
+    TEXT       buf[256];
+    STRPTR     pubScreenName = NULL, fullURL = NULL;     
     ULONG       res, show, toFront, newWindow, launch, httpPrepend = FALSE;
 
     NEWLIST(&portList);
@@ -75,7 +76,7 @@ URL_OpenA(REG(a0,UBYTE *URL),REG(a1,struct TagItem *attrs))
         }
         else fullURL = buf;
 
-        msprintf(fullURL,(UBYTE*)"http://%s",(ULONG)URL);
+        msprintf(fullURL,"http://%s",(ULONG)URL);
     }
     else fullURL = URL;
 
@@ -157,7 +158,7 @@ URL_OldGetPrefs(void)
 /**************************************************************************/
 
 void LIBCALL
-URL_FreePrefsA(REG(a0,struct URL_Prefs *p),REG(a1,struct TagItem *attrs))
+URL_FreePrefsA(REG(a0,struct URL_Prefs *p),UNUSED REG(a1,struct TagItem *attrs))
 {
     if (p)
     {
@@ -217,7 +218,7 @@ URL_SetPrefsA(REG(a0,struct URL_Prefs *p),REG(a1,struct TagItem *attrs))
 ULONG LIBCALL
 URL_OldSetPrefs(REG(a0,struct URL_Prefs *p),REG(d0,ULONG save))
 {
-    struct TagItem stags[] = {URL_SetPrefs_Save,0,TAG_DONE};
+    struct TagItem stags[] = {URL_SetPrefs_Save,0,TAG_DONE,TAG_DONE};
 
     stags[0].ti_Data = save;
 
@@ -229,7 +230,7 @@ URL_OldSetPrefs(REG(a0,struct URL_Prefs *p),REG(d0,ULONG save))
 struct URL_Prefs * LIBCALL
 URL_OldGetDefaultPrefs(void)
 {
-    struct TagItem gtags[] = {URL_GetPrefs_Mode,URL_GetPrefs_Mode_Default,TAG_DONE};
+    struct TagItem gtags[] = {URL_GetPrefs_Mode,URL_GetPrefs_Mode_Default,TAG_DONE,TAG_DONE};
 
     return URL_GetPrefsA(gtags);
 }
@@ -237,7 +238,7 @@ URL_OldGetDefaultPrefs(void)
 /**************************************************************************/
 
 ULONG LIBCALL
-URL_LaunchPrefsAppA(REG(a0,struct TagItem *attrs))
+URL_LaunchPrefsAppA(REG(a0,UNUSED struct TagItem *attrs))
 {
     BPTR in;
 

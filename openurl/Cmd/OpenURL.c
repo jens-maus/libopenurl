@@ -77,8 +77,8 @@ int main(int argc,char **argv)
       if( (IOpenURL = (struct OpenURLIFace *)GetInterface(OpenURLBase,"main",1L,NULL)) )
       {
       #endif
-      struct TagItem tags[8] = {0};
-      struct SmartArgs smart_args = {NULL};
+      struct TagItem tags[8] = {0,0};
+      struct SmartArgs smart_args = {NULL,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
       LONG             args[A_MAX] = {0};
       STRPTR           real_url = NULL, filename = NULL;
 
@@ -262,7 +262,9 @@ int main(int argc,char **argv)
             0,
             "OpenURL Error",
             "%s",
-            "Cancel"
+            "Cancel",
+            NULL,
+            NULL
          };
 
          EasyRequest(NULL,&error_requester,NULL,error_buffer);

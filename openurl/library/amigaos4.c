@@ -26,14 +26,14 @@ ULONG SAVEDS ASM closeLib(REG(a6,struct Library *base));
 
 #include <stdarg.h>
 
-ULONG VARARGS68K OS4_URL_OpenA ( struct OpenURLIFace * Self, STRPTR url, struct TagItem *attrs )
+ULONG VARARGS68K OS4_URL_OpenA ( UNUSED struct OpenURLIFace * Self, STRPTR url, struct TagItem *attrs )
 {
     return URL_OpenA( url, attrs );
 }
 
 /* amigaos4 *****************************************************************/
 
-ULONG VARARGS68K OS4_URL_Open ( struct OpenURLIFace * Self, STRPTR url, ... )
+ULONG VARARGS68K OS4_URL_Open ( UNUSED struct OpenURLIFace * Self, STRPTR url, ... )
 {
     va_list ap;
     struct TagItem *tags;
@@ -46,7 +46,7 @@ ULONG VARARGS68K OS4_URL_Open ( struct OpenURLIFace * Self, STRPTR url, ... )
 
 /* amigaos4 *****************************************************************/
 
-struct URL_Prefs * VARARGS68K OS4_URL_GetPrefsA ( struct OpenURLIFace * Self, struct TagItem *attrs )
+struct URL_Prefs * VARARGS68K OS4_URL_GetPrefsA ( UNUSED struct OpenURLIFace * Self, struct TagItem *attrs )
 {
     return URL_GetPrefsA( attrs );
 }
@@ -66,21 +66,21 @@ struct URL_Prefs * VARARGS68K OS4_URL_GetPrefs ( struct OpenURLIFace * Self, ...
 
 /* amigaos4 *****************************************************************/
 
-struct URL_Prefs * VARARGS68K OS4_URL_OldGetPrefs ( struct OpenURLIFace * Self )
+struct URL_Prefs * VARARGS68K OS4_URL_OldGetPrefs ( UNUSED struct OpenURLIFace * Self )
 {
     return URL_OldGetPrefs();
 }
 
 /* amigaos4 *****************************************************************/
 
-void VARARGS68K OS4_URL_FreePrefsA ( struct OpenURLIFace * Self, struct URL_Prefs *up , struct TagItem *attrs )
+void VARARGS68K OS4_URL_FreePrefsA ( UNUSED struct OpenURLIFace * Self, struct URL_Prefs *up , struct TagItem *attrs )
 {
     URL_FreePrefsA( up, attrs );
 }
 
 /* amigaos4 *****************************************************************/
 
-void VARARGS68K OS4_URL_FreePrefs ( struct OpenURLIFace * Self, struct URL_Prefs *up, ... )
+void VARARGS68K OS4_URL_FreePrefs ( UNUSED struct OpenURLIFace * Self, struct URL_Prefs *up, ... )
 {
     va_list ap;
     struct TagItem *tags;
@@ -93,21 +93,21 @@ void VARARGS68K OS4_URL_FreePrefs ( struct OpenURLIFace * Self, struct URL_Prefs
 
 /* amigaos4 *****************************************************************/
 
-void VARARGS68K OS4_URL_OldFreePrefs ( struct OpenURLIFace * Self, struct URL_Prefs *up )
+void VARARGS68K OS4_URL_OldFreePrefs ( UNUSED struct OpenURLIFace * Self, struct URL_Prefs *up )
 {
     URL_OldFreePrefs( up );
 }
 
 /* amigaos4 *****************************************************************/
 
-ULONG VARARGS68K OS4_URL_SetPrefsA ( struct OpenURLIFace * Self, struct URL_Prefs *p, struct TagItem *attrs )
+ULONG VARARGS68K OS4_URL_SetPrefsA ( UNUSED struct OpenURLIFace * Self, struct URL_Prefs *p, struct TagItem *attrs )
 {
     return URL_SetPrefsA( p, attrs );
 }
 
 /* amigaos4 *****************************************************************/
 
-ULONG VARARGS68K OS4_URL_SetPrefs ( struct OpenURLIFace * Self, struct URL_Prefs *p, ... )
+ULONG VARARGS68K OS4_URL_SetPrefs ( UNUSED struct OpenURLIFace * Self, struct URL_Prefs *p, ... )
 {
     va_list ap;
     struct TagItem *tags;
@@ -120,21 +120,21 @@ ULONG VARARGS68K OS4_URL_SetPrefs ( struct OpenURLIFace * Self, struct URL_Prefs
 
 /* amigaos4 *****************************************************************/
 
-ULONG VARARGS68K OS4_URL_OldSetPrefs ( struct OpenURLIFace * Self, struct URL_Prefs *p , ULONG permanent )
+ULONG VARARGS68K OS4_URL_OldSetPrefs ( UNUSED struct OpenURLIFace * Self, struct URL_Prefs *p , ULONG permanent )
 {
     return URL_OldSetPrefs( p, permanent );
 }
 
 /* amigaos4 *****************************************************************/
 
-struct URL_Prefs * VARARGS68K OS4_URL_OldGetDefaultPrefs ( struct OpenURLIFace * Self )
+struct URL_Prefs * VARARGS68K OS4_URL_OldGetDefaultPrefs ( UNUSED struct OpenURLIFace * Self )
 {
     return URL_OldGetDefaultPrefs();
 }
 
 /* amigaos4 *****************************************************************/
 
-ULONG VARARGS68K OS4_URL_LaunchPrefsAppA ( struct OpenURLIFace * Self, struct TagItem *attrs )
+ULONG VARARGS68K OS4_URL_LaunchPrefsAppA ( UNUSED struct OpenURLIFace * Self, struct TagItem *attrs )
 {
     return URL_LaunchPrefsAppA( attrs );
 }
@@ -154,21 +154,21 @@ ULONG VARARGS68K OS4_URL_LaunchPrefsApp ( struct OpenURLIFace * Self, ... )
 
 /* amigaos4 *****************************************************************/
 
-ULONG VARARGS68K OS4_URL_OldLaunchPrefsApp ( struct OpenURLIFace * Self )
+ULONG VARARGS68K OS4_URL_OldLaunchPrefsApp ( UNUSED struct OpenURLIFace * Self )
 {
     return URL_OldLaunchPrefsApp();
 }
 
 /* amigaos4 *****************************************************************/
 
-ULONG VARARGS68K OS4_URL_GetAttr ( struct OpenURLIFace * Self, ULONG attr , ULONG *storage )
+ULONG VARARGS68K OS4_URL_GetAttr ( UNUSED struct OpenURLIFace * Self, ULONG attr , ULONG *storage )
 {
     return URL_GetAttr( attr, storage );
 }
 
 /* amigaos4 *****************************************************************/
 
-LONG VARARGS68K OS4_dispatch ( struct OpenURLIFace * Self, struct RexxMsg *msg, UBYTE ** resPtr )
+LONG VARARGS68K OS4_dispatch ( UNUSED struct OpenURLIFace * Self, struct RexxMsg *msg, UBYTE ** resPtr )
 {
 	 return dispatch( msg, resPtr );
 }
@@ -193,7 +193,7 @@ struct Library * mgr_Init (struct Library *base, BPTR segList, struct ExecIFace 
 
 /* amigaos4 *****************************************************************/
 
-struct Library *mgr_Open( struct LibraryManagerInterface *Self, uint32 version )
+struct Library *mgr_Open( struct LibraryManagerInterface *Self, UNUSED uint32 version )
 {
 	return openLib( Self->Data.LibBase );
 }
@@ -251,7 +251,7 @@ uint32 VARARGS68K OS4_URL_Release( struct OpenURLIFace *Self ) {
  *
  */
 
-int32 _start( STRPTR argstring, int32 arglen, APTR SysBase )
+int32 _start( UNUSED STRPTR argstring, UNUSED int32 arglen, UNUSED APTR SysBase )
 {
 
     /* If you feel like it, open DOS and print something to the user */

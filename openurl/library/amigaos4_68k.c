@@ -47,7 +47,7 @@ struct EmuTrap stub_Close = { TRAPINST, TRAPTYPE, stub_ClosePPC };
 
 /* amigaos4 *****************************************************************/
 
-STATIC ULONG stub_ExpungePPC(ULONG *regarray)
+STATIC ULONG stub_ExpungePPC(UNUSED ULONG *regarray)
 {
 	return 0UL;
 }
@@ -55,7 +55,7 @@ struct EmuTrap stub_Expunge = { TRAPINST, TRAPTYPE, stub_ExpungePPC };
 
 /* amigaos4 *****************************************************************/
 
-STATIC ULONG stub_ReservedPPC(ULONG *regarray)
+STATIC ULONG stub_ReservedPPC(UNUSED ULONG *regarray)
 {
 	return 0UL;
 }
@@ -113,7 +113,7 @@ static ULONG stub_URL_OldSetPrefsPPC(ULONG *regarray)
 	struct ExtendedLibrary *ExtLib = (struct ExtendedLibrary *) ((ULONG)Base + Base->lib_PosSize);
 	struct OpenURLIFace *Self = (struct OpenURLIFace *) ExtLib->MainIFace;
 
-	 struct TagItem stags[] = {URL_SetPrefs_Save,0,TAG_DONE};
+	 struct TagItem stags[] = {URL_SetPrefs_Save,0,TAG_DONE,TAG_DONE};
 
 	 stags[0].ti_Data = regarray[REG68K_D0/4];
 

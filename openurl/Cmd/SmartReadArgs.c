@@ -258,8 +258,7 @@ static BOOL is_in_template(STRPTR name, STRPTR template);
  */
 int main(int argc, STRPTR argv[])
 {
-   struct SmartArgs smart_args =
-   {NULL};
+   struct SmartArgs smart_args = {NULL,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
    LONG argument[2];
    LONG error;
 
