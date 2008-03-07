@@ -104,7 +104,7 @@ windowFun(void)
     Object      *win = (Object *)REG_A1;
 #else
 static void SAVEDS ASM
-windowFun(REG(a0,struct Hook *hook),REG(a2,Object *pop),REG(a1,Object *win))
+windowFun(UNUSED REG(a0,struct Hook *hook),REG(a2,Object *pop),REG(a1,Object *win))
 {
 #endif
     set(win,MUIA_Window_DefaultObject,pop);
@@ -114,7 +114,7 @@ windowFun(REG(a0,struct Hook *hook),REG(a2,Object *pop),REG(a1,Object *win))
 static struct EmulLibEntry windowTrap = {TRAP_LIB,0,(void (*)(void))windowFun};
 static struct Hook windowHook = {0,0,(HOOKFUNC)&windowTrap};
 #else
-static struct Hook windowHook = {0,0,(HOOKFUNC)&windowFun};
+static struct Hook windowHook = {{0,0},(HOOKFUNC)&windowFun,0,0};
 #endif
 
 /***********************************************************************/
@@ -128,7 +128,7 @@ openFun(void)
     Object      *str = (Object *)REG_A1;
 #else
 static ULONG SAVEDS ASM
-openFun(REG(a0,struct Hook *hook),REG(a2,Object *list),REG(a1,Object *str))
+openFun(UNUSED REG(a0,struct Hook *hook),REG(a2,Object *list),REG(a1,Object *str))
 {
 #endif
     STRPTR s, x;
@@ -159,7 +159,7 @@ openFun(REG(a0,struct Hook *hook),REG(a2,Object *list),REG(a1,Object *str))
 static struct EmulLibEntry openTrap = {TRAP_LIB,0,(void (*)(void))openFun};
 static struct Hook openHook = {0,0,(HOOKFUNC)&openTrap};
 #else
-static struct Hook openHook = {0,0,(HOOKFUNC)&openFun};
+static struct Hook openHook = {{0,0},(HOOKFUNC)&openFun,0,0};
 #endif
 
 /***********************************************************************/
@@ -172,7 +172,7 @@ static void closeFun(void)
     Object      *str = (Object *)REG_A1;
 #else
 static void SAVEDS ASM
-closeFun(REG(a0,struct Hook *hook),REG(a2,Object *list),REG(a1,Object *str))
+closeFun(UNUSED REG(a0,struct Hook *hook),REG(a2,Object *list),REG(a1,Object *str))
 {
 #endif
     STRPTR port;
@@ -210,7 +210,7 @@ closeFun(REG(a0,struct Hook *hook),REG(a2,Object *list),REG(a1,Object *str))
 static struct EmulLibEntry closeTrap = {TRAP_LIB,0,(void (*)(void))closeFun};
 static struct Hook closeHook = {0,0,(HOOKFUNC)&closeTrap};
 #else
-static struct Hook closeHook = {0,0,(HOOKFUNC)&closeFun};
+static struct Hook closeHook = {{0,0},(HOOKFUNC)&closeFun,0,0};
 #endif
 
 /***********************************************************************/

@@ -42,7 +42,7 @@ conFun(void)
     ULONG num = REG_A1;
 #else
 static ULONG SAVEDS ASM
-conFun(REG(a0,struct Hook *hook),REG(a2,APTR pool),REG(a1,ULONG num))
+conFun(UNUSED REG(a0,struct Hook *hook), UNUSED REG(a2,APTR pool),REG(a1,ULONG num))
 {
 #endif
     return num+1;
@@ -52,7 +52,7 @@ conFun(REG(a0,struct Hook *hook),REG(a2,APTR pool),REG(a1,ULONG num))
 static struct EmulLibEntry conTrap = {TRAP_LIB,0,(void (*)(void))conFun};
 static struct Hook conHook = {0,0,(HOOKFUNC)&conTrap};
 #else
-static struct Hook conHook = {0,0,(HOOKFUNC)conFun};
+static struct Hook conHook = {{0,0},(HOOKFUNC)conFun,0,0};
 #endif
 
 /**************************************************************************/
@@ -183,7 +183,7 @@ windowFun(void)
     Object      *win = (Object *)REG_A1;
 #else
 static void SAVEDS ASM
-windowFun(REG(a0,struct Hook *hook),REG(a2,Object *pop),REG(a1,Object *win))
+windowFun(UNUSED REG(a0,struct Hook *hook),REG(a2,Object *pop),REG(a1,Object *win))
 {
 #endif
     set(win,MUIA_Window_DefaultObject,pop);
@@ -193,7 +193,7 @@ windowFun(REG(a0,struct Hook *hook),REG(a2,Object *pop),REG(a1,Object *win))
 static struct EmulLibEntry windowTrap = {TRAP_LIB,0,(void (*)(void))windowFun};
 static struct Hook windowHook = {0,0,(HOOKFUNC)&windowTrap};
 #else
-static struct Hook windowHook = {0,0,(HOOKFUNC)&windowFun};
+static struct Hook windowHook = {{0,0},(HOOKFUNC)&windowFun,0,0};
 #endif
 
 /***********************************************************************/
@@ -210,7 +210,7 @@ closeFun(REG(a0,struct Hook *hook),REG(a2,Object *list),REG(a1,Object *str))
 {
 #endif
     struct data *data = hook->h_Data;
-    ULONG       a;
+    LONG       a;
 
     get(list,MUIA_List_Active,&a);
     if (a>=0)
@@ -346,10 +346,10 @@ static struct EmulLibEntry reqIntuiTrap = {TRAP_LIBNR,0,(void (*)(void))reqIntui
 #endif
 
 static ULONG
-mRequestFile(struct IClass *cl,Object *obj,Msg msg)
+mRequestFile(struct IClass *cl,Object *obj,UNUSED Msg msg)
 {
     struct data *data = INST_DATA(cl,obj);
-    struct Hook reqIntuiHook = {0};
+    struct Hook reqIntuiHook = {{0,0},0,0,0};
     TEXT       path[256], *x, *file, *p;
 
     set(_app(obj),MUIA_Application_Sleep,TRUE);

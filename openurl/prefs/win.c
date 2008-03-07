@@ -403,7 +403,7 @@ mDelete(struct IClass *cl,Object *obj,struct MUIP_Win_Delete *msg)
 /**************************************************************************/
 
 static ULONG
-mCheckSave(struct IClass *cl,Object *obj,Msg msg)
+mCheckSave(struct IClass *cl,Object *obj,UNUSED Msg msg)
 {
     struct data *data = INST_DATA(cl,obj);
 

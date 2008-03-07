@@ -316,7 +316,7 @@ conFun(REG(a0,struct Hook *hook),REG(a2,APTR pool),REG(a1,struct URL_Node *node)
 static struct EmulLibEntry conTrap = {TRAP_LIB,0,(void (*)(void))conFun};
 static struct Hook conHook = {0,0,(HOOKFUNC)&conTrap};
 #else
-static struct Hook conHook = {0,0,(HOOKFUNC)conFun};
+static struct Hook conHook = {{0,0},(HOOKFUNC)conFun,0,0};
 #endif
 
 /**************************************************************************/
@@ -342,7 +342,7 @@ destFun(REG(a0,struct Hook *hook),REG(a2,APTR pool),REG(a1,struct URL_Node *node
 static struct EmulLibEntry destTrap = {TRAP_LIBNR,0,(void (*)(void))destFun};
 static struct Hook destHook = {0,0,(HOOKFUNC)&destTrap};
 #else
-static struct Hook destHook = {0,0,(HOOKFUNC)destFun};
+static struct Hook destHook = {{0,0},(HOOKFUNC)destFun,0,0};
 #endif
 
 /**************************************************************************/
@@ -388,7 +388,7 @@ dispFun(REG(a0,struct Hook *hook),REG(a2,STRPTR *array),REG(a1,struct URL_Node *
 static struct EmulLibEntry dispTrap = {TRAP_LIBNR,0,(void (*)(void))dispFun};
 static struct Hook dispHook = {0,0,(HOOKFUNC)&dispTrap};
 #else
-static struct Hook dispHook = {0,0,(HOOKFUNC)dispFun};
+static struct Hook dispHook = {{0,0},(HOOKFUNC)dispFun,0,0};
 #endif
 
 /**************************************************************************/
@@ -536,7 +536,7 @@ mListImport(struct IClass *cl,Object *obj,struct MUIP_Import *msg)
 */
 
 static ULONG
-mListExport(struct IClass *cl,Object *obj,struct MUIP_Import *msg)
+mListExport(UNUSED struct IClass *cl,Object *obj,struct MUIP_Import *msg)
 {
     register ULONG id;
 
@@ -561,7 +561,7 @@ mListExport(struct IClass *cl,Object *obj,struct MUIP_Import *msg)
 */
 
 static ULONG
-mListCheckSave(struct IClass *cl,Object *obj,Msg msg)
+mListCheckSave(struct IClass *cl,Object *obj,UNUSED Msg msg)
 {
     struct listData *data = INST_DATA(cl,obj);
     UBYTE           *f;
@@ -797,7 +797,7 @@ mGet(struct IClass *cl,Object *obj,struct opGet *msg)
 /**************************************************************************/
 
 static ULONG
-mAdd(struct IClass *cl,Object *obj,Msg msg)
+mAdd(struct IClass *cl,Object *obj,UNUSED Msg msg)
 {
     struct data     *data = INST_DATA(cl,obj);
     struct URL_Node *node;
@@ -848,7 +848,7 @@ mEdit(struct IClass *cl,Object *obj,struct MUIP_AppList_Edit *msg)
 /**************************************************************************/
 
 static ULONG
-mClone(struct IClass *cl,Object *obj,Msg msg)
+mClone(struct IClass *cl,Object *obj,UNUSED Msg msg)
 {
     struct data     *data = INST_DATA(cl,obj);
     struct URL_Node *node;
@@ -876,7 +876,7 @@ mClone(struct IClass *cl,Object *obj,Msg msg)
 /**************************************************************************/
 
 static ULONG
-mDelete(struct IClass *cl,Object *obj,Msg msg)
+mDelete(struct IClass *cl,Object *obj,UNUSED Msg msg)
 {
     struct data *data = INST_DATA(cl,obj);
     UBYTE       *node;
@@ -896,7 +896,7 @@ mDelete(struct IClass *cl,Object *obj,Msg msg)
 /**************************************************************************/
 
 static ULONG
-mActiveChanged(struct IClass *cl,Object *obj,Msg msg)
+mActiveChanged(struct IClass *cl,Object *obj,UNUSED Msg msg)
 {
     struct data *data = INST_DATA(cl,obj);
     LONG    a;
@@ -905,7 +905,7 @@ mActiveChanged(struct IClass *cl,Object *obj,Msg msg)
     if (a>=0)
     {
         struct URL_Node *node;
-        ULONG       n;
+        LONG       n;
 
         DoMethod(obj,MUIM_MultiSet,MUIA_Disabled,FALSE,
         (ULONG)data->edit,
@@ -983,7 +983,7 @@ mMove(struct IClass *cl,Object *obj,struct MUIP_AppList_Move *msg)
 */
 
 static ULONG
-mCheckSave(struct IClass *cl,Object *obj,Msg msg)
+mCheckSave(struct IClass *cl,Object *obj,UNUSED Msg msg)
 {
     struct data *data = INST_DATA(cl,obj);
 

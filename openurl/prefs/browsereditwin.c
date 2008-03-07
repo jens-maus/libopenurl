@@ -180,7 +180,7 @@ mWindow_Setup(struct IClass *cl,Object *obj,struct MUIP_Window_Setup *msg)
 /**************************************************************************/
 
 static ULONG
-mUse(struct IClass *cl,Object *obj,Msg msg)
+mUse(struct IClass *cl,Object *obj,UNUSED Msg msg)
 {
     struct data            *data = INST_DATA(cl,obj);
     struct URL_BrowserNode *bn = data->bn;

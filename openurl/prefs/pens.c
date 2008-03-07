@@ -61,7 +61,7 @@ mPenImport(struct IClass *cl,Object *obj,struct MUIP_Import *msg)
 */
 
 static ULONG
-mPenExport(struct IClass *cl,Object *obj,struct MUIP_Export *msg)
+mPenExport(UNUSED struct IClass *cl,Object *obj,struct MUIP_Export *msg)
 {
     register ULONG id;
 
@@ -82,7 +82,7 @@ mPenExport(struct IClass *cl,Object *obj,struct MUIP_Export *msg)
 */
 
 static ULONG
-mPenCheckSave(struct IClass *cl,Object *obj,Msg msg)
+mPenCheckSave(struct IClass *cl,Object *obj,UNUSED Msg msg)
 {
     struct penData     *data = INST_DATA(cl,obj);
     struct MUI_PenSpec *spec;
@@ -211,7 +211,7 @@ mNew(struct IClass *cl,Object *obj,struct opSet *msg)
 */
 
 static ULONG
-mChange(struct IClass *cl,Object *obj,Msg msg)
+mChange(struct IClass *cl,Object *obj,UNUSED Msg msg)
 {
     struct data *data = INST_DATA(cl,obj);
     Object      *app;

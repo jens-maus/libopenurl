@@ -231,7 +231,7 @@ findWinObjByAttr(Object *app,ULONG attr,ULONG val)
 /**************************************************************************/
 
 static ULONG
-mOpenWin(struct IClass *cl,Object *obj,struct MUIP_App_OpenWin *msg)
+mOpenWin(UNUSED struct IClass *cl,Object *obj,struct MUIP_App_OpenWin *msg)
 {
     Object *win = findWinObjByAttr(obj,msg->IDAttr,msg->IDVal);
 
@@ -307,7 +307,7 @@ mDisposeWin(struct IClass *cl,Object *obj,struct MUIP_App_DisposeWin *msg)
 /***********************************************************************/
 
 static ULONG
-mAboutMUI(struct IClass *cl,Object *obj, Msg msg)
+mAboutMUI(struct IClass *cl,Object *obj, UNUSED Msg msg)
 {
     struct data *data = INST_DATA(cl,obj);
 
@@ -334,7 +334,7 @@ mAboutMUI(struct IClass *cl,Object *obj, Msg msg)
 /***********************************************************************/
 
 static ULONG
-mAbout(struct IClass *cl,Object *obj,Msg msg)
+mAbout(struct IClass *cl,Object *obj,UNUSED Msg msg)
 {
     struct data *data = INST_DATA(cl,obj);
 
