@@ -1,21 +1,29 @@
-# OpenURL makefile
-CC 	= ppc-amigaos-gcc
-CDEFS   = -DUSE_INLINE_STDARG -D__USE_INLINE__
-CFLAGS  = $(CDEFS) $(CWARN) -O2 -fomit-frame-pointer -mcpu=750 -mstring -mmultiple -fstrict-aliasing -I../Include
-LDFLAGS = 
-CWARN   = -Wall\
-	  -Wno-missing-braces\
-	  -Wno-parentheses\
-          -Wno-switch\
-          -Wstrict-prototypes\
-	  -Werror-implicit-function-declaration\
-          -Wpointer-arith
+#
+# OpenURL AmigaOS4 specific makefile
+#
 
-OBJS    = OpenURL.o SmartReadArgs.o
+ODIR   = .os4objs
+MAKEFILENAME=makefile-os4
 
-OpenURL: $(OBJS)
-		  $(CC) $(LDFLAGS) -o $@ $(OBJS) -lauto
-		  strip --strip-unneeded --remove-section=.comment $@
+# Objs
+OBJS =
 
-OpenURL.o:       OpenURL.c SmartReadArgs.h OpenURL_rev.h
-SmartReadArgs.o: SmartReadArgs.c debug.h SmartReadArgs.h
+# Commands
+CC 	   = ppc-amigaos-gcc
+STRIP  = ppc-amigaos-strip
+MKDIR  = mkdir
+COPY   = copy
+RM	   = rm -f
+FLUSH  = avail flush
+DUMP   = objdump
+CHMOD  = chmod u+x
+FC	   = flexcat
+
+# Options
+CDEFS   = -D__USE_INLINE__
+CWARN   = 
+CFLAGS  = 
+LDFLAGS = -lauto
+
+# Include common makefile
+include makefile.inc

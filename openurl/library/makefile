@@ -1,34 +1,22 @@
-TARGET  = openurl.library
-DEST    = LIBS:
+#
+# OpenURL.library makefile
+#
 
-CC 	= ppc-morphos-gcc
-CDEFS   = -DUSE_INLINE_STDARG
-CFLAGS  = $(CDEFS) $(CWARN) -O2 -fomit-frame-pointer -mcpu=750 -mstring -mmultiple -noixemul -fstrict-aliasing -I../include
-LDFLAGS = -noixemul -nostartfiles
-CWARN   = -Wall\
-	  -Wno-missing-braces\
-	  -Wno-parentheses\
-          -Wno-switch\
-          -Wstrict-prototypes\
-	  -Werror-implicit-function-declaration\
-          -Wpointer-arith
+VER=7
 
-OBJS	= libinit.o init.o api.o handler.o prefs.o utils.o morphos.o
+all: os4 mos 68k
 
-$(TARGET): $(OBJS)
-	$(CC) $(LDFLAGS) -nostartfiles -o $@ $(OBJS)
-	ppc-morphos-strip $@
+os4:
+	@printf '\033[1m  => Building Amiga OS4 library...\033[0m\n'
+	@$(MAKE) -f makefile-os4
 
-install:
-	@copy $(TARGET) $(DEST)
-	@delete $(TARGET)
-	@avail flush
+mos:
+	@printf '\033[1m  => Building MorphOS library...\033[0m\n'
+	@$(MAKE) -f makefile-mos
 
-libinit.o: libinit.c lib.h openurl.library_rev.h base.h lib_protos.h
-init.o:    init.c lib.h base.h lib_protos.h
-api.o:     api.c lib.h openurl.library_rev.h base.h lib_protos.h
-handler.o: handler.c lib.h base.h lib_protos.h
-prefs.o:   prefs.c lib.h base.h lib_protos.h
-utils.o:   utils.c lib.h base.h lib_protos.h
-morphos.o: morphos.c lib.h openurl.library_rev.h base.h lib_protos.h
+68k:
+	@printf '\033[1m  => Building Amiga 68k library...\033[0m\n'
+	@echo not supported for now, use the smakefile provided instead
 
+revision:
+	@bumprev $(VER) openurl.library

@@ -1,0 +1,30 @@
+#
+# OpenURL MorphOS specific makefile
+#
+
+ODIR   = .mosobjs
+
+MAKEFILENAME=makefile-mos
+
+# Objs
+OBJS = 
+
+# Commands
+CC 	   = ppc-morphos-gcc
+STRIP  = ppc-morphos-strip
+MKDIR  = mkdir
+COPY   = copy
+RM	   = rm -f
+FLUSH  = avail flush
+DUMP   = objdump
+CHMOD  = chmod u+x
+FC	   = flexcat
+
+# Options
+CDEFS   = -DUSE_INLINE_STDARG
+CWARN   =
+CFLAGS  = -noixemul
+LDFLAGS = -noixemul
+
+# Include os agnostic makefile part
+include makefile.inc

@@ -1,41 +1,30 @@
-TARGET  = openurl.library
-DEST    = LIBS:
+#
+# OpenURL AmigaOS4 specific makefile
+#
 
-CC 	= ppc-amigaos-gcc
-CDEFS   = -DUSE_INLINE_STDARG -D__USE_INLINE__
-CFLAGS  = $(CDEFS) $(CWARN) -O2 -fomit-frame-pointer -mstring -mmultiple -mcpu=750 -fstrict-aliasing -I../include
-LDFLAGS =  -nostartfiles
-CWARN   = -Wall\
-	  -Wno-missing-braces\
-	  -Wno-parentheses\
-          -Wno-switch\
-          -Wstrict-prototypes\
-	  -Werror-implicit-function-declaration\
-          -Wpointer-arith
+ODIR   = .os4objs
+MAKEFILENAME=makefile-os4
 
-OBJS	= libinit.o init.o api.o handler.o prefs.o utils.o amigaos4.o amigaos4_68k.o
+# Objs
+OBJS = amigaos4.o amigaos4_68k.o
 
-all: $(TARGET)
+# Commands
+CC 	   = ppc-amigaos-gcc
+STRIP  = ppc-amigaos-strip
+MKDIR  = mkdir
+COPY   = copy
+RM	   = rm -f
+FLUSH  = avail flush
+DUMP   = objdump
+CHMOD  = chmod u+x
+FC	   = flexcat
 
-$(TARGET).dbg: $(OBJS)
-	$(CC) $(LDFLAGS) -nostartfiles -o $@ $(OBJS)
+# Options
+CDEFS   = -D__USE_INLINE__
+CWARN   = 
+CFLAGS  = 
+LDFLAGS =
 
-$(TARGET): $(TARGET).dbg
-	strip $@.dbg -o $@
+# Include common makefile
+include makefile.inc
 
-install:
-	@copy $(TARGET) $(DEST)
-	@delete $(TARGET)
-	@avail flush
-
-clean:
-	@delete $(OBJS)
-
-libinit.o: libinit.c lib.h openurl.library_rev.h base.h lib_protos.h
-init.o:    init.c lib.h base.h lib_protos.h
-api.o:     api.c lib.h openurl.library_rev.h base.h lib_protos.h
-handler.o: handler.c lib.h base.h lib_protos.h
-prefs.o:   prefs.c lib.h base.h lib_protos.h
-utils.o:   utils.c lib.h base.h lib_protos.h
-amigaos4.o: amigaos4.c lib.h
-amigaos4_68k.o: amigaos4_68k.c lib.h
