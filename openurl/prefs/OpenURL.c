@@ -23,7 +23,7 @@
 
 /**************************************************************************/
 
-LONG                   __stack = 32000; /* I think this is OK in every env */
+LONG                   __stack = 32000; /* I think this is OK for every env */
 
 struct IntuitionBase   *IntuitionBase = NULL;
 struct GfxBase         *GfxBase = NULL;
@@ -41,10 +41,9 @@ struct UtilityIFace    *IUtility = NULL;
 struct IconIFace       *IIcon = NULL;
 struct OpenURLIFace    *IOpenURL = NULL;
 struct LocaleIFace     *ILocale = NULL;
-#endif
+#endif /* __amigaos4__ */
 
 struct MUI_CustomClass *g_appClass = NULL;
-struct MUI_CustomClass *g_pensClass = NULL;
 struct MUI_CustomClass *g_aboutClass = NULL;
 struct MUI_CustomClass *g_winClass = NULL;
 struct MUI_CustomClass *g_appListClass = NULL;
@@ -73,11 +72,12 @@ openStuff(ULONG *arg0,ULONG *arg1)
 
     if (MUIMasterBase->lib_Version<20) g_MUI4 = FALSE;
     else if (MUIMasterBase->lib_Version==20) g_MUI4 = MUIMasterBase->lib_Revision>5341;
-    else g_MUI4 = TRUE;
+		 else g_MUI4 = TRUE;
 
 #if defined(__amigaos4__)
     if (!(IMUIMaster = (struct MUIMasterIFace *)GetInterface( MUIMasterBase, "main", 1L, NULL))) return MSG_Err_NoMUI;
-#endif
+#endif /* __amigaos4__ */
+
     if (!(g_pool = CreatePool(MEMF_PUBLIC|MEMF_CLEAR,8192,4196))) return MSG_Err_NoMem;
 
     *arg0 = 37;
@@ -92,7 +92,7 @@ openStuff(ULONG *arg0,ULONG *arg1)
     if (!(IGraphics = (struct GraphicsIFace *)GetInterface( (struct Library*)GfxBase, "main", 1L, NULL))) return MSG_Err_NoGfx;
     if (!(IUtility = (struct UtilityIFace *)GetInterface( UtilityBase, "main", 1L, NULL))) return MSG_Err_NoUtility;
     if (!(IIcon = (struct IconIFace *)GetInterface( IconBase, "main", 1L, NULL))) return MSG_Err_NoIcon;
-#endif
+#endif /* __amigaos4__ */
 
     if (!(OpenURLBase = OpenLibrary(OPENURLNAME,OPENURLVER)) ||
         ((OpenURLBase->lib_Version==7) && (OpenURLBase->lib_Revision<1)))
@@ -115,7 +115,7 @@ openStuff(ULONG *arg0,ULONG *arg1)
 
     // setup the AmiUpdate variable
     SetAmiUpdateENVVariable( "OpenURL" );
-#endif
+#endif /* __amigaos4__ */
 
     return 0;
 }
@@ -169,7 +169,7 @@ closeStuff(void)
         DropInterface((struct Interface*)IOpenURL);
         IOpenURL = NULL;
     }
-#endif
+#endif /* __amigaos4__ */
 
     if (OpenURLBase)   CloseLibrary(OpenURLBase);
     if (IconBase)      CloseLibrary(IconBase);
@@ -192,7 +192,6 @@ createClasses(void)
     if (!initMailerEditWinClass())  return MSG_Err_NoMailerEditWinClass;
     if (!initBrowserEditWinClass()) return MSG_Err_NoBrowserEditWinClass;
     if (!initAppListClass())        return MSG_Err_NoAppListClass;
-    if (!initPensClass())           return MSG_Err_NoPensClass;
     if (!initWinClass())            return MSG_Err_NoWinClass;
     if (!initAppClass())            return MSG_Err_NoAppClass;
 
@@ -211,7 +210,6 @@ disposeClasses(void)
     if (g_browserEditWinClass) disposeBrowserEditWinClass();
     if (g_appListClass)        disposeAppListClass();
     if (g_winClass)            disposeWinClass();
-    if (g_pensClass)           disposePensClass();
     if (g_aboutClass)          disposeAboutClass();
     if (g_appClass)            disposeAppClass();
 }

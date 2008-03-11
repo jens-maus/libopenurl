@@ -25,7 +25,6 @@
 struct data
 {
     Object            *win;
-    Object            *pens;
     Object            *about;
     Object            *aboutMUI;
 
@@ -55,8 +54,6 @@ static struct NewMenu menu[] =
         MITEM(MSG_Menu_Restore),
         MITEM(MSG_Menu_Defaults),
         MBAR,
-        MITEM(MSG_Menu_Pens),
-        MBAR,
         MITEM(MSG_Menu_MUI),
 
     MEND
@@ -68,9 +65,7 @@ static struct NewMenu menu[] =
 
 static STRPTR usedClasses[] =
 {
-    "Textinput.mcc",
     "Urltext.mcc",
-
     NULL
 };
 
@@ -80,7 +75,7 @@ static STRPTR usedClasses[] =
 static ULONG
 mNew(struct IClass *cl,Object *obj,struct opSet *msg)
 {
-    Object *strip, *win, *pens;
+    Object *strip, *win;
 
     if (obj = (Object *)DoSuperNew(cl,obj,
             MUIA_Application_Title,       PRG,
@@ -93,7 +88,6 @@ mNew(struct IClass *cl,Object *obj,struct opSet *msg)
             MUIA_Application_Menustrip,   strip = MUI_MakeObject(MUIO_MenustripNM,(ULONG)menu,MUIO_MenustripNM_CommandKeyCheck),
             MUIA_Application_UsedClasses, usedClasses,
             MUIA_Application_Window,      win = winObject, End,
-            MUIA_Application_Window,      pens = pensObject, End,
             TAG_MORE,msg->ops_AttrList))
     {
         struct data *data = INST_DATA(cl,obj);
@@ -103,16 +97,9 @@ mNew(struct IClass *cl,Object *obj,struct opSet *msg)
         */
 
         data->win  = win;
-        data->pens = pens;
 
         if (data->icon = GetDiskObject("PROGDIR:OpenURL"))
             superset(cl,obj,MUIA_Application_DiskObject,data->icon);
-
-        /*
-        ** Pens window
-        */
-
-        DoMethod(pens,MUIM_Notify,MUIA_Window_CloseRequest,TRUE,MUIV_Notify_Self,3,MUIM_Set,MUIA_Window_Open,FALSE);
 
         /* Menus */
 
@@ -127,19 +114,13 @@ mNew(struct IClass *cl,Object *obj,struct opSet *msg)
         DoMethod((Object *)DoMethod(strip,MUIM_FindUData,MSG_Menu_Restore),MUIM_Notify,MUIA_Menuitem_Trigger,MUIV_EveryTime,(ULONG)obj,2,MUIM_App_GetPrefs,MUIV_App_GetPrefs_Restore);
         DoMethod((Object *)DoMethod(strip,MUIM_FindUData,MSG_Menu_Defaults),MUIM_Notify,MUIA_Menuitem_Trigger,MUIV_EveryTime,(ULONG)obj,2,MUIM_App_GetPrefs,MUIV_App_GetPrefs_Defaults);
         DoMethod((Object *)DoMethod(strip,MUIM_FindUData,MSG_Menu_MUI),MUIM_Notify,MUIA_Menuitem_Trigger,MUIV_EveryTime,(ULONG)obj,2,MUIM_Application_OpenConfigWindow,0);
-        DoMethod((Object *)DoMethod(strip,MUIM_FindUData,MSG_Menu_Pens),MUIM_Notify,MUIA_Menuitem_Trigger,MUIV_EveryTime,(ULONG)pens,3,MUIM_Set,MUIA_Window_Open,TRUE);
 
         /* Menus help */
         DoSuperMethod(cl,obj,MUIM_Notify,MUIA_Application_MenuHelp,MUIV_EveryTime,MUIV_Notify_Self,
             5,MUIM_Application_ShowHelp,(ULONG)win,(ULONG)APPHELP,(ULONG)"MENUS",0);
 
         /*
-        ** Setup default lamps pens
-        */
-        DoMethod(pens,MUIM_Pens_Change);
-
-        /*
-        ** Load list formats and pens prefs
+        ** Load list formats
         */
         DoSuperMethod(cl,obj,MUIM_Application_Load,(ULONG)MUIV_Application_Load_ENV);
 
@@ -168,9 +149,9 @@ mDispose(struct IClass *cl,Object *obj,Msg msg)
 
     /*
     ** Because of users hate an app that saves on disc
-    ** at any exit, we check if something changed
+    ** at any exit, we check if you must save something
     */
-    if (DoMethod(data->win,MUIM_App_CheckSave) || DoMethod(data->pens,MUIM_App_CheckSave))
+    if (DoMethod(data->win,MUIM_App_CheckSave))
     {
         DoSuperMethod(cl,obj,MUIM_Application_Save,(ULONG)MUIV_Application_Save_ENV);
         DoSuperMethod(cl,obj,MUIM_Application_Save,(ULONG)MUIV_Application_Save_ENVARC);
@@ -181,26 +162,6 @@ mDispose(struct IClass *cl,Object *obj,Msg msg)
     if (icon) FreeDiskObject(icon);
 
     return res;
-}
-
-/***********************************************************************/
-/*
-** We just care of pens
-*/
-
-static ULONG
-mSets(struct IClass *cl,Object *obj,struct opSet *msg)
-{
-    struct MUI_PenSpec **specs;
-
-    if (specs = (struct MUI_PenSpec **)GetTagData(MUIA_App_Pens,(ULONG)NULL,msg->ops_AttrList))
-    {
-        struct data *data = INST_DATA(cl,obj);
-
-        set(data->win,MUIA_App_Pens,specs);
-    }
-
-    return DoSuperMethodA(cl,obj,(Msg)msg);
 }
 
 /***********************************************************************/
@@ -352,7 +313,7 @@ mAbout(struct IClass *cl,Object *obj,UNUSED Msg msg)
                 DoSuperMethod(cl,obj,OM_ADDMEMBER,(ULONG)data->about);
                 DoMethod(data->about,MUIM_Notify,MUIA_Window_CloseRequest,TRUE,(ULONG)obj,5,
                     MUIM_Application_PushMethod,(ULONG)obj,2,MUIM_App_DisposeWin,(ULONG)data->about);
-    	    }
+            }
         }
     }
 
@@ -427,7 +388,6 @@ M_DISP(dispatcher)
     {
         case OM_NEW:                            return mNew(cl,obj,(APTR)msg);
         case OM_DISPOSE:                        return mDispose(cl,obj,(APTR)msg);
-        case OM_SET:                            return mSets(cl,obj,(APTR)msg);
 
         case MUIM_Application_AboutMUI:         return mAboutMUI(cl,obj,(APTR)msg);
         case MUIM_Application_OpenConfigWindow: return mOpenConfigWindow(cl,obj,(APTR)msg);

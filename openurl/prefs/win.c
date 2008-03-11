@@ -147,11 +147,11 @@ mNew(struct IClass *cl,Object *obj,struct opSet *msg)
             /* Buttons */
             Child, HGroup,
                 Child, temp.save = obutton(MSG_Win_Save,MSG_Win_Save_Help),
-                Child, wspace(10),
+                Child, wspace(16),
                 Child, temp.use = obutton(MSG_Win_Use,MSG_Win_Use_Help),
-                Child, wspace(10),
+                Child, wspace(16),
                 Child, temp.apply = obutton(MSG_Win_Apply,MSG_Win_Apply_Help),
-                Child, wspace(10),
+                Child, wspace(16),
                 Child, temp.cancel = obutton(MSG_Win_Cancel,MSG_Win_Cancel_Help),
             End,
 
@@ -185,28 +185,6 @@ mNew(struct IClass *cl,Object *obj,struct opSet *msg)
 }
 
 /**************************************************************************/
-
-static ULONG
-mSets(struct IClass *cl,Object *obj,struct opSet *msg)
-{
-    struct MUI_PenSpec **specs;
-
-    if (specs = (struct MUI_PenSpec **)GetTagData(MUIA_App_Pens,0L,msg->ops_AttrList))
-    {
-        struct data *data = INST_DATA(cl,obj);
-
-        //Printf("PrefsWin [%s] [%s] [%s]\n",specs[0],specs[1],specs[2]);
-
-        set(data->browserList,MUIA_App_Pens,specs);
-        set(data->mailerList,MUIA_App_Pens,specs);
-        set(data->FTPList,MUIA_App_Pens,specs);
-    }
-
-    return DoSuperMethodA(cl,obj,(Msg)msg);
-}
-
-/***********************************************************************/
-
 
 static ULONG
 mGetPrefs(struct IClass *cl,Object *obj,struct MUIP_Win_GetPrefs *msg)
@@ -408,8 +386,8 @@ mCheckSave(struct IClass *cl,Object *obj,UNUSED Msg msg)
     struct data *data = INST_DATA(cl,obj);
 
     return (ULONG)(DoMethod(data->browsers,MUIM_App_CheckSave) ||
-           		   DoMethod(data->mailers,MUIM_App_CheckSave)  ||
-           		   DoMethod(data->FTPs,MUIM_App_CheckSave));
+                   DoMethod(data->mailers,MUIM_App_CheckSave)  ||
+                   DoMethod(data->FTPs,MUIM_App_CheckSave));
 }
 
 /**************************************************************************/
@@ -421,7 +399,6 @@ M_DISP(dispatcher)
     switch (msg->MethodID)
     {
         case OM_NEW:              return mNew(cl,obj,(APTR)msg);
-        case OM_SET:              return mSets(cl,obj,(APTR)msg);
 
         case MUIM_Win_GetPrefs:   return mGetPrefs(cl,obj,(APTR)msg);
         case MUIM_Win_StorePrefs: return mStorePrefs(cl,obj,(APTR)msg);

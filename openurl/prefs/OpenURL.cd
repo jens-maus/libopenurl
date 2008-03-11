@@ -31,13 +31,10 @@ Can't open openurl.library %ld.%ld or higher
 MSG_Err_NoAppClass (//)
 Can't create AppClass
 ;
-MSG_Err_NoWinClass (//)
+MSG_Err_NoWinClass (11//)
 Can't create WinClass
 ;
-MSG_Err_NoPensClass (//)
-Can't create PensClass
-;
-MSG_Err_NoAppListClass (//)
+MSG_Err_NoAppListClass (13//)
 Can't create AppListClass
 ;
 MSG_Err_NoBrowserEditWinClass (//)
@@ -107,13 +104,10 @@ L\0Last saveds
 MSG_Menu_Restore (//)
 R\0Restore
 ;
-MSG_Menu_Defaults (//)
+MSG_Menu_Defaults (210//)
 D\0Defaults settings
 ;
-MSG_Menu_Pens (//)
-P\0Adjust pens...
-;
-MSG_Menu_MUI (//)
+MSG_Menu_MUI (212//)
 M\0MUI Setting...
 ;
 MSG_Win_WinTitle (300//)
@@ -380,70 +374,13 @@ _Launch browser if one isn't running
 MSG_Misc_Launch_Help (//)
 If selected, a new application is run, if none is found.
 ;
-MSG_Pens_WinTitle (1000//)
-Adjust pens
-;
-MSG_Pens_EnabledPen (//)
-_Enabled
-;
-MSG_Pens_EnabledPen_Help (//)
-Pen used for enabled entries lamp.
-;
-MSG_Pens_EnabledPen_WinTitle (//)
-Enabled pen
-;
-MSG_Pens_DisabledPen (//)
-_Disabled
-;
-MSG_Pens_DisabledPen_Help (//)
-Pen used for disabled entries lamp.
-;
-MSG_Pens_DisabledPen_WinTitle (//)
-Disabled pen
-;
-MSG_Pens_DetailPen (//)
-Deta_il
-;
-MSG_Pens_DetailPen_Help (//)
-Pen used for lamp details.
-;
-MSG_Pens_DetailPen_WinTitle (//)
-Detail pen
-;
 MSG_About_WinTitle (1100//)
 About OpenURL
 ;
-MSG_About_Info  (1102//)
-Information
-;
-MSG_About_Version (//)
-Version:
-;
-MSG_About_Authors (//)
-Authors:
-;
-MSG_About_Support (//)
-Support:
-;
-MSG_About_ThirdParts (//)
-Third parts
-;
-MSG_About_OfCourse (//)
-, of course!
-;
-MSG_About_Translation (//)
-
-;
-MSG_About_Translator (//)
-
-;
-MSG_About_TranslatorURL (//)
-
-;
-MSG_About_OK (//)
+MSG_About_OK (1111//)
 _OK
 ;
-MSG_About_Descr (//)
+MSG_About_Descr (1112//)
 \33bOpenURL\33n is a shared library for easily sending\n\
 URLs from applications to browsers, mailers\n\
 and FTP clients. Originally written by \33bTroels\n\

@@ -95,10 +95,6 @@ void disposePopportClass ( void );
 ULONG initPopphClass ( void );
 void disposePopphClass ( void );
 
-/* prefs.c */
-ULONG initPensClass ( void );
-void disposePensClass ( void );
-
 /* about.c */
 ULONG initAboutClass ( void );
 void disposeAboutClass ( void );

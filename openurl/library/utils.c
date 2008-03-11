@@ -8,8 +8,6 @@
 **  Developed by:
 **  - Alfonso Ranieri <alforan@tin.it>
 **  - Stefan Kost <ensonic@sonicpulse.de>
-**
-**  Ported to OS4 by Alexandre Balaban <alexandre@balaban.name>
 */
 
 
@@ -627,7 +625,7 @@ sendToMailer(UBYTE *URL,
     {
         UBYTE *rxport;
 
-    if (mn->umn_Flags & UNF_DISABLED) continue;
+        if (mn->umn_Flags & UNF_DISABLED) continue;
 
         rxport = findRexxPort(portlist,mn->umn_Port);
 
@@ -701,7 +699,7 @@ sendToMailer(UBYTE *URL,
         BPTR   lock;
         LONG   error;
 
-    if (mn->umn_Flags & UNF_DISABLED) continue;
+        if (mn->umn_Flags & UNF_DISABLED) continue;
         if (!*mn->umn_Path) continue;
 
         /* compose commandline */
@@ -878,6 +876,7 @@ msprintf(STRPTR buf, STRPTR fmt,...)
     va_list va;
     va_startlinear(va,fmt);
     RawDoFmt(fmt, va_getlinearva(va,CONST APTR), (void (*)(void)) 0, buf);
+
     va_end(va);
 }
 #else

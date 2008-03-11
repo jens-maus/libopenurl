@@ -10,7 +10,7 @@ VPATH=$(ODIR)
 
 # Objs
 OBJS += OpenURL.o loc.o utils.o popport.o popph.o ftpeditwin.o mailereditwin.o\
-       browsereditwin.o applist.o win.o about.o app.o pens.o
+       browsereditwin.o applist.o win.o about.o app.o
 
 FOBJS =$(addprefix $(ODIR)/,$(OBJS))
 

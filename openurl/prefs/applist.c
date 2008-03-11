@@ -28,8 +28,6 @@ static struct MUI_CustomClass *lampClass = NULL;
 
 struct lampData
 {
-    struct MUI_PenSpec **specs; /* We don't need to save them, because of Pens window is always valid */
-
     LONG               enabled;
     LONG               disabled;
     LONG               detail;
@@ -70,26 +68,6 @@ mLampSets(struct IClass *cl,Object *obj,struct opSet *msg)
         /* Of course, we don't redraw here */
     }
 
-    if (tag = FindTagItem(MUIA_App_Pens,msg->ops_AttrList))
-    {
-        struct MUI_PenSpec **specs = (struct MUI_PenSpec **)tag->ti_Data;
-
-        data->specs = specs;
-
-        if (data->flags & FLG_LampSetup)
-        {
-            MUI_ReleasePen(muiRenderInfo(obj),data->enabled);
-            MUI_ReleasePen(muiRenderInfo(obj),data->disabled);
-            MUI_ReleasePen(muiRenderInfo(obj),data->detail);
-            data->enabled  = MUI_ObtainPen(muiRenderInfo(obj),specs[0],0);
-            data->disabled = MUI_ObtainPen(muiRenderInfo(obj),specs[1],0);
-            data->detail   = MUI_ObtainPen(muiRenderInfo(obj),specs[2],0);
-
-            /* Of course, we don't redraw here */
-        data->flags |= FLG_LampSetup;
-        }
-    }
-
     return DoSuperMethodA(cl,obj,(Msg)msg);
 }
 
@@ -100,12 +78,21 @@ mLampSetup(struct IClass *cl,Object *obj,struct MUIP_Setup *msg)
 {
     struct lampData *data = INST_DATA(cl,obj);
     if (!DoSuperMethodA(cl,obj,(APTR)msg)) return FALSE;
-    data->enabled  = MUI_ObtainPen(muiRenderInfo(obj),data->specs[0],0);
-    data->disabled = MUI_ObtainPen(muiRenderInfo(obj),data->specs[1],0);
-    data->detail   = MUI_ObtainPen(muiRenderInfo(obj),data->specs[2],0);
+
+    if (MUIMasterBase->lib_Version<20)
+	{
+    	data->enabled  = MUI_ObtainPen(muiRenderInfo(obj),(APTR)"r00000000,ffffffff,00000000",0);
+	    data->disabled = MUI_ObtainPen(muiRenderInfo(obj),(APTR)"rffffffff,00000000,00000000",0);
+	    data->detail   = MUI_ObtainPen(muiRenderInfo(obj),(APTR)"r00000000,00000000,00000000",0);
+    }
+	else
+    {
+    	data->enabled  = MUI_ObtainPen(muiRenderInfo(obj),(APTR)"r02ff00",0);
+   		data->disabled = MUI_ObtainPen(muiRenderInfo(obj),(APTR)"rff0000",0);
+		data->detail   = MUI_ObtainPen(muiRenderInfo(obj),(APTR)"r000000",0);
+	}
 
     data->flags |= FLG_LampSetup;
-
     return TRUE;
 }
 
@@ -269,7 +256,7 @@ struct listData
     ULONG  nodeSize;
 
     TEXT  format[64];
-	
+
     ULONG  flags;
 };
 
@@ -348,33 +335,40 @@ static struct Hook destHook = {{0,0},(HOOKFUNC)destFun,0,0};
 /**************************************************************************/
 
 #ifdef __MORPHOS__
-static void
-dispFun(void)
+static ULONG
+mListDisplay(struct IClass *cl,Object *obj,struct MUIP_List_Display *msg)
 {
-    struct Hook     *hook = (struct Hook *)REG_a0;
-    STRPTR          *array = (STRPTR *)REG_A2;
-    struct URL_Node *node = (struct URL_Node *)REG_A1;
+    struct listData *data = INST_DATA(cl,obj);
+    struct URL_Node *node = (struct URL_Node *)msg->entry;
+    STRPTR          *array = (STRPTR*)msg->array;
 #else
 static void SAVEDS ASM
 dispFun(REG(a0,struct Hook *hook),REG(a2,STRPTR *array),REG(a1,struct URL_Node *node))
 {
-#endif
     struct listData *data = hook->h_Data;
+#endif
 
     if (node)
     {
         if (data->lamp)
         {
             set(data->olamp,MUIA_Lamp_Disabled,node->Flags & UNF_DISABLED);
-            //msprintf(data->col0buf,"\33O[%08lx] %s",(ULONG)data->lamp,(ULONG)((UBYTE *)node+data->nameOfs));
             msprintf(data->col0buf,"\33O[%08lx]",(ULONG)data->lamp);
             *array++ = data->col0buf;
         }
-        else *array++ = "+";
-        //msprintf(data->col0buf,"%s %s",(ULONG)((node->Flags & UNF_DISABLED) ? " " : ">"),(ULONG)
+        else *array++ = (node->Flags & UNF_DISABLED) ? " " : ">";
 
         *array++ = (STRPTR)node+data->nameOfs;
         *array   = (STRPTR)node+data->pathOfs;
+
+        #ifdef __MORPHOS__
+        if (g_MUI4)
+        {
+            msg->array[-7] = (STRPTR)2;
+            if ((ULONG)msg->array[-1] % 2) msg->array[-9] = (STRPTR)40;
+            else msg->array[-9] = (STRPTR)20;
+        }
+        #endif
     }
     else
     {
@@ -382,12 +376,13 @@ dispFun(REG(a0,struct Hook *hook),REG(a2,STRPTR *array),REG(a1,struct URL_Node *
         *array++ = getString(MSG_Edit_ListName);
         *array   = getString(MSG_Edit_ListPath);
     }
+
+    #ifdef __MORPHOS__
+    return 0;
+    #endif
 }
 
-#ifdef __MORPHOS__
-static struct EmulLibEntry dispTrap = {TRAP_LIBNR,0,(void (*)(void))dispFun};
-static struct Hook dispHook = {0,0,(HOOKFUNC)&dispTrap};
-#else
+#ifndef __MORPHOS__
 static struct Hook dispHook = {{0,0},(HOOKFUNC)dispFun,0,0};
 #endif
 
@@ -404,10 +399,12 @@ mListNew(struct IClass *cl,Object *obj,struct opSet *msg)
             MUIA_List_Pool,          g_pool,
             MUIA_List_ConstructHook, &conHook,
             MUIA_List_DestructHook,  &destHook,
+			#ifndef __MORPHOS__
             MUIA_List_DisplayHook,   &dispHook,
+            #endif
             MUIA_List_DragSortable,  TRUE,
             MUIA_List_ShowDropMarks, TRUE,
-            0x8042bc08, 			 1, /* MUI4 Auto Line Height: put the real name if you know it :P */
+            0x8042bc08,              1, /* MUI4 Auto Line Height: put the real name if you know it :P */
             TAG_MORE, msg->ops_AttrList))
     {
         struct listData *data = INST_DATA(cl,obj);
@@ -422,7 +419,9 @@ mListNew(struct IClass *cl,Object *obj,struct opSet *msg)
 
         conHook.h_Data  = data;
         destHook.h_Data = data;
+		#ifndef __MORPHOS__
         dispHook.h_Data = data;
+        #endif
     }
 
     return (ULONG)obj;
@@ -441,31 +440,6 @@ mListDispose(struct IClass *cl,Object *obj,Msg msg)
 }
 
 /**************************************************************************/
-
-static ULONG
-mListSets(struct IClass *cl,Object *obj,struct opSet *msg)
-{
-    struct TagItem *tag;
-
-    if (tag = FindTagItem(MUIA_App_Pens,msg->ops_AttrList))
-    {
-        struct listData *data = INST_DATA(cl,obj);
-        if (data->olamp)
-        {
-            struct MUI_PenSpec **specs = (struct MUI_PenSpec **)tag->ti_Data;
-            set(data->olamp,MUIA_App_Pens,specs);
-            tag->ti_Tag = TAG_IGNORE;
-
-            /* Don't want even know why a push is needed here! */
-            if (data->flags & FLG_ListSetup)
-                DoMethod(_app(obj),MUIM_Application_PushMethod,(ULONG)obj,2,MUIM_List_Redraw,MUIV_List_Redraw_All);
-        }
-    }
-
-    return DoSuperMethodA(cl,obj,(Msg)msg);
-}
-
-/***********************************************************************/
 
 static ULONG
 mListSetup(struct IClass *cl,Object *obj,struct MUIP_Setup *msg)
@@ -514,6 +488,8 @@ mListImport(struct IClass *cl,Object *obj,struct MUIP_Import *msg)
 {
     register ULONG id;
 
+    if (MUIMasterBase->lib_Version<20) return 0;
+
     if (id = (muiNotifyData(obj)->mnd_ObjectID))
     {
         register struct listIO *io;
@@ -539,6 +515,8 @@ static ULONG
 mListExport(UNUSED struct IClass *cl,Object *obj,struct MUIP_Import *msg)
 {
     register ULONG id;
+
+    if (MUIMasterBase->lib_Version<20) return 0;
 
     if (id = (muiNotifyData(obj)->mnd_ObjectID))
     {
@@ -581,12 +559,14 @@ M_DISP(listDispatcher)
     {
         case OM_NEW:                  return mListNew(cl,obj,(APTR)msg);
         case OM_DISPOSE:              return mListDispose(cl,obj,(APTR)msg);
-        case OM_SET:                  return mListSets(cl,obj,(APTR)msg);
 
         case MUIM_Setup:              return mListSetup(cl,obj,(APTR)msg);
         case MUIM_Cleanup:            return mListCleanup(cl,obj,(APTR)msg);
         case MUIM_Import:             return mListImport(cl,obj,(APTR)msg);
         case MUIM_Export:             return mListExport(cl,obj,(APTR)msg);
+		#ifdef __MORPHOS__
+        case MUIM_List_Display:		  return mListDisplay(cl,obj,(APTR)msg);
+		#endif
 
         case MUIM_App_CheckSave:      return mListCheckSave(cl,obj,(APTR)msg);
 
@@ -710,13 +690,15 @@ mNew(struct IClass *cl,Object *obj,struct opSet *msg)
                 End,
 
                 Child, VGroup,
-                    VirtualFrame,
-                    MUIA_Background, MUII_GroupBack,
-                    MUIA_Weight,     10,
+                    //VirtualFrame,
+                    //MUIA_Background, MUII_GroupBack,
+                    MUIA_Group_VertSpacing, 2,
+                    MUIA_Weight,     		0,
 
-                    Child, addb   = obutton(MSG_AppList_Add,MSG_AppList_Add_Help),
-                    Child, editb  = obutton(MSG_AppList_Edit,MSG_AppList_Edit_Help),
-                    Child, cloneb = obutton(MSG_AppList_Clone,MSG_AppList_Clone_Help),
+                    Child, addb    = obutton(MSG_AppList_Add,MSG_AppList_Add_Help),
+                    Child, editb   = obutton(MSG_AppList_Edit,MSG_AppList_Edit_Help),
+                    Child, cloneb  = obutton(MSG_AppList_Clone,MSG_AppList_Clone_Help),
+                    Child, deleteb = obutton(MSG_AppList_Delete,MSG_AppList_Delete_Help),
                     Child, HGroup,
                         MUIA_Group_HorizSpacing, 1,
                         Child, upb      = oibutton(IBT_Up,MSG_AppList_MoveUp_Help),
@@ -724,7 +706,6 @@ mNew(struct IClass *cl,Object *obj,struct opSet *msg)
                         Child, disableb = otbutton(MSG_AppList_Disable,MSG_AppList_Disable_Help),
                     End,
                     Child, VSpace(0),
-                    Child, deleteb = obutton(MSG_AppList_Delete,MSG_AppList_Delete_Help),
                 End,
 
             TAG_MORE, msg->ops_AttrList))
@@ -829,7 +810,7 @@ mEdit(struct IClass *cl,Object *obj,struct MUIP_AppList_Edit *msg)
     DoMethod(data->appList,MUIM_List_GetEntry,MUIV_List_GetEntry_Active,(ULONG)&node);
     if (node)
     {
-    	if (msg->check && (xget(data->appList,MUIA_Listview_ClickColumn)==0))
+        if (msg->check && (xget(data->appList,MUIA_Listview_ClickColumn)==0))
         {
             set(data->appList,MUIA_Listview_ClickColumn,1);
 

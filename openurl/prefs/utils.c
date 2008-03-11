@@ -41,9 +41,9 @@ DoSuperNew(struct IClass *cl,Object *obj,...)
 }
 #elif !defined(__MORPHOS__)
 APTR STDARGS
-DoSuperNew(struct IClass *cl,Object *obj,ULONG tag1,...)
+DoSuperNew(struct IClass *cl,Object *obj,...)
 {
-    return (APTR)DoSuperMethod(cl,obj,OM_NEW,&tag1,NULL);
+    return (APTR)DoSuperMethod(cl,obj,OM_NEW,(struct TagItem *)(&obj+1),NULL);
 }
 #endif
 
@@ -333,10 +333,10 @@ msprintf(STRPTR buf,STRPTR fmt,...)
     va_end(va);
 }
 #else
-static ULONG fmtfunc = 0x16C04E75;
+static UWORD fmtfunc[] = { 0x16c0, 0x4e75 };
 
-void STDARGS
-msprintf(STRPTR to, STRPTR fmt,...)
+void
+msprintf(STRPTR to,STRPTR fmt,...)
 {
     #if defined(__amigaos4__)
     va_list       va;
@@ -345,9 +345,9 @@ msprintf(STRPTR to, STRPTR fmt,...)
     va_end(va);
     #else
     RawDoFmt(fmt,&fmt+1,(APTR)&fmtfunc,to);
-    #endif
+    #endif /* __amigaos4__ */
 }
-#endif
+#endif /* __MORPHOS__ */
 
 /***********************************************************************/
 
@@ -377,11 +377,6 @@ ASM msnprintfStuff(REG(d0,UBYTE c),REG(a3,struct stream *st))
         else *(st->buf++) = c;
     }
 }
-
-#ifdef __MORPHOS__
-static struct EmulLibEntry msnprintfStuffTrap = {TRAP_LIB,0,(void *)&msnprintfStuff};
-#endif
-
 
 #if defined(__MORPHOS__) || defined(__amigaos4__)
 int
