@@ -19,4 +19,4 @@ mos:
 	@echo not supported for now, use the smakefile provided instead
 
 revision:
-	@bumprev $(VER) OpenURL
+	@bumprev $(VER) OpenURL_rev
