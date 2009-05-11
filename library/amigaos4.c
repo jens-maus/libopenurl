@@ -168,7 +168,7 @@ ULONG VARARGS68K OS4_URL_GetAttr ( UNUSED struct OpenURLIFace * Self, ULONG attr
 
 /* amigaos4 *****************************************************************/
 
-LONG VARARGS68K OS4_dispatch ( UNUSED struct OpenURLIFace * Self, struct RexxMsg *msg, UBYTE ** resPtr )
+LONG VARARGS68K OS4_dispatch ( UNUSED struct OpenURLIFace * Self, struct RexxMsg *msg, STRPTR *resPtr )
 {
 	 return dispatch( msg, resPtr );
 }
@@ -179,7 +179,7 @@ struct Library * mgr_Init (struct Library *base, BPTR segList, struct ExecIFace 
 {
 	base->lib_Node.ln_Type = NT_LIBRARY;
 	base->lib_Node.ln_Pri = 0;
-	base->lib_Node.ln_Name = lib_name;
+	base->lib_Node.ln_Name = (char *)lib_name;
 	base->lib_Flags = LIBF_SUMUSED|LIBF_CHANGED;
 	base->lib_Version = lib_version;
 	base->lib_Revision = lib_revision;

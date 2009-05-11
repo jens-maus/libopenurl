@@ -18,7 +18,7 @@ void freeBase ( void );
 ULONG initBase ( void );
 
 /* api.c */
-ULONG LIBCALL URL_OpenA ( REG (a0 ,UBYTE *URL ), REG (a1 ,struct TagItem *attrs ));
+ULONG LIBCALL URL_OpenA ( REG (a0 ,STRPTR URL ), REG (a1 ,struct TagItem *attrs ));
 struct URL_Prefs *LIBCALL URL_GetPrefsA ( REG (a0 ,struct TagItem *attrs ));
 struct URL_Prefs *LIBCALL URL_OldGetPrefs ( void );
 void LIBCALL URL_FreePrefsA ( REG (a0 ,struct URL_Prefs *p ), REG (a1 ,struct TagItem *attrs ));
@@ -32,7 +32,7 @@ ULONG LIBCALL URL_GetAttr ( REG (d0 ,ULONG attr ), REG (a0 ,ULONG *storage ));
 #ifdef __MORPHOS__
 LONG dispatch ( void );
 #else
-LONG LIBCALL dispatch ( REG (a0 , struct RexxMsg *msg ) , REG (a1 , UBYTE **resPtr ));
+LONG LIBCALL dispatch ( REG (a0 , struct RexxMsg *msg ) , REG (a1 , STRPTR *resPtr ));
 #endif
 
 #ifdef __MORPHOS__
@@ -66,7 +66,7 @@ ULONG              VARARGS68K OS4_URL_LaunchPrefsAppA ( struct OpenURLIFace * Se
 ULONG              VARARGS68K OS4_URL_LaunchPrefsApp ( struct OpenURLIFace * Self, ... );
 ULONG              VARARGS68K OS4_URL_OldLaunchPrefsApp ( struct OpenURLIFace * Self );
 ULONG              VARARGS68K OS4_URL_GetAttr ( struct OpenURLIFace * Self, ULONG attr , ULONG *storage );
-LONG               VARARGS68K OS4_dispatch ( struct OpenURLIFace * Self, struct RexxMsg *msg, UBYTE **resPtr );
+LONG               VARARGS68K OS4_dispatch ( struct OpenURLIFace * Self, struct RexxMsg *msg, STRPTR *resPtr );
 
 #endif
 
@@ -81,17 +81,17 @@ void SAVEDS handler ( void );
 struct URL_Prefs *copyPrefs ( struct URL_Prefs *old );
 void initPrefs ( struct URL_Prefs *p );
 void setDefaultPrefs ( struct URL_Prefs *up );
-ULONG savePrefs ( UBYTE *filename , struct URL_Prefs *up );
+ULONG savePrefs ( CONST_STRPTR filename , struct URL_Prefs *up );
 ULONG loadPrefs ( struct URL_Prefs *p , ULONG mode );
 struct URL_Prefs *loadPrefsNotFail ( void );
 
 /* utils.c */
-ULONG sendToBrowser ( UBYTE *URL , struct List *portlist , ULONG show , ULONG toFront , ULONG newWindow , ULONG launch , UBYTE *pubScreenName );
-ULONG sendToFTP ( UBYTE *URL , struct List *portlist , ULONG show , ULONG toFront , ULONG newWindow , ULONG launch , UBYTE *pubScreenName );
-ULONG sendToMailer ( UBYTE *URL , struct List *portlist , ULONG show , ULONG toFront , ULONG launch , UBYTE *pubScreenName );
+ULONG sendToBrowser ( STRPTR URL , struct List *portlist , ULONG show , ULONG toFront , ULONG newWindow , ULONG launch , STRPTR pubScreenName );
+ULONG sendToFTP ( STRPTR URL , struct List *portlist , ULONG show , ULONG toFront , ULONG newWindow , ULONG launch , STRPTR pubScreenName );
+ULONG sendToMailer ( STRPTR URL , struct List *portlist , ULONG show , ULONG toFront , ULONG launch , STRPTR pubScreenName );
 ULONG copyList ( struct List *dst , struct List *src , ULONG size );
 void freeList ( struct List *list , ULONG size );
-ULONG isdigits ( UBYTE *str );
+ULONG isdigits ( STRPTR str );
 APTR allocPooled ( ULONG size );
 void freePooled ( APTR mem , ULONG size );
 APTR allocVecPooled ( ULONG size );

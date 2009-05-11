@@ -19,11 +19,11 @@
 /**************************************************************************/
 
 ULONG LIBCALL
-URL_OpenA(REG(a0,UBYTE *URL),REG(a1,struct TagItem *attrs))
+URL_OpenA(REG(a0,STRPTR URL),REG(a1,struct TagItem *attrs))
 {
     struct List portList;
     TEXT       buf[256];
-    STRPTR     pubScreenName = NULL, fullURL = NULL;     
+    STRPTR     pubScreenName = NULL, fullURL = NULL;
     ULONG       res, show, toFront, newWindow, launch, httpPrepend = FALSE;
 
     NEWLIST(&portList);
@@ -31,7 +31,7 @@ URL_OpenA(REG(a0,UBYTE *URL),REG(a1,struct TagItem *attrs))
 
 
     /* parse arguments */
-    pubScreenName = (UBYTE *)GetTagData(URL_PubScreenName,(ULONG)"Workbench",attrs);
+    pubScreenName = (STRPTR)GetTagData(URL_PubScreenName,(ULONG)"Workbench",attrs);
     show          = GetTagData(URL_Show,lib_prefs->up_DefShow,attrs);
     toFront       = GetTagData(URL_BringToFront,lib_prefs->up_DefBringToFront,attrs);
     newWindow     = GetTagData(URL_NewWindow,lib_prefs->up_DefNewWindow,attrs);
@@ -78,7 +78,8 @@ URL_OpenA(REG(a0,UBYTE *URL),REG(a1,struct TagItem *attrs))
 
         msprintf(fullURL,"http://%s",(ULONG)URL);
     }
-    else fullURL = URL;
+    else
+    	fullURL = URL;
 
     /* Be case insensitive - Piru */
     if ((lib_prefs->up_Flags & UPF_DOMAILTO) && !Strnicmp((STRPTR)URL,"mailto:",7))
@@ -198,11 +199,11 @@ URL_SetPrefsA(REG(a0,struct URL_Prefs *p),REG(a1,struct TagItem *attrs))
             URL_FreePrefsA(lib_prefs,NULL);
             lib_prefs = newp;
 
-            if (res = savePrefs((UBYTE*)DEF_ENV,lib_prefs))
+            if (res = savePrefs((STRPTR)DEF_ENV,lib_prefs))
             {
                 if (GetTagData(URL_SetPrefs_Save,FALSE,attrs))
                 {
-                    res = savePrefs((UBYTE*)DEF_ENVARC,lib_prefs);
+                    res = savePrefs((STRPTR)DEF_ENVARC,lib_prefs);
                 }
             }
         }
@@ -325,7 +326,7 @@ LONG dispatch(void)
 {
     struct RexxMsg *msg = (struct RexxMsg *)REG_A0;
 #else
-LONG ASM SAVEDS dispatch(REG(a0,struct RexxMsg *msg),REG(a1,UBYTE **resPtr))
+LONG ASM SAVEDS dispatch(REG(a0,struct RexxMsg *msg),REG(a1,STRPTR *resPtr))
 {
 #endif
 
@@ -338,7 +339,7 @@ LONG ASM SAVEDS dispatch(REG(a0,struct RexxMsg *msg),REG(a1,UBYTE **resPtr))
         else
         {
             struct TagItem tags[MAXRMARG+1];
-            TEXT          *url;
+            STRPTR url;
             int            i, j;
 
             for (i = na, j = 0, url = NULL; i>0; i--)
@@ -364,7 +365,7 @@ LONG ASM SAVEDS dispatch(REG(a0,struct RexxMsg *msg),REG(a1,UBYTE **resPtr))
 
             tags[j].ti_Tag = TAG_END;
 
-            res = url && URL_OpenA((UBYTE*)url,tags);
+            res = url && URL_OpenA(url,tags);
         }
     }
     else
@@ -381,7 +382,7 @@ LONG ASM SAVEDS dispatch(REG(a0,struct RexxMsg *msg),REG(a1,UBYTE **resPtr))
 #ifdef __MORPHOS__
     return (REG_A0 = (ULONG)CreateArgstring(res ? "1" : "0",1)) ? 0 : 3;
 #else
-    return (*resPtr = (UBYTE*)CreateArgstring(res ? "1" : "0",1)) ? 0 : 3;
+    return (*resPtr = (STRPTR)CreateArgstring(res ? "1" : "0",1)) ? 0 : 3;
 #endif
 }
 

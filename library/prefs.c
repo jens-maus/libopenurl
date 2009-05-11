@@ -189,7 +189,7 @@ setDefaultPrefs(struct URL_Prefs *p)
 /**************************************************************************/
 
 ULONG
-savePrefs(UBYTE *filename,struct URL_Prefs *p)
+savePrefs(CONST_STRPTR filename,struct URL_Prefs *p)
 {
     struct IFFHandle *iffh;
     ULONG            res = FALSE;
@@ -291,7 +291,7 @@ loadPrefs(struct URL_Prefs *p,ULONG mode)
 
     if (iffh = AllocIFF())
     {
-        UBYTE *fileName;
+        CONST_STRPTR fileName;
         BPTR  file;
 
         fileName = (mode==LOADPREFS_ENV) ? DEF_ENV : DEF_ENVARC;

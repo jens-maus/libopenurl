@@ -234,8 +234,8 @@ static struct Resident romTag = {
 	VERSION,					// rt_Version
 	NT_LIBRARY,					// rt_Type
 	0,							// rt_Pri
-	lib_name,					// rt_Name
-	lib_ver,					// rt_IdString
+	(char *)lib_name,			// rt_Name
+	(char *)lib_ver,			// rt_IdString
 	libCreateTags				// rt_Init
 };
 

@@ -15,7 +15,7 @@
 /***********************************************************************/
 
 static ULONG
-sendRexxMsg(struct MsgPort *reply,UBYTE *rxport,UBYTE *rxcmd)
+sendRexxMsg(struct MsgPort *reply,STRPTR rxport,STRPTR rxcmd)
 {
     struct RexxMsg *rxmsg;
 

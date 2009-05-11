@@ -23,8 +23,8 @@
 
 struct placeHolder
 {
-    UBYTE ph_Char;
-    UBYTE *ph_String;
+    TEXT ph_Char;
+    STRPTR ph_String;
 };
 
 #define PH_COUNT_BROWSER    2
@@ -33,10 +33,10 @@ struct placeHolder
 
 /**************************************************************************/
 
-static UBYTE *
-expandPlaceHolders(UBYTE *template,struct placeHolder *ph,int num)
+static STRPTR
+expandPlaceHolders(STRPTR template,struct placeHolder *ph,int num)
 {
-    UBYTE *p, *res;
+    STRPTR p, res;
     int   i, length = 0;
 
     for (p = template; *p; p++)
@@ -78,7 +78,7 @@ expandPlaceHolders(UBYTE *template,struct placeHolder *ph,int num)
 /**************************************************************************/
 
 static ULONG
-writeToFile(UBYTE *fileName,UBYTE *str)
+writeToFile(STRPTR fileName, STRPTR str)
 {
     BPTR  fh;
     ULONG res = FALSE;
@@ -97,8 +97,8 @@ writeToFile(UBYTE *fileName,UBYTE *str)
 
 /**************************************************************************/
 
-static UBYTE *
-findRexxPort(struct List *list,UBYTE *name)
+static STRPTR
+findRexxPort(struct List *list,STRPTR name)
 {
     struct Node *n;
     ULONG       len;
@@ -121,8 +121,8 @@ findRexxPort(struct List *list,UBYTE *name)
 
 /**************************************************************************/
 
-static UBYTE *
-waitForRexxPort(UBYTE *port)
+static STRPTR
+waitForRexxPort(STRPTR port)
 {
     int i;
 
@@ -130,7 +130,7 @@ waitForRexxPort(UBYTE *port)
 
     for (i = 0; i<FINDPORT_NUM; i++)
     {
-        UBYTE *rxport;
+        STRPTR rxport;
 
         Forbid();
         rxport = findRexxPort(&SysBase->PortList,port);
@@ -150,7 +150,7 @@ waitForRexxPort(UBYTE *port)
 /**************************************************************************/
 
 static ULONG
-sendRexxMsg(UBYTE *rxport,UBYTE *rxcmd)
+sendRexxMsg(STRPTR rxport, STRPTR rxcmd)
 {
     ULONG res = FALSE;
     int   sig;
@@ -206,23 +206,23 @@ sendRexxMsg(UBYTE *rxport,UBYTE *rxcmd)
 /****************************************************************************/
 
 ULONG
-sendToBrowser(UBYTE *URL,
+sendToBrowser(STRPTR URL,
               struct List *portlist,
               ULONG show,
               ULONG toFront,
               ULONG newWindow,
               ULONG launch,
-              UBYTE *pubScreenName)
+              STRPTR pubScreenName)
 {
     ULONG                  res = FALSE;
-    UBYTE                  *cmd = NULL;
+    STRPTR                 cmd = NULL;
     struct placeHolder     ph[PH_COUNT_BROWSER];
     struct URL_BrowserNode *bn;
 
     /* set up the placeholder mapping */
 
     ph[0].ph_Char = 'u'; ph[0].ph_String = URL;
-    ph[1].ph_Char = 'p'; ph[1].ph_String = pubScreenName ? pubScreenName : (UBYTE *)"Workbench";
+    ph[1].ph_Char = 'p'; ph[1].ph_String = pubScreenName ? pubScreenName : (STRPTR)"Workbench";
 
     /* try to find one of the browsers in the list */
 
@@ -230,7 +230,7 @@ sendToBrowser(UBYTE *URL,
          bn->ubn_Node.mln_Succ;
          bn = (struct URL_BrowserNode *)bn->ubn_Node.mln_Succ)
     {
-        UBYTE *port;
+        STRPTR port;
 
         if (bn->ubn_Flags & UNF_DISABLED) continue;
 
@@ -271,7 +271,8 @@ sendToBrowser(UBYTE *URL,
          bn = (struct URL_BrowserNode *)bn->ubn_Node.mln_Succ)
     {
         ULONG  startOnly;
-        UBYTE  *filePart, c = '\0';
+        STRPTR filePart;
+        TEXT   c = '\0';
         BPTR   lock;
         LONG   error;
 
@@ -318,7 +319,7 @@ sendToBrowser(UBYTE *URL,
 
         if (!startOnly)
         {
-            UBYTE *rxport;
+            STRPTR rxport;
 
             /* send urlopen command */
 
@@ -348,23 +349,23 @@ done:
 /**************************************************************************/
 
 ULONG
-sendToFTP(UBYTE *URL,
+sendToFTP(STRPTR URL,
           struct List *portlist,
           ULONG show,
           ULONG toFront,
           ULONG newWindow,
           ULONG launch,
-          UBYTE *pubScreenName)
+          STRPTR pubScreenName)
 {
     ULONG              res = FALSE;
-    UBYTE              *cmd = NULL;
+    STRPTR             cmd = NULL;
     struct placeHolder ph[PH_COUNT_FTP];
     struct URL_FTPNode *fn;
 
     /* set up the placeholder mapping */
 
     ph[0].ph_Char = 'u'; /*ph[0].ph_String = URL;*/
-    ph[1].ph_Char = 'p'; ph[1].ph_String = pubScreenName ? pubScreenName : (UBYTE *)"Workbench";
+    ph[1].ph_Char = 'p'; ph[1].ph_String = pubScreenName ? pubScreenName : (STRPTR)"Workbench";
 
     /* try to find one of the ftp client in the list */
 
@@ -372,7 +373,7 @@ sendToFTP(UBYTE *URL,
          fn->ufn_Node.mln_Succ;
          fn = (struct URL_FTPNode *)fn->ufn_Node.mln_Succ)
     {
-        UBYTE *port;
+        STRPTR port;
 
     if (fn->ufn_Flags & UNF_DISABLED) continue;
 
@@ -417,7 +418,8 @@ sendToFTP(UBYTE *URL,
          fn = (struct URL_FTPNode *)fn->ufn_Node.mln_Succ)
     {
         ULONG  startOnly;
-        UBYTE  *filePart, c = '\0';
+        STRPTR filePart;
+        TEXT   c = '\0';
         BPTR   lock;
         LONG   error;
 
@@ -470,7 +472,7 @@ sendToFTP(UBYTE *URL,
 
         if (!startOnly)
         {
-            UBYTE *rxport;
+            STRPTR rxport;
 
             /* send urlopen command */
 
@@ -501,17 +503,18 @@ done:
 static WORD trans[256];
 
 ULONG
-sendToMailer(UBYTE *URL,
+sendToMailer(STRPTR URL,
              struct List *portlist,
              ULONG show,
              ULONG toFront,
              ULONG launch,
-             UBYTE *pubScreenName)
+             STRPTR pubScreenName)
 {
     struct placeHolder    ph[PH_COUNT_MAILER];
     struct URL_MailerNode *mn;
-    UBYTE                 *start, *end, *data, *address = NULL, *subject = NULL, *body = NULL,
-                          *cmd = NULL, **tag, fileName[32];
+    STRPTR                start, end, data, address = NULL, subject = NULL, body = NULL,
+                          cmd = NULL, *tag;
+    TEXT                  fileName[32];
     ULONG                 res = FALSE, written = FALSE;
     UWORD                 offset, len;
 
@@ -589,9 +592,9 @@ sendToMailer(UBYTE *URL,
             data=*tag;
             while (data)
             {
-                if ((data=strchr(data,'%')) && (trans[data[1]]!=-1) && (trans[data[2]]!=-1))
+                if ((data=strchr(data,'%')) && (trans[(int)data[1]]!=-1) && (trans[(int)data[2]]!=-1))
                 {
-                    *data=(trans[data[1]]<<4)|trans[data[2]];
+                    *data=(trans[(int)data[1]]<<4)|trans[(int)data[2]];
                     data++;
                     memmove(data,data+2,strlen(data+2)+1);
                 }
@@ -610,12 +613,12 @@ sendToMailer(UBYTE *URL,
 
     /* set up the placeholder mapping */
 
-    ph[0].ph_Char = 'a'; ph[0].ph_String = address ? address : (UBYTE *)"";
-    ph[1].ph_Char = 's'; ph[1].ph_String = subject ? subject : (UBYTE *)"";//URL;
-    ph[2].ph_Char = 'b'; ph[2].ph_String = body ? body : (UBYTE *)"";
+    ph[0].ph_Char = 'a'; ph[0].ph_String = address ? address : (STRPTR)"";
+    ph[1].ph_Char = 's'; ph[1].ph_String = subject ? subject : (STRPTR)"";//URL;
+    ph[2].ph_Char = 'b'; ph[2].ph_String = body ? body : (STRPTR)"";
     ph[3].ph_Char = 'f'; ph[3].ph_String = fileName;
     ph[4].ph_Char = 'u'; ph[4].ph_String = URL;
-    ph[5].ph_Char = 'p'; ph[5].ph_String = pubScreenName ? pubScreenName : (UBYTE *)"Workbench";
+    ph[5].ph_Char = 'p'; ph[5].ph_String = pubScreenName ? pubScreenName : (STRPTR)"Workbench";
 
     /* try to find one of the mailers in the list */
 
@@ -623,7 +626,7 @@ sendToMailer(UBYTE *URL,
          mn->umn_Node.mln_Succ;
          mn = (struct URL_MailerNode *)mn->umn_Node.mln_Succ)
     {
-        UBYTE *rxport;
+        STRPTR rxport;
 
         if (mn->umn_Flags & UNF_DISABLED) continue;
 
@@ -695,7 +698,8 @@ sendToMailer(UBYTE *URL,
          mn = (struct URL_MailerNode *)mn->umn_Node.mln_Succ)
     {
         ULONG  startOnly;
-        UBYTE  *filePart, c = '\0';
+        STRPTR filePart;
+        TEXT   c = '\0';
         BPTR   lock;
         LONG   error;
 
@@ -747,7 +751,7 @@ sendToMailer(UBYTE *URL,
 
         if (!startOnly)
         {
-            UBYTE *rxport;
+            STRPTR rxport;
 
             /* send write mail command */
 
@@ -845,7 +849,7 @@ freeList(struct List *list,ULONG size)
 /**************************************************************************/
 
 ULONG
-isdigits(UBYTE *str)
+isdigits(STRPTR str)
 {
     for (;;)
     {

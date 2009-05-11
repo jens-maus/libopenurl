@@ -1,0 +1,10 @@
+---------------------------
+openurl.library - ChangeLog
+---------------------------
+
+$Id$
+$URL$
+
+2009-05-11  Thore Böckelmann <tboeckel@gmx.de>
+
+  * misc: lots of type changes to make the source compilable for OS4.
