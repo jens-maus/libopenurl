@@ -406,7 +406,7 @@ LONG LIBFUNC dispatch(REG(a0, struct RexxMsg *msg), REG(a1, STRPTR *resPtr))
 
             tags[j].ti_Tag = TAG_END;
 
-            res = (url != NULL) && URL_OpenA(url, tags));
+            res = (url != NULL && URL_OpenA(url, tags));
         }
     }
     else
