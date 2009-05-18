@@ -125,13 +125,13 @@ void setDefaultPrefs(struct URL_Prefs *p)
   }
 
   bn->ubn_Flags = UNF_DISABLED;
-  strcpy(bn->ubn_Name,"IBrowse");
-  strcpy(bn->ubn_Path,"IBrowse \"%u\"");
-  strcpy(bn->ubn_Port,"IBROWSE");
-  strcpy(bn->ubn_ShowCmd,"SHOW");
-  strcpy(bn->ubn_ToFrontCmd,"SCREENTOFRONT");
-  strcpy(bn->ubn_OpenURLCmd,"GOTOURL \"%u\"");
-  strcpy(bn->ubn_OpenURLWCmd,"NEWWINDOW \"%u\"");
+  strlcpy(bn->ubn_Name,"IBrowse", sizeof(bn->ubn_Name));
+  strlcpy(bn->ubn_Path,"IBrowse \"%u\"", sizeof(bn->ubn_Path));
+  strlcpy(bn->ubn_Port,"IBROWSE", sizeof(bn->ubn_Port));
+  strlcpy(bn->ubn_ShowCmd,"SHOW", sizeof(bn->ubn_ShowCmd));
+  strlcpy(bn->ubn_ToFrontCmd,"SCREENTOFRONT", sizeof(bn->ubn_ToFrontCmd));
+  strlcpy(bn->ubn_OpenURLCmd,"GOTOURL \"%u\"", sizeof(bn->ubn_OpenURLCmd));
+  strlcpy(bn->ubn_OpenURLWCmd,"NEWWINDOW \"%u\"", sizeof(bn->ubn_OpenURLWCmd));
   AddTail((struct List *)(&p->up_BrowserList), (struct Node *)(bn));
 
   /* Browsers: AWeb */
@@ -142,13 +142,13 @@ void setDefaultPrefs(struct URL_Prefs *p)
   }
 
   bn->ubn_Flags = UNF_DISABLED;
-  strcpy(bn->ubn_Name,"AWeb");
-  strcpy(bn->ubn_Path,"AWeb \"%u\"");
-  strcpy(bn->ubn_Port,"AWEB");
-  strcpy(bn->ubn_ShowCmd,"ICONIFY SHOW");
-  strcpy(bn->ubn_ToFrontCmd,"SCREENTOFRONT");
-  strcpy(bn->ubn_OpenURLCmd,"OPEN \"%u\"");
-  strcpy(bn->ubn_OpenURLWCmd,"NEW \"%u\"");
+  strlcpy(bn->ubn_Name,"AWeb", sizeof(bn->ubn_Name));
+  strlcpy(bn->ubn_Path,"AWeb \"%u\"", sizeof(bn->ubn_Path));
+  strlcpy(bn->ubn_Port,"AWEB", sizeof(bn->ubn_Port));
+  strlcpy(bn->ubn_ShowCmd,"ICONIFY SHOW", sizeof(bn->ubn_ShowCmd));
+  strlcpy(bn->ubn_ToFrontCmd,"SCREENTOFRONT", sizeof(bn->ubn_ToFrontCmd));
+  strlcpy(bn->ubn_OpenURLCmd,"OPEN \"%u\"", sizeof(bn->ubn_OpenURLCmd));
+  strlcpy(bn->ubn_OpenURLWCmd,"NEW \"%u\"", sizeof(bn->ubn_OpenURLWCmd));
   AddTail((struct List *)(&p->up_BrowserList),(struct Node *)(bn));
 
   /* Browsers: Voyager */
@@ -159,17 +159,18 @@ void setDefaultPrefs(struct URL_Prefs *p)
   }
 
   strcpy(bn->ubn_Name,"Voyager");
-  if (GetVar("Vapor/Voyager_LASTUSEDDIR",bn->ubn_Path,PATH_LEN,GVF_GLOBAL_ONLY)>0) AddPart(bn->ubn_Path,"V \"%u\"",PATH_LEN);
+  if(GetVar("Vapor/Voyager_LASTUSEDDIR",bn->ubn_Path,sizeof(bn->ubn_Path),GVF_GLOBAL_ONLY)>0)
+    AddPart(bn->ubn_Path,"V \"%u\"", sizeof(bn->ubn_Path));
   else
   {
-      strcpy(bn->ubn_Path,"V \"%u\"");
-      bn->ubn_Flags = UNF_DISABLED;
+    strlcpy(bn->ubn_Path,"V \"%u\"", sizeof(bn->ubn_Path));
+    bn->ubn_Flags = UNF_DISABLED;
   }
-  strcpy(bn->ubn_Port,"VOYAGER");
-  strcpy(bn->ubn_ShowCmd,"SHOW");
-  strcpy(bn->ubn_ToFrontCmd,"SCREENTOFRONT");
-  strcpy(bn->ubn_OpenURLCmd,"OPENURL \"%u\"");
-  strcpy(bn->ubn_OpenURLWCmd,"OPENURL \"%u\" NEWWIN");
+  strlcpy(bn->ubn_Port,"VOYAGER", sizeof(bn->ubn_Port));
+  strlcpy(bn->ubn_ShowCmd,"SHOW", sizeof(bn->ubn_ShowCmd));
+  strlcpy(bn->ubn_ToFrontCmd,"SCREENTOFRONT", sizeof(bn->ubn_ToFrontCmd));
+  strlcpy(bn->ubn_OpenURLCmd,"OPENURL \"%u\"", sizeof(bn->ubn_OpenURLCmd));
+  strlcpy(bn->ubn_OpenURLWCmd,"OPENURL \"%u\" NEWWIN", sizeof(bn->ubn_OpenURLWCmd));
   AddTail((struct List *)(&p->up_BrowserList),(struct Node *)(bn));
 
   /* Mailers: SimpleMail */
@@ -180,12 +181,12 @@ void setDefaultPrefs(struct URL_Prefs *p)
   }
 
   mn->umn_Flags = UNF_DISABLED;
-  strcpy(mn->umn_Name,"SimpleMail");
-  strcpy(mn->umn_Path,"SimpleMail MAILTO=\"%a\" SUBJECT=\"%s\"");
-  strcpy(mn->umn_Port,"SIMPLEMAIL");
-  strcpy(mn->umn_ShowCmd,"SHOW");
-  strcpy(mn->umn_ToFrontCmd,"SCREENTOFRONT");
-  strcpy(mn->umn_WriteMailCmd,"MAILWRITE MAILTO=\"%a\" SUBJECT=\"%s\"");
+  strlcpy(mn->umn_Name,"SimpleMail", sizeof(mn->umn_Name));
+  strlcpy(mn->umn_Path,"SimpleMail MAILTO=\"%a\" SUBJECT=\"%s\"", sizeof(mn->umn_Path));
+  strlcpy(mn->umn_Port,"SIMPLEMAIL", sizeof(mn->umn_Port));
+  strlcpy(mn->umn_ShowCmd,"SHOW", sizeof(mn->umn_ShowCmd));
+  strlcpy(mn->umn_ToFrontCmd,"SCREENTOFRONT", sizeof(mn->umn_ToFrontCmd));
+  strlcpy(mn->umn_WriteMailCmd,"MAILWRITE MAILTO=\"%a\" SUBJECT=\"%s\"", sizeof(mn->umn_WriteMailCmd));
   AddTail((struct List *)(&p->up_MailerList),(struct Node *)(mn));
 
   /* Mailers: YAM */
@@ -196,13 +197,13 @@ void setDefaultPrefs(struct URL_Prefs *p)
   }
 
   mn->umn_Flags = UNF_DISABLED;
-  strcpy(mn->umn_Name,"YAM 2.3");
-  strcpy(mn->umn_Path,"YAM:YAM MAILTO=\"%a\" SUBJECT=\"%s\" LETTER=\"%f\"");
-  strcpy(mn->umn_Port,"YAM");
-  strcpy(mn->umn_ShowCmd,"SHOW");
-  strcpy(mn->umn_ToFrontCmd,"SCREENTOFRONT");
-  strcpy(mn->umn_WriteMailCmd,"MAILWRITE;WRITETO \"%a\";WRITESUBJECT \"%s\";WRITEEDITOR \"CLEAR\";WRITEEDITOR \"TEXT %b\"");
-  //strcpy(mn->umn_WriteMailCmd,"MAILWRITE;WRITETO '%a';WRITESUBJECT '%s';WRITELETTER '%f'\"");
+  strlcpy(mn->umn_Name,"YAM 2.3", sizeof(mn->umn_Name));
+  strlcpy(mn->umn_Path,"YAM:YAM MAILTO=\"%a\" SUBJECT=\"%s\" LETTER=\"%f\"", sizeof(mn->umn_Path));
+  strlcpy(mn->umn_Port,"YAM", sizeof(mn->umn_Port));
+  strlcpy(mn->umn_ShowCmd,"SHOW", sizeof(mn->umn_ShowCmd));
+  strlcpy(mn->umn_ToFrontCmd,"SCREENTOFRONT", sizeof(mn->umn_ToFrontCmd));
+  strlcpy(mn->umn_WriteMailCmd,"MAILWRITE;WRITETO \"%a\";WRITESUBJECT \"%s\";WRITEEDITOR \"CLEAR\";WRITEEDITOR \"TEXT %b\"", sizeof(mn->umn_WriteMailCmd));
+  //strlcpy(mn->umn_WriteMailCmd,"MAILWRITE;WRITETO '%a';WRITESUBJECT '%s';WRITELETTER '%f'\"", sizeof(mn->umn_WriteMailCmd));
   AddTail((struct List *)(&p->up_MailerList),(struct Node *)(mn));
 
   /* Mailers: MicroDot II */
@@ -213,13 +214,13 @@ void setDefaultPrefs(struct URL_Prefs *p)
   }
 
   mn->umn_Flags = UNF_DISABLED;
-  strcpy(mn->umn_Name,"MicroDot II");
-  if (GetVar("Vapor/MD2_LASTUSEDDIR",mn->umn_Path,PATH_LEN,GVF_GLOBAL_ONLY)<0)
-      *mn->umn_Path = 0;
-  AddPart(mn->umn_Path,"MicroDot TO=\"%a\" SUBJECT=\"%s\" CONTENTS=\"%f\"",PATH_LEN);
-  strcpy(mn->umn_Port,"MD");
-  strcpy(mn->umn_ShowCmd,"SHOW");
-  strcpy(mn->umn_WriteMailCmd,"NEWMSGWINDOW TO=\"%a\" SUBJECT=\"%s\" CONTENTS=\"%f\"");
+  strlcpy(mn->umn_Name,"MicroDot II", sizeof(mn->umn_Name));
+  if(GetVar("Vapor/MD2_LASTUSEDDIR",mn->umn_Path, sizeof(mn->umn_Path),GVF_GLOBAL_ONLY)<0)
+    *mn->umn_Path = 0;
+  AddPart(mn->umn_Path,"MicroDot TO=\"%a\" SUBJECT=\"%s\" CONTENTS=\"%f\"", sizeof(mn->umn_Path));
+  strlcpy(mn->umn_Port,"MD", sizeof(mn->umn_Port));
+  strlcpy(mn->umn_ShowCmd,"SHOW", sizeof(mn->umn_ShowCmd));
+  strlcpy(mn->umn_WriteMailCmd,"NEWMSGWINDOW TO=\"%a\" SUBJECT=\"%s\" CONTENTS=\"%f\"", sizeof(mn->umn_WriteMailCmd));
   AddTail((struct List *)(&p->up_MailerList),(struct Node *)(mn));
 
   /* Mailers: lola */
@@ -230,11 +231,11 @@ void setDefaultPrefs(struct URL_Prefs *p)
   }
 
   mn->umn_Flags = UNF_DISABLED;
-  strcpy(mn->umn_Name,"lola");
-  strcpy(mn->umn_Path,"lola TO=\"%a\" SUBJECT=\"%s\" TEXT=\"%b\" CX_POPUP CX_POPKEY=\"control alt l\"");
-  strcpy(mn->umn_Port,"LOLA");
-  strcpy(mn->umn_ShowCmd,"SHOW");
-  strcpy(mn->umn_WriteMailCmd,"FILL TO=\"%a\" SUBJECT=\"%s\" TEXT=\"%b\"");
+  strlcpy(mn->umn_Name,"lola", sizeof(mn->umn_Name));
+  strlcpy(mn->umn_Path,"lola TO=\"%a\" SUBJECT=\"%s\" TEXT=\"%b\" CX_POPUP CX_POPKEY=\"control alt l\"", sizeof(mn->umn_Path));
+  strlcpy(mn->umn_Port,"LOLA", sizeof(mn->umn_Port));
+  strlcpy(mn->umn_ShowCmd,"SHOW", sizeof(mn->umn_ShowCmd));
+  strlcpy(mn->umn_WriteMailCmd,"FILL TO=\"%a\" SUBJECT=\"%s\" TEXT=\"%b\"", sizeof(mn->umn_WriteMailCmd));
   AddTail((struct List *)(&p->up_MailerList),(struct Node *)(mn));
 
   LEAVE();

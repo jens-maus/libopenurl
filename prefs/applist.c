@@ -413,7 +413,7 @@ mListNew(struct IClass *cl,Object *obj,struct opSet *msg)
         data->pathOfs  = GetTagData(MUIA_AppList_NodePathOffset,0,msg->ops_AttrList);
         data->nodeSize = GetTagData(MUIA_AppList_NodeSize,0,msg->ops_AttrList);
 
-        strcpy(data->format,"C=0,C=1,C=2");
+        strlcpy(data->format,"C=0,C=1,C=2", sizeof(data->format));
 
         if (lampClass) data->olamp = lampObject, End;
 
@@ -908,7 +908,7 @@ mActiveChanged(struct IClass *cl,Object *obj,UNUSED Msg msg)
     else
     {
         set(data->disable,MUIA_Selected,FALSE);
-        
+
         DoMethod(obj,MUIM_MultiSet,MUIA_Disabled,TRUE,
             (ULONG)data->edit,
             (ULONG)data->clone,

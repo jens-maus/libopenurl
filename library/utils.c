@@ -649,8 +649,8 @@ BOOL sendToMailer(STRPTR URL, struct List *portlist, BOOL show, BOOL toFront, BO
       snprintf(fileName, sizeof(fileName), "T:OpenURL-MailBody.%08lx",(ULONG)FindTask(NULL));
     else
     {
-        written = TRUE;
-        strcpy(fileName,"NIL:");
+      written = TRUE;
+      strlcpy(fileName, "NIL:", sizeof(fileName));
     }
 
     /* set up the placeholder mapping */
@@ -921,38 +921,6 @@ BOOL isdigits(STRPTR str)
   RETURN(result);
   return result;
 }
-
-/**************************************************************************/
-
-#if defined(__MORPHOS__)
-void msprintf(STRPTR buf, STRPTR fmt,...)
-{
-    va_list va;
-
-    va_start(va,fmt);
-    VNewRawDoFmt(fmt,(APTR)0,buf,va);
-    va_end(va);
-}
-#elif defined(__amigaos4__)
-#include <stdarg.h>
-void VARARGS68K msprintf(STRPTR buf, STRPTR fmt,...)
-{
-    va_list va;
-    va_startlinear(va,fmt);
-    RawDoFmt(fmt, va_getlinearva(va,CONST APTR), (void (*)(void)) 0, buf);
-
-    va_end(va);
-}
-#else
-static UWORD fmtfunc[] = { 0x16c0, 0x4e75 };
-
-void msprintf(STRPTR buf,STRPTR fmt,...)
-{
-    RawDoFmt(fmt,&fmt+1,(APTR)fmtfunc,buf);
-}
-#endif
-
-/****************************************************************************/
 
 #if !defined(HAVE_ALLOCVECPOOLED)
 APTR allocVecPooled(APTR pool, ULONG size)

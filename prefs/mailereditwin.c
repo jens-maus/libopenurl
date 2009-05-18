@@ -192,13 +192,13 @@ mUse(struct IClass *cl,Object *obj,UNUSED Msg msg)
 
     mn->umn_Flags &= ~UNF_NEW;
 
-    strcpy((STRPTR)mn->umn_Name,(STRPTR)xget(data->name,MUIA_String_Contents));
-    strcpy((STRPTR)mn->umn_Path,(STRPTR)xget(data->path,MUIA_String_Contents));
-    strcpy((STRPTR)mn->umn_Port,(STRPTR)xget(data->port,MUIA_String_Contents));
+    strlcpy(mn->umn_Name, (STRPTR)xget(data->name,MUIA_String_Contents), sizeof(mn->umn_Name));
+    strlcpy(mn->umn_Path, (STRPTR)xget(data->path,MUIA_String_Contents), sizeof(mn->umn_Path));
+    strlcpy(mn->umn_Port, (STRPTR)xget(data->port,MUIA_String_Contents), sizeof(mn->umn_Port));
 
-    strcpy((STRPTR)mn->umn_ShowCmd,(STRPTR)xget(data->show,MUIA_String_Contents));
-    strcpy((STRPTR)mn->umn_ToFrontCmd,(STRPTR)xget(data->toFront,MUIA_String_Contents));
-    strcpy((STRPTR)mn->umn_WriteMailCmd,(STRPTR)xget(data->write,MUIA_String_Contents));
+    strlcpy(mn->umn_ShowCmd, (STRPTR)xget(data->show,MUIA_String_Contents), sizeof(mn->umn_ShowCmd));
+    strlcpy(mn->umn_ToFrontCmd, (STRPTR)xget(data->toFront,MUIA_String_Contents), sizeof(mn->umn_ToFrontCmd));
+    strlcpy(mn->umn_WriteMailCmd, (STRPTR)xget(data->write,MUIA_String_Contents), sizeof(mn->umn_WriteMailCmd));
 
     get(data->mailerList,MUIA_List_Visible,&visible);
     if (visible != -1)

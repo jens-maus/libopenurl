@@ -196,16 +196,18 @@ mUse(struct IClass *cl,Object *obj,UNUSED Msg msg)
 
     fn->ufn_Flags &= ~UNF_NEW;
 
-    strcpy((STRPTR)fn->ufn_Name,(STRPTR)xget(data->name,MUIA_String_Contents));
-    strcpy((STRPTR)fn->ufn_Path,(STRPTR)xget(data->path,MUIA_String_Contents));
-    strcpy((STRPTR)fn->ufn_Port,(STRPTR)xget(data->port,MUIA_String_Contents));
-    if (xget(data->removeScheme,MUIA_Selected)) fn->ufn_Flags |= UFNF_REMOVEFTP;
-    else fn->ufn_Flags &= ~UFNF_REMOVEFTP;
+    strlcpy(fn->ufn_Name, (STRPTR)xget(data->name,MUIA_String_Contents), sizeof(fn->ufn_Name));
+    strlcpy(fn->ufn_Path, (STRPTR)xget(data->path,MUIA_String_Contents), sizeof(fn->ufn_Path));
+    strlcpy(fn->ufn_Port, (STRPTR)xget(data->port,MUIA_String_Contents), sizeof(fn->ufn_Port));
+    if (xget(data->removeScheme,MUIA_Selected))
+      fn->ufn_Flags |= UFNF_REMOVEFTP;
+    else
+      fn->ufn_Flags &= ~UFNF_REMOVEFTP;
 
-    strcpy((STRPTR)fn->ufn_ShowCmd,(STRPTR)xget(data->show,MUIA_String_Contents));
-    strcpy((STRPTR)fn->ufn_ToFrontCmd,(STRPTR)xget(data->toFront,MUIA_String_Contents));
-    strcpy((STRPTR)fn->ufn_OpenURLCmd,(STRPTR)xget(data->openURL,MUIA_String_Contents));
-    strcpy((STRPTR)fn->ufn_OpenURLWCmd,(STRPTR)xget(data->openURLNW,MUIA_String_Contents));
+    strlcpy(fn->ufn_ShowCmd, (STRPTR)xget(data->show,MUIA_String_Contents), sizeof(fn->ufn_ShowCmd));
+    strlcpy(fn->ufn_ToFrontCmd, (STRPTR)xget(data->toFront,MUIA_String_Contents), sizeof(fn->ufn_ToFrontCmd));
+    strlcpy(fn->ufn_OpenURLCmd, (STRPTR)xget(data->openURL,MUIA_String_Contents), sizeof(fn->ufn_OpenURLCmd));
+    strlcpy(fn->ufn_OpenURLWCmd, (STRPTR)xget(data->openURLNW,MUIA_String_Contents), sizeof(fn->ufn_OpenURLWCmd));
 
     get(data->FTPList,MUIA_List_Visible,&visible);
     if (visible!=-1)

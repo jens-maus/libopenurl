@@ -7,6 +7,8 @@ $URL$
 
 2009-05-18  Thore Böckelmann <tboeckel@gmx.de>
 
+  * misc: replaced almost all strcpy() calls by strlcpy(). Also removed the
+    custom msnprintf() function as they are longer used.
   * api.c: lots of code clean up to make things more readable.
   * misc: replaced several ULONG results by proper BOOL types.
   * misc: added the usual ENTER()/LEAVE()/RETURN() macro calls to all functions.

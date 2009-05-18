@@ -381,8 +381,8 @@ mRequestFile(struct IClass *cl,Object *obj,UNUSED Msg msg)
     {
         TEXT buf[256];
 
-        strcpy(buf,data->req->fr_Drawer);
-        AddPart(buf,data->req->fr_File,sizeof(buf));
+        strlcpy(buf, data->req->fr_Drawer, sizeof(buf));
+        AddPart(buf, data->req->fr_File, sizeof(buf));
 
         if (*buf) set(data->str,MUIA_String_Contents,buf);
     }

@@ -134,8 +134,8 @@ int main(int argc,char **argv)
             {
                if (NameFromLock(lock,filename,MAXIMUM_URL_LENGTH))
                {
-                  strcpy(real_url,"file://localhost/");
-                  strncat(real_url,filename,MAXIMUM_URL_LENGTH);
+                  strlcpy(real_url,"file://localhost/",MAXIMUM_URL_LENGTH);
+                  strlcat(real_url,filename,MAXIMUM_URL_LENGTH);
                }
                else
                {

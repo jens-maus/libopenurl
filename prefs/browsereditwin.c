@@ -188,14 +188,14 @@ mUse(struct IClass *cl,Object *obj,UNUSED Msg msg)
 
     bn->ubn_Flags &= ~UNF_NEW;
 
-    strcpy((STRPTR)bn->ubn_Name,(STRPTR)xget(data->name,MUIA_String_Contents));
-    strcpy((STRPTR)bn->ubn_Path,(STRPTR)xget(data->path,MUIA_String_Contents));
-    strcpy((STRPTR)bn->ubn_Port,(STRPTR)xget(data->port,MUIA_String_Contents));
+    strlcpy(bn->ubn_Name, (STRPTR)xget(data->name,MUIA_String_Contents), sizeof(bn->ubn_Name));
+    strlcpy(bn->ubn_Path, (STRPTR)xget(data->path,MUIA_String_Contents), sizeof(bn->ubn_Path));
+    strlcpy(bn->ubn_Port, (STRPTR)xget(data->port,MUIA_String_Contents), sizeof(bn->ubn_Port));
 
-    strcpy((STRPTR)bn->ubn_ShowCmd,(STRPTR)xget(data->show,MUIA_String_Contents));
-    strcpy((STRPTR)bn->ubn_ToFrontCmd,(STRPTR)xget(data->toFront,MUIA_String_Contents));
-    strcpy((STRPTR)bn->ubn_OpenURLCmd,(STRPTR)xget(data->openURL,MUIA_String_Contents));
-    strcpy((STRPTR)bn->ubn_OpenURLWCmd,(STRPTR)xget(data->openURLNW,MUIA_String_Contents));
+    strlcpy(bn->ubn_ShowCmd, (STRPTR)xget(data->show,MUIA_String_Contents), sizeof(bn->ubn_ShowCmd));
+    strlcpy(bn->ubn_ToFrontCmd, (STRPTR)xget(data->toFront,MUIA_String_Contents), sizeof(bn->ubn_ToFrontCmd));
+    strlcpy(bn->ubn_OpenURLCmd, (STRPTR)xget(data->openURL,MUIA_String_Contents), sizeof(bn->ubn_OpenURLCmd));
+    strlcpy(bn->ubn_OpenURLWCmd, (STRPTR)xget(data->openURLNW,MUIA_String_Contents), sizeof(bn->ubn_OpenURLWCmd));
 
     get(data->browserList,MUIA_List_Visible,&visible);
     if (visible!=-1)
