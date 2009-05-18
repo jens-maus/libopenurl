@@ -49,6 +49,8 @@ mListSetup(struct IClass *cl,Object *obj,Msg msg)
 
     DoSuperMethod(cl,obj,MUIM_List_Clear);
 
+    // this Forbid() will very likely be broken by any memory allocation during the
+    // MUIM_List_InsertSingle invocation. Better replace this by a more secure approach.
     Forbid();
 
     for (mstate = SysBase->PortList.lh_Head; mstate->ln_Succ; mstate = mstate->ln_Succ)
