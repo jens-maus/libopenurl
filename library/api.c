@@ -370,7 +370,8 @@ LONG LIBFUNC dispatch(REG(a0, struct RexxMsg *msg), REG(a1, STRPTR *resPtr))
 {
     ULONG result = 17;
     TEXT  *fun = msg->rm_Args[0];
-    ULONG  res = FALSE, na = msg->rm_Action & RXARGMASK;
+    ULONG  na = msg->rm_Action & RXARGMASK;
+    BOOL res = FALSE;
 
     ENTER();
 
@@ -380,7 +381,7 @@ LONG LIBFUNC dispatch(REG(a0, struct RexxMsg *msg), REG(a1, STRPTR *resPtr))
         {
             struct TagItem tags[MAXRMARG+1];
             STRPTR url;
-            int            i, j;
+            int i, j;
 
             for (i = na, j = 0, url = NULL; i>0; i--)
             {
@@ -405,7 +406,7 @@ LONG LIBFUNC dispatch(REG(a0, struct RexxMsg *msg), REG(a1, STRPTR *resPtr))
 
             tags[j].ti_Tag = TAG_END;
 
-            res = url && URL_OpenA(url,tags);
+            res = (url != NULL) && URL_OpenA(url, tags));
         }
     }
     else

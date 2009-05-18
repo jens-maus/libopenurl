@@ -43,12 +43,12 @@ void freeVecPooled(APTR pool, APTR mem);
 APTR reallocVecPooled(APTR pool, APTR mem, ULONG oldSize, ULONG newSize);
 APTR allocArbitrateVecPooled(ULONG size);
 void freeArbitrateVecPooled(APTR mem);
-ULONG sendToBrowser(STRPTR URL, struct List *portlist , ULONG show , ULONG toFront , ULONG newWindow , ULONG launch , STRPTR pubScreenName);
-ULONG sendToFTP(STRPTR URL, struct List *portlist , ULONG show , ULONG toFront , ULONG newWindow , ULONG launch , STRPTR pubScreenName);
-ULONG sendToMailer(STRPTR URL, struct List *portlist , ULONG show , ULONG toFront , ULONG launch , STRPTR pubScreenName);
-ULONG copyList(struct List *dst, struct List *src , ULONG size);
+BOOL sendToBrowser(STRPTR URL, struct List *portlist, BOOL show, BOOL toFront, BOOL newWindow, BOOL launch, STRPTR pubScreenName);
+BOOL sendToFTP(STRPTR URL, struct List *portlist, BOOL show, BOOL toFront, BOOL newWindow, BOOL launch, STRPTR pubScreenName);
+BOOL sendToMailer(STRPTR URL, struct List *portlist, BOOL show, BOOL toFront, BOOL launch, STRPTR pubScreenName);
+BOOL copyList(struct List *dst, struct List *src, ULONG size);
 void freeList(struct List *list);
-ULONG isdigits(STRPTR str);
+BOOL isdigits(STRPTR str);
 
 /* api.c */
 LIBPROTO(URL_OpenA, ULONG, REG(a0, STRPTR url), REG(a1, struct TagItem *attrs));
@@ -84,6 +84,6 @@ void SAVEDS handler(void);
 struct URL_Prefs *copyPrefs(struct URL_Prefs *old);
 void initPrefs(struct URL_Prefs *p);
 void setDefaultPrefs(struct URL_Prefs *up);
-ULONG savePrefs(CONST_STRPTR filename, struct URL_Prefs *up);
-ULONG loadPrefs(struct URL_Prefs *p, ULONG mode);
+BOOL savePrefs(CONST_STRPTR filename, struct URL_Prefs *up);
+BOOL loadPrefs(struct URL_Prefs *p, ULONG mode);
 struct URL_Prefs *loadPrefsNotFail(void);

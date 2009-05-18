@@ -7,6 +7,7 @@ $URL$
 
 2009-05-18  Thore Böckelmann <tboeckel@gmx.de>
 
+  * misc: replaced several ULONG results by proper BOOL types.
   * misc: added the usual ENTER()/LEAVE()/RETURN() macro calls to all functions.
 
 2009-05-18  Jens Langner <Jens.Langner@light-speed.de>

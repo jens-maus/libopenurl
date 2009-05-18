@@ -51,11 +51,10 @@ struct placeHolder
 
 /**************************************************************************/
 
-static STRPTR
-expandPlaceHolders(STRPTR template,struct placeHolder *ph,int num)
+static STRPTR expandPlaceHolders(STRPTR template, struct placeHolder *ph, int num)
 {
     STRPTR p, res = NULL;
-    int   i, length = 0;
+    int i, length = 0;
 
     ENTER();
 
@@ -98,18 +97,18 @@ expandPlaceHolders(STRPTR template,struct placeHolder *ph,int num)
 
 /**************************************************************************/
 
-static ULONG
-writeToFile(STRPTR fileName, STRPTR str)
+static BOOL writeToFile(STRPTR fileName, STRPTR str)
 {
-    BPTR  fh;
-    ULONG res = FALSE;
-    LONG  len = strlen(str);
+    BOOL res = FALSE;
+    BPTR fh;
 
     ENTER();
 
-    if((fh = Open(fileName,MODE_NEWFILE)))
+    if((fh = Open(fileName, MODE_NEWFILE)))
     {
-        if (Write(fh,str,len)==len)
+        LONG len = strlen(str);
+
+        if(Write(fh, str, len)==len)
             res = TRUE;
 
         Close(fh);
@@ -121,12 +120,11 @@ writeToFile(STRPTR fileName, STRPTR str)
 
 /**************************************************************************/
 
-static STRPTR
-findRexxPort(struct List *list,STRPTR name)
+static STRPTR findRexxPort(struct List *list,STRPTR name)
 {
     STRPTR portName = NULL;
     struct Node *n;
-    ULONG       len;
+    ULONG len;
 
     ENTER();
 
@@ -134,10 +132,10 @@ findRexxPort(struct List *list,STRPTR name)
 
     len = strlen(name);
 
-    for (n = list->lh_Head; n->ln_Succ; n = n->ln_Succ)
+    for(n = list->lh_Head; n->ln_Succ; n = n->ln_Succ)
     {
-        if (n->ln_Name && !strncmp(n->ln_Name,name,len) &&
-            (n->ln_Name[len]=='\0' || (n->ln_Name[len]=='.' && isdigits(&n->ln_Name[len+1]))))
+        if(n->ln_Name != NULL && strncmp(n->ln_Name, name, len) == 0 &&
+            (n->ln_Name[len] == '\0' || (n->ln_Name[len] == '.' && isdigits(&n->ln_Name[len+1]))))
         {
             portName = n->ln_Name;
             break;
@@ -150,20 +148,19 @@ findRexxPort(struct List *list,STRPTR name)
 
 /**************************************************************************/
 
-static STRPTR
-waitForRexxPort(STRPTR port)
+static STRPTR waitForRexxPort(STRPTR port)
 {
     STRPTR name = NULL;
     int i;
 
     /* (busy) wait for the port to appear */
 
-    for (i = 0; i<FINDPORT_NUM; i++)
+    for(i = 0; i<FINDPORT_NUM; i++)
     {
         STRPTR rxport;
 
         Forbid();
-        rxport = findRexxPort(&((struct ExecBase *)SysBase)->PortList,port);
+        rxport = findRexxPort(&((struct ExecBase *)SysBase)->PortList, port);
         Permit();
 
         if(rxport != NULL)
@@ -172,7 +169,7 @@ waitForRexxPort(STRPTR port)
           break;
         }
 
-        if(SetSignal(0,0) & SIGBREAKF_CTRL_C)
+        if(SetSignal(0, 0) & SIGBREAKF_CTRL_C)
         {
           name = NULL;
           break;
@@ -187,34 +184,45 @@ waitForRexxPort(STRPTR port)
 
 /**************************************************************************/
 
-static ULONG
-sendRexxMsg(STRPTR rxport, STRPTR rxcmd)
+static BOOL sendRexxMsg(STRPTR rxport, STRPTR rxcmd)
 {
     ULONG res = FALSE;
-    int   sig;
+    int sig;
 
     ENTER();
 
-    if ((sig = AllocSignal(-1))>=0)
+    if((sig = AllocSignal(-1))>=0)
     {
         struct Process *proc;
-        struct TagItem attrs[] = { { NP_Entry,        (ULONG)handler },
-                                   #ifdef __MORPHOS__
-                                   { NP_CodeType,     CODETYPE_PPC   },
-                                   { NP_PPCStackSize, 8192           },
-                                   #endif
-                                   { NP_StackSize,    4196           },
-                                   { NP_Name,         (ULONG)"OpenURL - Handler" },
-                                   { NP_CopyVars,     FALSE          },
-                                   { NP_Input,        (ULONG)NULL    },
-                                   { NP_CloseInput,   FALSE          },
-                                   { NP_Output,       (ULONG)NULL    },
-                                   { NP_CloseOutput,  FALSE          },
-                                   { NP_Error,        (ULONG)NULL    },
-                                   { NP_CloseError,   FALSE          },
-                                   { TAG_DONE,        TAG_DONE       } };
 
-        if((proc = CreateNewProcTagList(attrs)))
+        #if defined(__MORPHOS__)
+        proc = CreateNewProcTags(NP_Entry,        handler,
+                                 NP_CodeType,     CODETYPE_PPC,
+                                 NP_PPCStackSize, 8192,
+                                 NP_StackSize,    4196,
+                                 NP_Name,         "OpenURL - Handler",
+                                 NP_CopyVars,     FALSE,
+                                 NP_Input,        NULL,
+                                 NP_CloseInput,   FALSE,
+                                 NP_Output,       NULL,
+                                 NP_CloseOutput,  FALSE,
+                                 NP_Error,        NULL,
+                                 NP_CloseError,   FALSE,
+                                 TAG_DONE);
+        #else
+        proc = CreateNewProcTags(NP_Entry,        handler,
+                                 NP_StackSize,    4196,
+                                 NP_Name,         "OpenURL - Handler",
+                                 NP_CopyVars,     FALSE,
+                                 NP_Input,        NULL,
+                                 NP_CloseInput,   FALSE,
+                                 NP_Output,       NULL,
+                                 NP_CloseOutput,  FALSE,
+                                 NP_Error,        NULL,
+                                 NP_CloseError,   FALSE,
+                                 TAG_DONE);
+        #endif
+        if(proc != NULL)
         {
             struct MsgPort  port;
             struct startMsg smsg;
@@ -223,14 +231,14 @@ sendRexxMsg(STRPTR rxport, STRPTR rxcmd)
             OpenURLBase->rexx_use++;
             Permit();
 
-            INITPORT(&port,sig);
+            INITPORT(&port, sig);
 
             memset(&smsg,0,sizeof(smsg));
             INITMESSAGE(&smsg,&port,sizeof(smsg));
             smsg.port = rxport;
-            smsg.cmd  = rxcmd;
+            smsg.cmd = rxcmd;
 
-            PutMsg(&proc->pr_MsgPort,(struct Message *)&smsg);
+            PutMsg(&proc->pr_MsgPort, (struct Message *)&smsg);
             WaitPort(&port);
             GetMsg(&port);
 
@@ -246,18 +254,11 @@ sendRexxMsg(STRPTR rxport, STRPTR rxcmd)
 
 /****************************************************************************/
 
-ULONG
-sendToBrowser(STRPTR URL,
-              struct List *portlist,
-              ULONG show,
-              ULONG toFront,
-              ULONG newWindow,
-              ULONG launch,
-              STRPTR pubScreenName)
+BOOL sendToBrowser(STRPTR URL, struct List *portlist, BOOL show, BOOL toFront, BOOL newWindow, BOOL launch, STRPTR pubScreenName)
 {
-    ULONG                  res = FALSE;
-    STRPTR                 cmd = NULL;
-    struct placeHolder     ph[PH_COUNT_BROWSER];
+    BOOL res = FALSE;
+    STRPTR cmd = NULL;
+    struct placeHolder ph[PH_COUNT_BROWSER];
     struct URL_BrowserNode *bn;
 
     ENTER();
@@ -393,17 +394,10 @@ done:
 
 /**************************************************************************/
 
-ULONG
-sendToFTP(STRPTR URL,
-          struct List *portlist,
-          ULONG show,
-          ULONG toFront,
-          ULONG newWindow,
-          ULONG launch,
-          STRPTR pubScreenName)
+BOOL sendToFTP(STRPTR URL, struct List *portlist, BOOL show, BOOL toFront, BOOL newWindow, BOOL launch, STRPTR pubScreenName)
 {
-    ULONG              res = FALSE;
-    STRPTR             cmd = NULL;
+    BOOL res = FALSE;
+    STRPTR cmd = NULL;
     struct placeHolder ph[PH_COUNT_FTP];
     struct URL_FTPNode *fn;
 
@@ -552,20 +546,14 @@ done:
 
 static WORD trans[256];
 
-ULONG
-sendToMailer(STRPTR URL,
-             struct List *portlist,
-             ULONG show,
-             ULONG toFront,
-             ULONG launch,
-             STRPTR pubScreenName)
+BOOL sendToMailer(STRPTR URL, struct List *portlist, BOOL show, BOOL toFront, BOOL launch, STRPTR pubScreenName)
 {
     struct placeHolder    ph[PH_COUNT_MAILER];
     struct URL_MailerNode *mn;
     STRPTR                start, end, data, address = NULL, subject = NULL, body = NULL,
                           cmd = NULL, *tag;
     TEXT                  fileName[32];
-    ULONG                 res = FALSE, written = FALSE;
+    BOOL                  res = FALSE, written = FALSE;
     UWORD                 offset, len;
 
     ENTER();
@@ -869,10 +857,9 @@ done:
 
 /**************************************************************************/
 
-ULONG
-copyList(struct List *dst,struct List *src,ULONG size)
+BOOL copyList(struct List *dst, struct List *src, ULONG size)
 {
-    ULONG success = TRUE;
+    BOOL success = TRUE;
     struct Node *n, *new;
 
     ENTER();
@@ -898,14 +885,13 @@ copyList(struct List *dst,struct List *src,ULONG size)
 
 /**************************************************************************/
 
-void
-freeList(struct List *list)
+void freeList(struct List *list)
 {
   struct Node *n;
 
   ENTER();
 
-  while((n = RemHead(list)))
+  while((n = RemHead(list)) != NULL)
     freeArbitrateVecPooled(n);
 
   LEAVE();
@@ -913,35 +899,33 @@ freeList(struct List *list)
 
 /**************************************************************************/
 
-ULONG
-isdigits(STRPTR str)
+BOOL isdigits(STRPTR str)
 {
-	ULONG result = FALSE;
+  BOOL result = FALSE;
 
-	ENTER();
+  ENTER();
 
-    for(;;)
+  for(;;)
+  {
+    if(*str == '\0')
     {
-        if(*str == '\0')
-        {
-            result = TRUE;
-            break;
-        }
-        else if(!isdigit(*str))
-            break;
-
-        str++;
+      result = TRUE;
+      break;
     }
+    else if(!isdigit(*str))
+      break;
 
-    RETURN(result);
-    return result;
+    str++;
+  }
+
+  RETURN(result);
+  return result;
 }
 
 /**************************************************************************/
 
 #if defined(__MORPHOS__)
-void
-msprintf(STRPTR buf, STRPTR fmt,...)
+void msprintf(STRPTR buf, STRPTR fmt,...)
 {
     va_list va;
 
@@ -951,8 +935,7 @@ msprintf(STRPTR buf, STRPTR fmt,...)
 }
 #elif defined(__amigaos4__)
 #include <stdarg.h>
-void VARARGS68K
-msprintf(STRPTR buf, STRPTR fmt,...)
+void VARARGS68K msprintf(STRPTR buf, STRPTR fmt,...)
 {
     va_list va;
     va_startlinear(va,fmt);
@@ -963,8 +946,7 @@ msprintf(STRPTR buf, STRPTR fmt,...)
 #else
 static UWORD fmtfunc[] = { 0x16c0, 0x4e75 };
 
-void
-msprintf(STRPTR buf,STRPTR fmt,...)
+void msprintf(STRPTR buf,STRPTR fmt,...)
 {
     RawDoFmt(fmt,&fmt+1,(APTR)fmtfunc,buf);
 }
@@ -973,8 +955,7 @@ msprintf(STRPTR buf,STRPTR fmt,...)
 /****************************************************************************/
 
 #if !defined(HAVE_ALLOCVECPOOLED)
-APTR
-allocVecPooled(APTR pool,ULONG size)
+APTR allocVecPooled(APTR pool, ULONG size)
 {
   ULONG *mem;
 
@@ -992,8 +973,7 @@ allocVecPooled(APTR pool,ULONG size)
 /****************************************************************************/
 
 #if !defined(HAVE_FREEVECPOOLED)
-void
-freeVecPooled(APTR pool,APTR mem)
+void freeVecPooled(APTR pool,APTR mem)
 {
   ENTER();
 
@@ -1005,8 +985,7 @@ freeVecPooled(APTR pool,APTR mem)
 
 /****************************************************************************/
 
-APTR
-reallocVecPooled(APTR pool, APTR mem, ULONG oldSize, ULONG newSize)
+APTR reallocVecPooled(APTR pool, APTR mem, ULONG oldSize, ULONG newSize)
 {
   ULONG *newMem;
 
@@ -1025,8 +1004,7 @@ reallocVecPooled(APTR pool, APTR mem, ULONG oldSize, ULONG newSize)
 
 /****************************************************************************/
 
-APTR
-allocArbitrateVecPooled(ULONG size)
+APTR allocArbitrateVecPooled(ULONG size)
 {
   ULONG *mem;
 
@@ -1042,8 +1020,7 @@ allocArbitrateVecPooled(ULONG size)
 
 /****************************************************************************/
 
-void
-freeArbitrateVecPooled(APTR mem)
+void freeArbitrateVecPooled(APTR mem)
 {
   ENTER();
 
@@ -1056,8 +1033,7 @@ freeArbitrateVecPooled(APTR mem)
 
 /****************************************************************************/
 
-APTR
-reallocArbitrateVecPooled(APTR mem, ULONG oldSize, ULONG newSize)
+APTR reallocArbitrateVecPooled(APTR mem, ULONG oldSize, ULONG newSize)
 {
   ENTER();
 

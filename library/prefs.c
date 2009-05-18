@@ -84,8 +84,7 @@ struct URL_Prefs *copyPrefs(struct URL_Prefs *old)
 
 /**************************************************************************/
 
-void
-initPrefs(struct URL_Prefs *p)
+void initPrefs(struct URL_Prefs *p)
 {
   ENTER();
 
@@ -102,160 +101,161 @@ initPrefs(struct URL_Prefs *p)
 
 /**************************************************************************/
 
-void
-setDefaultPrefs(struct URL_Prefs *p)
+void setDefaultPrefs(struct URL_Prefs *p)
 {
-    struct URL_BrowserNode *bn;
-    struct URL_MailerNode  *mn;
+  struct URL_BrowserNode *bn;
+  struct URL_MailerNode  *mn;
 
-    ENTER();
+  ENTER();
 
-    initPrefs(p);
+  initPrefs(p);
 
-    p->up_Flags = DEF_FLAGS;
+  p->up_Flags = DEF_FLAGS;
 
-    p->up_DefShow         = DEF_DefShow;
-    p->up_DefBringToFront = DEF_DefBringToFront;
-    p->up_DefNewWindow    = DEF_DefNewWindow;
-    p->up_DefLaunch       = DEF_DefLaunch;
+  p->up_DefShow         = DEF_DefShow;
+  p->up_DefBringToFront = DEF_DefBringToFront;
+  p->up_DefNewWindow    = DEF_DefNewWindow;
+  p->up_DefLaunch       = DEF_DefLaunch;
 
-    /* Browsers: IBrowse */
-    if(!(bn = allocArbitrateVecPooled(sizeof(struct URL_BrowserNode))))
-    {
-      LEAVE();
-      return;
-    }
-
-    bn->ubn_Flags = UNF_DISABLED;
-    strcpy(bn->ubn_Name,"IBrowse");
-    strcpy(bn->ubn_Path,"IBrowse \"%u\"");
-    strcpy(bn->ubn_Port,"IBROWSE");
-    strcpy(bn->ubn_ShowCmd,"SHOW");
-    strcpy(bn->ubn_ToFrontCmd,"SCREENTOFRONT");
-    strcpy(bn->ubn_OpenURLCmd,"GOTOURL \"%u\"");
-    strcpy(bn->ubn_OpenURLWCmd,"NEWWINDOW \"%u\"");
-    AddTail((struct List *)(&p->up_BrowserList), (struct Node *)(bn));
-
-    /* Browsers: AWeb */
-    if(!(bn = allocArbitrateVecPooled(sizeof(struct URL_BrowserNode))))
-    {
-      LEAVE();
-      return;
-    }
-
-    bn->ubn_Flags = UNF_DISABLED;
-    strcpy(bn->ubn_Name,"AWeb");
-    strcpy(bn->ubn_Path,"AWeb \"%u\"");
-    strcpy(bn->ubn_Port,"AWEB");
-    strcpy(bn->ubn_ShowCmd,"ICONIFY SHOW");
-    strcpy(bn->ubn_ToFrontCmd,"SCREENTOFRONT");
-    strcpy(bn->ubn_OpenURLCmd,"OPEN \"%u\"");
-    strcpy(bn->ubn_OpenURLWCmd,"NEW \"%u\"");
-    AddTail((struct List *)(&p->up_BrowserList),(struct Node *)(bn));
-
-    /* Browsers: Voyager */
-    if(!(bn = allocArbitrateVecPooled(sizeof(struct URL_BrowserNode))))
-    {
-      LEAVE();
-      return;
-    }
-
-    strcpy(bn->ubn_Name,"Voyager");
-    if (GetVar("Vapor/Voyager_LASTUSEDDIR",bn->ubn_Path,PATH_LEN,GVF_GLOBAL_ONLY)>0) AddPart(bn->ubn_Path,"V \"%u\"",PATH_LEN);
-    else
-    {
-        strcpy(bn->ubn_Path,"V \"%u\"");
-        bn->ubn_Flags = UNF_DISABLED;
-    }
-    strcpy(bn->ubn_Port,"VOYAGER");
-    strcpy(bn->ubn_ShowCmd,"SHOW");
-    strcpy(bn->ubn_ToFrontCmd,"SCREENTOFRONT");
-    strcpy(bn->ubn_OpenURLCmd,"OPENURL \"%u\"");
-    strcpy(bn->ubn_OpenURLWCmd,"OPENURL \"%u\" NEWWIN");
-    AddTail((struct List *)(&p->up_BrowserList),(struct Node *)(bn));
-
-    /* Mailers: SimpleMail */
-    if(!(mn = allocArbitrateVecPooled(sizeof(struct URL_MailerNode))))
-    {
-      LEAVE();
-      return;
-    }
-
-    mn->umn_Flags = UNF_DISABLED;
-    strcpy(mn->umn_Name,"SimpleMail");
-    strcpy(mn->umn_Path,"SimpleMail MAILTO=\"%a\" SUBJECT=\"%s\"");
-    strcpy(mn->umn_Port,"SIMPLEMAIL");
-    strcpy(mn->umn_ShowCmd,"SHOW");
-    strcpy(mn->umn_ToFrontCmd,"SCREENTOFRONT");
-    strcpy(mn->umn_WriteMailCmd,"MAILWRITE MAILTO=\"%a\" SUBJECT=\"%s\"");
-    AddTail((struct List *)(&p->up_MailerList),(struct Node *)(mn));
-
-    /* Mailers: YAM */
-    if(!(mn = allocArbitrateVecPooled(sizeof(struct URL_MailerNode))))
-    {
-      LEAVE();
-      return;
-    }
-
-    mn->umn_Flags = UNF_DISABLED;
-    strcpy(mn->umn_Name,"YAM 2.3");
-    strcpy(mn->umn_Path,"YAM:YAM MAILTO=\"%a\" SUBJECT=\"%s\" LETTER=\"%f\"");
-    strcpy(mn->umn_Port,"YAM");
-    strcpy(mn->umn_ShowCmd,"SHOW");
-    strcpy(mn->umn_ToFrontCmd,"SCREENTOFRONT");
-    strcpy(mn->umn_WriteMailCmd,"MAILWRITE;WRITETO \"%a\";WRITESUBJECT \"%s\";WRITEEDITOR \"CLEAR\";WRITEEDITOR \"TEXT %b\"");
-    //strcpy(mn->umn_WriteMailCmd,"MAILWRITE;WRITETO '%a';WRITESUBJECT '%s';WRITELETTER '%f'\"");
-    AddTail((struct List *)(&p->up_MailerList),(struct Node *)(mn));
-
-    /* Mailers: MicroDot II */
-    if(!(mn = allocArbitrateVecPooled(sizeof(struct URL_MailerNode))))
-    {
-      LEAVE();
-      return;
-    }
-
-    mn->umn_Flags = UNF_DISABLED;
-    strcpy(mn->umn_Name,"MicroDot II");
-    if (GetVar("Vapor/MD2_LASTUSEDDIR",mn->umn_Path,PATH_LEN,GVF_GLOBAL_ONLY)<0)
-        *mn->umn_Path = 0;
-    AddPart(mn->umn_Path,"MicroDot TO=\"%a\" SUBJECT=\"%s\" CONTENTS=\"%f\"",PATH_LEN);
-    strcpy(mn->umn_Port,"MD");
-    strcpy(mn->umn_ShowCmd,"SHOW");
-    strcpy(mn->umn_WriteMailCmd,"NEWMSGWINDOW TO=\"%a\" SUBJECT=\"%s\" CONTENTS=\"%f\"");
-    AddTail((struct List *)(&p->up_MailerList),(struct Node *)(mn));
-
-    /* Mailers: lola */
-    if(!(mn = allocArbitrateVecPooled(sizeof(struct URL_MailerNode))))
-      return;
-
-    mn->umn_Flags = UNF_DISABLED;
-    strcpy(mn->umn_Name,"lola");
-    strcpy(mn->umn_Path,"lola TO=\"%a\" SUBJECT=\"%s\" TEXT=\"%b\" CX_POPUP CX_POPKEY=\"control alt l\"");
-    strcpy(mn->umn_Port,"LOLA");
-    strcpy(mn->umn_ShowCmd,"SHOW");
-    strcpy(mn->umn_WriteMailCmd,"FILL TO=\"%a\" SUBJECT=\"%s\" TEXT=\"%b\"");
-    AddTail((struct List *)(&p->up_MailerList),(struct Node *)(mn));
-
+  /* Browsers: IBrowse */
+  if(!(bn = allocArbitrateVecPooled(sizeof(struct URL_BrowserNode))))
+  {
     LEAVE();
+    return;
+  }
+
+  bn->ubn_Flags = UNF_DISABLED;
+  strcpy(bn->ubn_Name,"IBrowse");
+  strcpy(bn->ubn_Path,"IBrowse \"%u\"");
+  strcpy(bn->ubn_Port,"IBROWSE");
+  strcpy(bn->ubn_ShowCmd,"SHOW");
+  strcpy(bn->ubn_ToFrontCmd,"SCREENTOFRONT");
+  strcpy(bn->ubn_OpenURLCmd,"GOTOURL \"%u\"");
+  strcpy(bn->ubn_OpenURLWCmd,"NEWWINDOW \"%u\"");
+  AddTail((struct List *)(&p->up_BrowserList), (struct Node *)(bn));
+
+  /* Browsers: AWeb */
+  if(!(bn = allocArbitrateVecPooled(sizeof(struct URL_BrowserNode))))
+  {
+    LEAVE();
+    return;
+  }
+
+  bn->ubn_Flags = UNF_DISABLED;
+  strcpy(bn->ubn_Name,"AWeb");
+  strcpy(bn->ubn_Path,"AWeb \"%u\"");
+  strcpy(bn->ubn_Port,"AWEB");
+  strcpy(bn->ubn_ShowCmd,"ICONIFY SHOW");
+  strcpy(bn->ubn_ToFrontCmd,"SCREENTOFRONT");
+  strcpy(bn->ubn_OpenURLCmd,"OPEN \"%u\"");
+  strcpy(bn->ubn_OpenURLWCmd,"NEW \"%u\"");
+  AddTail((struct List *)(&p->up_BrowserList),(struct Node *)(bn));
+
+  /* Browsers: Voyager */
+  if(!(bn = allocArbitrateVecPooled(sizeof(struct URL_BrowserNode))))
+  {
+    LEAVE();
+    return;
+  }
+
+  strcpy(bn->ubn_Name,"Voyager");
+  if (GetVar("Vapor/Voyager_LASTUSEDDIR",bn->ubn_Path,PATH_LEN,GVF_GLOBAL_ONLY)>0) AddPart(bn->ubn_Path,"V \"%u\"",PATH_LEN);
+  else
+  {
+      strcpy(bn->ubn_Path,"V \"%u\"");
+      bn->ubn_Flags = UNF_DISABLED;
+  }
+  strcpy(bn->ubn_Port,"VOYAGER");
+  strcpy(bn->ubn_ShowCmd,"SHOW");
+  strcpy(bn->ubn_ToFrontCmd,"SCREENTOFRONT");
+  strcpy(bn->ubn_OpenURLCmd,"OPENURL \"%u\"");
+  strcpy(bn->ubn_OpenURLWCmd,"OPENURL \"%u\" NEWWIN");
+  AddTail((struct List *)(&p->up_BrowserList),(struct Node *)(bn));
+
+  /* Mailers: SimpleMail */
+  if(!(mn = allocArbitrateVecPooled(sizeof(struct URL_MailerNode))))
+  {
+    LEAVE();
+    return;
+  }
+
+  mn->umn_Flags = UNF_DISABLED;
+  strcpy(mn->umn_Name,"SimpleMail");
+  strcpy(mn->umn_Path,"SimpleMail MAILTO=\"%a\" SUBJECT=\"%s\"");
+  strcpy(mn->umn_Port,"SIMPLEMAIL");
+  strcpy(mn->umn_ShowCmd,"SHOW");
+  strcpy(mn->umn_ToFrontCmd,"SCREENTOFRONT");
+  strcpy(mn->umn_WriteMailCmd,"MAILWRITE MAILTO=\"%a\" SUBJECT=\"%s\"");
+  AddTail((struct List *)(&p->up_MailerList),(struct Node *)(mn));
+
+  /* Mailers: YAM */
+  if(!(mn = allocArbitrateVecPooled(sizeof(struct URL_MailerNode))))
+  {
+    LEAVE();
+    return;
+  }
+
+  mn->umn_Flags = UNF_DISABLED;
+  strcpy(mn->umn_Name,"YAM 2.3");
+  strcpy(mn->umn_Path,"YAM:YAM MAILTO=\"%a\" SUBJECT=\"%s\" LETTER=\"%f\"");
+  strcpy(mn->umn_Port,"YAM");
+  strcpy(mn->umn_ShowCmd,"SHOW");
+  strcpy(mn->umn_ToFrontCmd,"SCREENTOFRONT");
+  strcpy(mn->umn_WriteMailCmd,"MAILWRITE;WRITETO \"%a\";WRITESUBJECT \"%s\";WRITEEDITOR \"CLEAR\";WRITEEDITOR \"TEXT %b\"");
+  //strcpy(mn->umn_WriteMailCmd,"MAILWRITE;WRITETO '%a';WRITESUBJECT '%s';WRITELETTER '%f'\"");
+  AddTail((struct List *)(&p->up_MailerList),(struct Node *)(mn));
+
+  /* Mailers: MicroDot II */
+  if(!(mn = allocArbitrateVecPooled(sizeof(struct URL_MailerNode))))
+  {
+    LEAVE();
+    return;
+  }
+
+  mn->umn_Flags = UNF_DISABLED;
+  strcpy(mn->umn_Name,"MicroDot II");
+  if (GetVar("Vapor/MD2_LASTUSEDDIR",mn->umn_Path,PATH_LEN,GVF_GLOBAL_ONLY)<0)
+      *mn->umn_Path = 0;
+  AddPart(mn->umn_Path,"MicroDot TO=\"%a\" SUBJECT=\"%s\" CONTENTS=\"%f\"",PATH_LEN);
+  strcpy(mn->umn_Port,"MD");
+  strcpy(mn->umn_ShowCmd,"SHOW");
+  strcpy(mn->umn_WriteMailCmd,"NEWMSGWINDOW TO=\"%a\" SUBJECT=\"%s\" CONTENTS=\"%f\"");
+  AddTail((struct List *)(&p->up_MailerList),(struct Node *)(mn));
+
+  /* Mailers: lola */
+  if(!(mn = allocArbitrateVecPooled(sizeof(struct URL_MailerNode))))
+  {
+    LEAVE();
+    return;
+  }
+
+  mn->umn_Flags = UNF_DISABLED;
+  strcpy(mn->umn_Name,"lola");
+  strcpy(mn->umn_Path,"lola TO=\"%a\" SUBJECT=\"%s\" TEXT=\"%b\" CX_POPUP CX_POPKEY=\"control alt l\"");
+  strcpy(mn->umn_Port,"LOLA");
+  strcpy(mn->umn_ShowCmd,"SHOW");
+  strcpy(mn->umn_WriteMailCmd,"FILL TO=\"%a\" SUBJECT=\"%s\" TEXT=\"%b\"");
+  AddTail((struct List *)(&p->up_MailerList),(struct Node *)(mn));
+
+  LEAVE();
 }
 
 /**************************************************************************/
 
-ULONG
-savePrefs(CONST_STRPTR filename,struct URL_Prefs *p)
+BOOL savePrefs(CONST_STRPTR filename,struct URL_Prefs *p)
 {
     struct IFFHandle *iffh;
-    ULONG            res = FALSE;
+    BOOL res = FALSE;
 
     ENTER();
 
-    if((iffh = AllocIFF()))
+    if((iffh = AllocIFF()) != NULL)
     {
         if((iffh->iff_Stream = Open(filename,MODE_NEWFILE)))
         {
             InitIFFasDOS(iffh);
 
-            if (!OpenIFF(iffh,IFFF_WRITE))
+            if(!OpenIFF(iffh,IFFF_WRITE))
             {
                 struct PrefHeader      prhd;
                 struct URL_BrowserNode *bn;
@@ -329,7 +329,8 @@ savePrefs(CONST_STRPTR filename,struct URL_Prefs *p)
         FreeIFF(iffh);
     }
 
-    if (!res) DeleteFile(filename);
+    if (!res)
+      DeleteFile(filename);
 
     RETURN(res);
     return res;
@@ -337,17 +338,16 @@ savePrefs(CONST_STRPTR filename,struct URL_Prefs *p)
 
 /**************************************************************************/
 
-ULONG
-loadPrefs(struct URL_Prefs *p,ULONG mode)
+BOOL loadPrefs(struct URL_Prefs *p,ULONG mode)
 {
     struct IFFHandle *iffh;
-    ULONG            res = FALSE;
+    BOOL res = FALSE;
 
     ENTER();
 
     initPrefs(p);
 
-    if((iffh = AllocIFF()))
+    if((iffh = AllocIFF()) != NULL)
     {
         CONST_STRPTR fileName;
         BPTR  file;
@@ -486,21 +486,20 @@ loadPrefs(struct URL_Prefs *p,ULONG mode)
 
 /**************************************************************************/
 
-struct URL_Prefs *
-loadPrefsNotFail(void)
+struct URL_Prefs *loadPrefsNotFail(void)
 {
-    struct URL_Prefs *p;
+  struct URL_Prefs *p;
 
-    ENTER();
+  ENTER();
 
-    if((p = allocArbitrateVecPooled(sizeof(struct URL_Prefs))))
-    {
-        if (!loadPrefs(p,LOADPREFS_ENV))
-            setDefaultPrefs(p);
-    }
+  if((p = allocArbitrateVecPooled(sizeof(*p))) != NULL)
+  {
+    if(loadPrefs(p, LOADPREFS_ENV) == FALSE)
+      setDefaultPrefs(p);
+  }
 
-    RETURN(p);
-    return p;
+  RETURN(p);
+  return p;
 }
 
 /**************************************************************************/
