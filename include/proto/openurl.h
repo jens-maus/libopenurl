@@ -2,22 +2,13 @@
 #define PROTO_OPENURL_H
 
 /*
-**  $VER: openurl.h 7.3 (28.12.2007)
-**  Includes Release 7.3
+**	$Id$
+**	Includes Release 50.1
 **
-**  SAS `C' style prototype/pragma header file combo
+**	Prototype/inline/pragma header file combo
 **
-**  openurl.library - universal URL display and browser
-**  launcher library
-**
-**  Written by Troels Walsted Hansen <troels@thule.no>
-**  Placed in the public domain.
-**
-**  Versions 3.1 to 7.1 were developed by:
-**  - Alfonso Ranieri <alforan@tin.it>
-**  - Stefan Kost <ensonic@sonicpulse.de>
-**
-**  Copyright (C) 2006-2007 OpenURL Team
+**	(C) Copyright 2003-2007 Amiga, Inc.
+**	    All Rights Reserved
 */
 
 #ifndef EXEC_TYPES_H
@@ -28,18 +19,9 @@
 
 #ifndef __NOLIBBASE__
  #ifndef __USE_BASETYPE__
-extern struct Library *
-#ifdef __CONSTLIBBASEDECL__
-__CONSTLIBBASEDECL__
-#endif /* __CONSTLIBBASEDECL__ */
-OpenURLBase;
-
-#else
-  extern struct Library *
-  #ifdef __CONSTLIBBASEDECL__
-   __CONSTLIBBASEDECL__
-  #endif /* __CONSTLIBBASEDECL__ */
-  OpenURLBase;
+  extern struct Library * OpenURLBase;
+ #else
+  extern struct Library * OpenURLBase;
  #endif /* __USE_BASETYPE__ */
 #endif /* __NOLIBBASE__ */
 
@@ -62,20 +44,19 @@ OpenURLBase;
  #endif /* CLIB_OPENURL_PROTOS_H */
  #if defined(__GNUC__)
   #ifndef __PPC__
-#include <inline/openurl.h>
+   #include <inline/openurl.h>
   #else
    #include <ppcinline/openurl.h>
   #endif /* __PPC__ */
  #elif defined(__VBCC__)
   #ifndef __PPC__
    #include <inline/openurl_protos.h>
-#endif /* __PPC__ */
-#else
-#include <pragmas/openurl_pragmas.h>
-#endif /* __GNUC__ */
+  #endif /* __PPC__ */
+ #else
+  #include <pragmas/openurl_pragmas.h>
+ #endif /* __GNUC__ */
 #endif /* __amigaos4__ */
 
 /****************************************************************************/
 
 #endif /* PROTO_OPENURL_H */
-

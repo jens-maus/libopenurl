@@ -1,18 +1,28 @@
-/*
-**  openurl.library-universal URL display and browser
-**  launcher library
-**
-**  Written by Troels Walsted Hansen <troels@thule.no>
-**  Placed in the public domain.
-**
-**  Developed by:
-** -Alfonso Ranieri <alforan@tin.it>
-** -Stefan Kost <ensonic@sonicpulse.de>
-*/
+/***************************************************************************
 
+ openurl.library - universal URL display and browser launcher library
+ Copyright (C) 1998-2005 by Troels Walsted Hansen, et al.
+ Copyright (C) 2005-2009 by openurl.library Open Source Team
+
+ This library is free software; it has been placed in the public domain
+ and you can freely redistribute it and/or modify it. Please note, however,
+ that some components may be under the LGPL or GPL license.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+ openurl.library project: http://sourceforge.net/projects/openurllib/
+
+ $Id$
+
+***************************************************************************/
 
 #include "lib.h"
+
 #include <prefs/prefhdr.h>
+
+#include "debug.h"
 
 /**************************************************************************/
 
@@ -39,28 +49,29 @@ copyPrefs(struct URL_Prefs *old)
     ver = old->up_Version;
     if (ver!=PREFS_VERSION) return FALSE;
 
-    if (new = allocPooled(sizeof(struct URL_Prefs)))
+    if((new = allocArbitrateVecPooled(sizeof(struct URL_Prefs))))
     {
         ULONG res;
 
         new->up_Version = PREFS_VERSION;
         new->up_Flags   = old->up_Flags;
 
-        NEWLIST(&new->up_BrowserList);
-        NEWLIST(&new->up_MailerList);
-        NEWLIST(&new->up_FTPList);
+        NewList((struct List *)&new->up_BrowserList);
+        NewList((struct List *)&new->up_MailerList);
+        NewList((struct List *)&new->up_FTPList);
 
-        if (res = copyList((struct List *)&new->up_BrowserList,(struct List *)&old->up_BrowserList,sizeof(struct URL_BrowserNode)))
+        if((res = copyList((struct List *)&new->up_BrowserList,(struct List *)&old->up_BrowserList,sizeof(struct URL_BrowserNode))))
         {
             new->up_DefShow         = old->up_DefShow;
             new->up_DefBringToFront = old->up_DefBringToFront;
             new->up_DefNewWindow    = old->up_DefNewWindow;
             new->up_DefLaunch       = old->up_DefLaunch;
 
-            if (res = copyList((struct List *)&new->up_MailerList,(struct List *)&old->up_MailerList,sizeof(struct URL_MailerNode)))
-                res = copyList((struct List *)&new->up_FTPList,(struct List *)&old->up_FTPList,sizeof(struct URL_FTPNode));
+            if((res = copyList((struct List *)&new->up_MailerList,(struct List *)&old->up_MailerList,sizeof(struct URL_MailerNode))))
+              res = copyList((struct List *)&new->up_FTPList,(struct List *)&old->up_FTPList,sizeof(struct URL_FTPNode));
 
-            if (res) return new;
+            if(res)
+              return new;
         }
 
         URL_FreePrefsA(new,NULL);
@@ -74,13 +85,17 @@ copyPrefs(struct URL_Prefs *old)
 void
 initPrefs(struct URL_Prefs *p)
 {
-    memset(p,0,sizeof(*p));
+  ENTER();
 
-    p->up_Version = PREFS_VERSION;
+  memset(p,0,sizeof(*p));
 
-    QUICKNEWLIST(&p->up_BrowserList);
-    QUICKNEWLIST(&p->up_MailerList);
-    QUICKNEWLIST(&p->up_FTPList);
+  p->up_Version = PREFS_VERSION;
+
+  NewList((struct List *)&p->up_BrowserList);
+  NewList((struct List *)&p->up_MailerList);
+  NewList((struct List *)&p->up_FTPList);
+
+  LEAVE();
 }
 
 /**************************************************************************/
@@ -101,7 +116,9 @@ setDefaultPrefs(struct URL_Prefs *p)
     p->up_DefLaunch       = DEF_DefLaunch;
 
     /* Browsers: IBrowse */
-    if (!(bn = allocPooled(sizeof(struct URL_BrowserNode)))) return;
+    if(!(bn = allocArbitrateVecPooled(sizeof(struct URL_BrowserNode))))
+      return;
+
     bn->ubn_Flags = UNF_DISABLED;
     strcpy(bn->ubn_Name,"IBrowse");
     strcpy(bn->ubn_Path,"IBrowse \"%u\"");
@@ -110,10 +127,12 @@ setDefaultPrefs(struct URL_Prefs *p)
     strcpy(bn->ubn_ToFrontCmd,"SCREENTOFRONT");
     strcpy(bn->ubn_OpenURLCmd,"GOTOURL \"%u\"");
     strcpy(bn->ubn_OpenURLWCmd,"NEWWINDOW \"%u\"");
-    AddTail(LIST(&p->up_BrowserList),NODE(bn));
+    AddTail((struct List *)(&p->up_BrowserList), (struct Node *)(bn));
 
     /* Browsers: AWeb */
-    if (!(bn = allocPooled(sizeof(struct URL_BrowserNode)))) return;
+    if(!(bn = allocArbitrateVecPooled(sizeof(struct URL_BrowserNode))))
+      return;
+
     bn->ubn_Flags = UNF_DISABLED;
     strcpy(bn->ubn_Name,"AWeb");
     strcpy(bn->ubn_Path,"AWeb \"%u\"");
@@ -122,10 +141,12 @@ setDefaultPrefs(struct URL_Prefs *p)
     strcpy(bn->ubn_ToFrontCmd,"SCREENTOFRONT");
     strcpy(bn->ubn_OpenURLCmd,"OPEN \"%u\"");
     strcpy(bn->ubn_OpenURLWCmd,"NEW \"%u\"");
-    AddTail(LIST(&p->up_BrowserList),NODE(bn));
+    AddTail((struct List *)(&p->up_BrowserList),(struct Node *)(bn));
 
     /* Browsers: Voyager */
-    if (!(bn = allocPooled(sizeof(struct URL_BrowserNode)))) return;
+    if(!(bn = allocArbitrateVecPooled(sizeof(struct URL_BrowserNode))))
+      return;
+
     strcpy(bn->ubn_Name,"Voyager");
     if (GetVar("Vapor/Voyager_LASTUSEDDIR",bn->ubn_Path,PATH_LEN,GVF_GLOBAL_ONLY)>0) AddPart(bn->ubn_Path,"V \"%u\"",PATH_LEN);
     else
@@ -138,10 +159,12 @@ setDefaultPrefs(struct URL_Prefs *p)
     strcpy(bn->ubn_ToFrontCmd,"SCREENTOFRONT");
     strcpy(bn->ubn_OpenURLCmd,"OPENURL \"%u\"");
     strcpy(bn->ubn_OpenURLWCmd,"OPENURL \"%u\" NEWWIN");
-    AddTail(LIST(&p->up_BrowserList),NODE(bn));
+    AddTail((struct List *)(&p->up_BrowserList),(struct Node *)(bn));
 
     /* Mailers: SimpleMail */
-    if (!(mn = allocPooled(sizeof(struct URL_MailerNode)))) return;
+    if(!(mn = allocArbitrateVecPooled(sizeof(struct URL_MailerNode))))
+      return;
+
     mn->umn_Flags = UNF_DISABLED;
     strcpy(mn->umn_Name,"SimpleMail");
     strcpy(mn->umn_Path,"SimpleMail MAILTO=\"%a\" SUBJECT=\"%s\"");
@@ -149,10 +172,12 @@ setDefaultPrefs(struct URL_Prefs *p)
     strcpy(mn->umn_ShowCmd,"SHOW");
     strcpy(mn->umn_ToFrontCmd,"SCREENTOFRONT");
     strcpy(mn->umn_WriteMailCmd,"MAILWRITE MAILTO=\"%a\" SUBJECT=\"%s\"");
-    AddTail(LIST(&p->up_MailerList),NODE(mn));
+    AddTail((struct List *)(&p->up_MailerList),(struct Node *)(mn));
 
     /* Mailers: YAM */
-    if (!(mn = allocPooled(sizeof(struct URL_MailerNode)))) return;
+    if(!(mn = allocArbitrateVecPooled(sizeof(struct URL_MailerNode))))
+      return;
+
     mn->umn_Flags = UNF_DISABLED;
     strcpy(mn->umn_Name,"YAM 2.3");
     strcpy(mn->umn_Path,"YAM:YAM MAILTO=\"%a\" SUBJECT=\"%s\" LETTER=\"%f\"");
@@ -161,10 +186,12 @@ setDefaultPrefs(struct URL_Prefs *p)
     strcpy(mn->umn_ToFrontCmd,"SCREENTOFRONT");
     strcpy(mn->umn_WriteMailCmd,"MAILWRITE;WRITETO \"%a\";WRITESUBJECT \"%s\";WRITEEDITOR \"CLEAR\";WRITEEDITOR \"TEXT %b\"");
     //strcpy(mn->umn_WriteMailCmd,"MAILWRITE;WRITETO '%a';WRITESUBJECT '%s';WRITELETTER '%f'\"");
-    AddTail(LIST(&p->up_MailerList),NODE(mn));
+    AddTail((struct List *)(&p->up_MailerList),(struct Node *)(mn));
 
     /* Mailers: MicroDot II */
-    if (!(mn = allocPooled(sizeof(struct URL_MailerNode)))) return;
+    if(!(mn = allocArbitrateVecPooled(sizeof(struct URL_MailerNode))))
+      return;
+
     mn->umn_Flags = UNF_DISABLED;
     strcpy(mn->umn_Name,"MicroDot II");
     if (GetVar("Vapor/MD2_LASTUSEDDIR",mn->umn_Path,PATH_LEN,GVF_GLOBAL_ONLY)<0)
@@ -173,17 +200,19 @@ setDefaultPrefs(struct URL_Prefs *p)
     strcpy(mn->umn_Port,"MD");
     strcpy(mn->umn_ShowCmd,"SHOW");
     strcpy(mn->umn_WriteMailCmd,"NEWMSGWINDOW TO=\"%a\" SUBJECT=\"%s\" CONTENTS=\"%f\"");
-    AddTail(LIST(&p->up_MailerList),NODE(mn));
+    AddTail((struct List *)(&p->up_MailerList),(struct Node *)(mn));
 
     /* Mailers: lola */
-    if (!(mn = allocPooled(sizeof(struct URL_MailerNode)))) return;
+    if(!(mn = allocArbitrateVecPooled(sizeof(struct URL_MailerNode))))
+      return;
+
     mn->umn_Flags = UNF_DISABLED;
     strcpy(mn->umn_Name,"lola");
     strcpy(mn->umn_Path,"lola TO=\"%a\" SUBJECT=\"%s\" TEXT=\"%b\" CX_POPUP CX_POPKEY=\"control alt l\"");
     strcpy(mn->umn_Port,"LOLA");
     strcpy(mn->umn_ShowCmd,"SHOW");
     strcpy(mn->umn_WriteMailCmd,"FILL TO=\"%a\" SUBJECT=\"%s\" TEXT=\"%b\"");
-    AddTail(LIST(&p->up_MailerList),NODE(mn));
+    AddTail((struct List *)(&p->up_MailerList),(struct Node *)(mn));
 }
 
 /**************************************************************************/
@@ -194,9 +223,9 @@ savePrefs(CONST_STRPTR filename,struct URL_Prefs *p)
     struct IFFHandle *iffh;
     ULONG            res = FALSE;
 
-    if (iffh = AllocIFF())
+    if((iffh = AllocIFF()))
     {
-        if (iffh->iff_Stream = Open(filename,MODE_NEWFILE))
+        if((iffh->iff_Stream = Open(filename,MODE_NEWFILE)))
         {
             InitIFFasDOS(iffh);
 
@@ -289,7 +318,7 @@ loadPrefs(struct URL_Prefs *p,ULONG mode)
 
     initPrefs(p);
 
-    if (iffh = AllocIFF())
+    if((iffh = AllocIFF()))
     {
         CONST_STRPTR fileName;
         BPTR  file;
@@ -299,7 +328,7 @@ loadPrefs(struct URL_Prefs *p,ULONG mode)
         if (!(file = Open(fileName,MODE_OLDFILE)))
             if (mode==LOADPREFS_ENV) file = Open(DEF_ENVARC,MODE_OLDFILE);
 
-        if (iffh->iff_Stream = file)
+        if((iffh->iff_Stream = file))
         {
             InitIFFasDOS(iffh);
 
@@ -341,16 +370,16 @@ loadPrefs(struct URL_Prefs *p,ULONG mode)
                     {
                         struct URL_BrowserNode *bn;
 
-                        if (!(bn = allocPooled(sizeof(struct URL_BrowserNode))))
-                            goto fail;
+                        if(!(bn = allocArbitrateVecPooled(sizeof(struct URL_BrowserNode))))
+                          goto fail;
 
                         if (ReadChunkBytes(iffh,&bn->ubn_Flags,cn->cn_Size)!=cn->cn_Size)
                         {
-                            freePooled(bn,sizeof(struct URL_BrowserNode));
-                            goto fail;
+                          freeArbitrateVecPooled(bn);
+                          goto fail;
                         }
 
-                        AddTail(LIST(&p->up_BrowserList),NODE(bn));
+                        AddTail((struct List *)(&p->up_BrowserList),(struct Node *)(bn));
 
                         continue;
                     }
@@ -359,16 +388,16 @@ loadPrefs(struct URL_Prefs *p,ULONG mode)
                     {
                         struct URL_MailerNode *mn;
 
-                        if (!(mn = allocPooled(sizeof(struct URL_MailerNode))))
-                            goto fail;
+                        if(!(mn = allocArbitrateVecPooled(sizeof(struct URL_MailerNode))))
+                          goto fail;
 
                         if (ReadChunkBytes(iffh,&mn->umn_Flags,cn->cn_Size)!=cn->cn_Size)
                         {
-                            freePooled(mn,sizeof(struct URL_MailerNode));
-                            goto fail;
+                          freeArbitrateVecPooled(mn);
+                          goto fail;
                         }
 
-                        AddTail(LIST(&p->up_MailerList),NODE(mn));
+                        AddTail((struct List *)(&p->up_MailerList),(struct Node *)(mn));
 
                         continue;
                     }
@@ -377,16 +406,16 @@ loadPrefs(struct URL_Prefs *p,ULONG mode)
                     {
                         struct URL_FTPNode *fn;
 
-                        if (!(fn = allocPooled(sizeof(struct URL_FTPNode))))
-                            goto fail;
+                        if(!(fn = allocArbitrateVecPooled(sizeof(struct URL_FTPNode))))
+                          goto fail;
 
                         if (ReadChunkBytes(iffh,&fn->ufn_Flags,cn->cn_Size)!=cn->cn_Size)
                         {
-                            freePooled(fn,sizeof(struct URL_FTPNode));
-                            goto fail;
+                          freeArbitrateVecPooled(fn);
+                          goto fail;
                         }
 
-                        AddTail(LIST(&p->up_FTPList),NODE(fn));
+                        AddTail((struct List *)(&p->up_FTPList),(struct Node *)(fn));
 
                         continue;
                     }
@@ -432,7 +461,7 @@ loadPrefsNotFail(void)
 {
     struct URL_Prefs *p;
 
-    if (p = allocPooled(sizeof(struct URL_Prefs)))
+    if((p = allocArbitrateVecPooled(sizeof(struct URL_Prefs))))
     {
         if (!loadPrefs(p,LOADPREFS_ENV))
             setDefaultPrefs(p);

@@ -5,6 +5,15 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2009-05-18  Jens Langner <Jens.Langner@light-speed.de>
+
+  * library: completely reworked the build system of openurl.library. Now the SDI
+    headers are used and a generic libinit.c. All this has been transferred
+    from the codesets.library project and should make future improvements more
+    easy. Please note, however, that the library needs a lot of testing now
+    until we consider a new official release. So please go and see if it works
+    with all kind of platforms and applications you have.
+
 2009-05-11  Thore Böckelmann <tboeckel@gmx.de>
 
   * misc: lots of type changes to make the source compilable for OS4.

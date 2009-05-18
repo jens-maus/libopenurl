@@ -1,14 +1,22 @@
-/*
-**  OpenURL-Handler - Asynch ARexx handler for openurl.library
-**
-**  Written by Troels Walsted Hansen <troels@thule.no>
-**  Placed in the public domain.
-**
-**  Developed by:
-**  - Alfonso Ranieri <alforan@tin.it>
-**  - Stefan Kost <ensonic@sonicpulse.de>
-*/
+/***************************************************************************
 
+ openurl.library - universal URL display and browser launcher library
+ Copyright (C) 1998-2005 by Troels Walsted Hansen, et al.
+ Copyright (C) 2005-2009 by openurl.library Open Source Team
+
+ This library is free software; it has been placed in the public domain
+ and you can freely redistribute it and/or modify it. Please note, however,
+ that some components may be under the LGPL or GPL license.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+ openurl.library project: http://sourceforge.net/projects/openurllib/
+
+ $Id$
+
+***************************************************************************/
 
 #include "lib.h"
 
@@ -19,17 +27,17 @@ sendRexxMsg(struct MsgPort *reply,STRPTR rxport,STRPTR rxcmd)
 {
     struct RexxMsg *rxmsg;
 
-    if (rxmsg = CreateRexxMsg(reply,NULL,NULL))
+    if((rxmsg = CreateRexxMsg(reply,NULL,NULL)))
     {
         rxmsg->rm_Action = RXCOMM|RXFF_STRING|RXFF_NOIO;
 
-        if (rxmsg->rm_Args[0] = CreateArgstring(rxcmd,strlen(rxcmd)))
+        if((rxmsg->rm_Args[0] = CreateArgstring(rxcmd,strlen(rxcmd))))
         {
             struct MsgPort *port;
 
             Forbid();
 
-            if (port = FindPort(rxport))
+            if((port = FindPort(rxport)))
             {
                 PutMsg(port,(struct Message *)rxmsg);
                 Permit();
@@ -89,7 +97,7 @@ void SAVEDS handler(void)
     if (sig>=0) FreeSignal(sig);
 
     Forbid();
-    lib_use--;
+    OpenURLBase->rexx_use--;
 }
 
 /**************************************************************************/

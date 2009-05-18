@@ -1,20 +1,25 @@
-/*
-**  openurl.library - universal URL display and browser
-**  launcher library
-**
-**  Written by Troels Walsted Hansen <troels@thule.no>
-**  Placed in the public domain.
-**
-**  Developed by:
-**  - Alfonso Ranieri <alforan@tin.it>
-**  - Stefan Kost <ensonic@sonicpulse.de>
-**
-**  Ported to OS4 by Alexandre Balaban <alexandre@balaban.name>
-*/
+/***************************************************************************
 
+ openurl.library - universal URL display and browser launcher library
+ Copyright (C) 1998-2005 by Troels Walsted Hansen, et al.
+ Copyright (C) 2005-2009 by openurl.library Open Source Team
 
-#define __NOLIBBASE__
-#define __USE_SYSBASE
+ This library is free software; it has been placed in the public domain
+ and you can freely redistribute it and/or modify it. Please note, however,
+ that some components may be under the LGPL or GPL license.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+ openurl.library project: http://sourceforge.net/projects/openurllib/
+
+ $Id$
+
+***************************************************************************/
+
+#ifndef _LIB_H
+#define _LIB_H
 
 #include <proto/exec.h>
 #include <proto/dos.h>
@@ -24,7 +29,10 @@
 #include <proto/rexxsyslib.h>
 
 #include <clib/alib_protos.h>
+
+#if !defined(__AROS__)
 #include <clib/debug_protos.h>
+#endif
 
 #include <libraries/openurl.h>
 
@@ -48,7 +56,7 @@
 #define DEF_DefLaunch       TRUE
 
 // ABA, TO BE ABLE TO COMPILE, DON'T KNOW WHY, SEEMS SOMETHING MESSED IN OPENURL.H
-#define URL_GetPrefs_Default URL_GetPrefs_Mode
+//#define URL_GetPrefs_Default URL_GetPrefs_Mode
 
 /**************************************************************************/
 
@@ -77,3 +85,4 @@ enum
 
 /**************************************************************************/
 
+#endif /* _LIB_H */

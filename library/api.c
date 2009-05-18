@@ -1,50 +1,64 @@
-/*
-**  openurl.library - universal URL display and browser
-**  launcher library
-**
-**  Written by Troels Walsted Hansen <troels@thule.no>
-**  Placed in the public domain.
-**
-**  Developed by:
-**  - Alfonso Ranieri <alforan@tin.it>
-**  - Stefan Kost <ensonic@sonicpulse.de>
-*/
+/***************************************************************************
 
+ openurl.library - universal URL display and browser launcher library
+ Copyright (C) 1998-2005 by Troels Walsted Hansen, et al.
+ Copyright (C) 2005-2009 by openurl.library Open Source Team
+
+ This library is free software; it has been placed in the public domain
+ and you can freely redistribute it and/or modify it. Please note, however,
+ that some components may be under the LGPL or GPL license.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+ openurl.library project: http://sourceforge.net/projects/openurllib/
+
+ $Id$
+
+***************************************************************************/
 
 #include "lib.h"
+
 #include <dos/dostags.h>
-#include "openurl.library_rev.h"
 #include <exec/execbase.h>
+
+#include "version.h"
+#include "debug.h"
+
+#include <stdio.h>
 
 /**************************************************************************/
 
-ULONG LIBCALL
-URL_OpenA(REG(a0,STRPTR URL),REG(a1,struct TagItem *attrs))
+ULONG LIBFUNC
+URL_OpenA(REG(a0,STRPTR URL), REG(a1,struct TagItem *attrs))
 {
     struct List portList;
     TEXT       buf[256];
     STRPTR     pubScreenName = NULL, fullURL = NULL;
     ULONG       res, show, toFront, newWindow, launch, httpPrepend = FALSE;
 
-    NEWLIST(&portList);
-    ObtainSemaphore(&lib_prefsSem);
+    NewList(&portList);
 
+    ObtainSemaphore(&OpenURLBase->prefsSem);
 
     /* parse arguments */
     pubScreenName = (STRPTR)GetTagData(URL_PubScreenName,(ULONG)"Workbench",attrs);
-    show          = GetTagData(URL_Show,lib_prefs->up_DefShow,attrs);
-    toFront       = GetTagData(URL_BringToFront,lib_prefs->up_DefBringToFront,attrs);
-    newWindow     = GetTagData(URL_NewWindow,lib_prefs->up_DefNewWindow,attrs);
-    launch        = GetTagData(URL_Launch,lib_prefs->up_DefLaunch,attrs);
+    show          = GetTagData(URL_Show, OpenURLBase->prefs->up_DefShow,attrs);
+    toFront       = GetTagData(URL_BringToFront, OpenURLBase->prefs->up_DefBringToFront,attrs);
+    newWindow     = GetTagData(URL_NewWindow, OpenURLBase->prefs->up_DefNewWindow,attrs);
+    launch        = GetTagData(URL_Launch, OpenURLBase->prefs->up_DefLaunch,attrs);
 
     /* make a copy of the global list of named ports */
     Forbid();
-    res = copyList(&portList,&SysBase->PortList,sizeof(struct Node));
+    res = copyList(&portList, &((struct ExecBase *)SysBase)->PortList,sizeof(struct Node));
     Permit();
-    if (!res) goto done;
+
+    if(!res)
+      goto done;
 
     /* prepend "http://" if URL has no method */
-    if (lib_prefs->up_Flags & UPF_PREPENDHTTP)
+    if(OpenURLBase->prefs->up_Flags & UPF_PREPENDHTTP)
     {
         TEXT *colon;
 
@@ -72,34 +86,36 @@ URL_OpenA(REG(a0,STRPTR URL),REG(a1,struct TagItem *attrs))
 
         if (len>sizeof(buf))
         {
-            if (!(fullURL = allocVecPooled(strlen((STRPTR)URL)+8))) goto done;
+            if(!(fullURL = allocArbitrateVecPooled(strlen((STRPTR)URL)+8)))
+              goto done;
         }
         else fullURL = buf;
 
-        msprintf(fullURL,"http://%s",(ULONG)URL);
+        snprintf(fullURL, len, "http://%s", URL);
     }
     else
     	fullURL = URL;
 
     /* Be case insensitive - Piru */
-    if ((lib_prefs->up_Flags & UPF_DOMAILTO) && !Strnicmp((STRPTR)URL,"mailto:",7))
+    if((OpenURLBase->prefs->up_Flags & UPF_DOMAILTO) && !Strnicmp((STRPTR)URL,"mailto:",7))
         res = sendToMailer(fullURL,&portList,show,toFront,launch,pubScreenName);
     else
-        if ((lib_prefs->up_Flags & UPF_DOFTP) && !Strnicmp((STRPTR)URL,"ftp://",6))
+        if ((OpenURLBase->prefs->up_Flags & UPF_DOFTP) && !Strnicmp((STRPTR)URL,"ftp://",6))
             res = sendToFTP(fullURL,&portList,show,toFront,newWindow,launch,pubScreenName);
         else res = sendToBrowser(fullURL,&portList,show,toFront,newWindow,launch,pubScreenName);
 
 done:
-    ReleaseSemaphore(&lib_prefsSem);
-    freeList(&portList,sizeof(struct Node));
-    if (httpPrepend && fullURL && fullURL!=buf) freeVecPooled(fullURL);
+    ReleaseSemaphore(&OpenURLBase->prefsSem);
+    freeList(&portList);
+    if(httpPrepend && fullURL && fullURL!=buf)
+      freeArbitrateVecPooled(fullURL);
 
     return res;
 }
 
 /**************************************************************************/
 
-struct URL_Prefs * LIBCALL
+struct URL_Prefs * LIBFUNC
 URL_GetPrefsA(REG(a0,struct TagItem *attrs))
 {
     struct URL_Prefs *p;
@@ -109,7 +125,9 @@ URL_GetPrefsA(REG(a0,struct TagItem *attrs))
 
     if (mode==URL_GetPrefs_Mode_Default)
     {
-        if (!(p = allocPooled(sizeof(struct URL_Prefs)))) return NULL;
+        if(!(p = allocArbitrateVecPooled(sizeof(struct URL_Prefs))))
+          return NULL;
+
         setDefaultPrefs(p);
 
         return p;
@@ -119,7 +137,7 @@ URL_GetPrefsA(REG(a0,struct TagItem *attrs))
     {
         mode = (mode==URL_GetPrefs_Mode_Env) ? LOADPREFS_ENV : LOADPREFS_ENVARC;
 
-        if (!(p = allocPooled(sizeof(struct URL_Prefs))))
+        if (!(p = allocArbitrateVecPooled(sizeof(struct URL_Prefs))))
             return NULL;
 
         if (loadPrefs(p,mode))
@@ -141,46 +159,46 @@ URL_GetPrefsA(REG(a0,struct TagItem *attrs))
         return NULL;
     }
 
-    ObtainSemaphoreShared(&lib_prefsSem);
-    p = copyPrefs(lib_prefs);
-    ReleaseSemaphore(&lib_prefsSem);
+    ObtainSemaphoreShared(&OpenURLBase->prefsSem);
+    p = copyPrefs(OpenURLBase->prefs);
+    ReleaseSemaphore(&OpenURLBase->prefsSem);
 
     return p;
 }
 
 /**************************************************************************/
 
-struct URL_Prefs * LIBCALL
+struct URL_Prefs * LIBFUNC
 URL_OldGetPrefs(void)
 {
-    return URL_GetPrefsA(NULL);
+  return URL_GetPrefsA(NULL);
 }
 
 /**************************************************************************/
 
-void LIBCALL
+void LIBFUNC
 URL_FreePrefsA(REG(a0,struct URL_Prefs *p),UNUSED REG(a1,struct TagItem *attrs))
 {
     if (p)
     {
-        freeList((struct List *)&p->up_BrowserList,sizeof(struct URL_BrowserNode));
-        freeList((struct List *)&p->up_MailerList,sizeof(struct URL_MailerNode));
-        freeList((struct List *)&p->up_FTPList,sizeof(struct URL_FTPNode));
-        freePooled(p,sizeof(*p));
+        freeList((struct List *)&p->up_BrowserList);
+        freeList((struct List *)&p->up_MailerList);
+        freeList((struct List *)&p->up_FTPList);
+        freeArbitrateVecPooled(p);
     }
 }
 
 /**************************************************************************/
 
-void LIBCALL
+void LIBFUNC
 URL_OldFreePrefs(REG(a0,struct URL_Prefs *p))
 {
-    URL_FreePrefsA(p,NULL);
+  URL_FreePrefsA(p,NULL);
 }
 
 /**************************************************************************/
 
-ULONG LIBCALL
+ULONG LIBFUNC
 URL_SetPrefsA(REG(a0,struct URL_Prefs *p),REG(a1,struct TagItem *attrs))
 {
     ULONG res = FALSE;
@@ -189,26 +207,26 @@ URL_SetPrefsA(REG(a0,struct URL_Prefs *p),REG(a1,struct TagItem *attrs))
     {
         struct URL_Prefs *newp;
 
-        ObtainSemaphore(&lib_prefsSem);
+        ObtainSemaphore(&OpenURLBase->prefsSem);
 
-        if (newp = copyPrefs(p))
+        if((newp = copyPrefs(p)))
         {
             newp->up_Version = PREFS_VERSION;
             newp->up_Flags &= ~UPF_ISDEFAULTS;
 
-            URL_FreePrefsA(lib_prefs,NULL);
-            lib_prefs = newp;
+            URL_FreePrefsA(OpenURLBase->prefs,NULL);
+            OpenURLBase->prefs = newp;
 
-            if (res = savePrefs((STRPTR)DEF_ENV,lib_prefs))
+            if((res = savePrefs((STRPTR)DEF_ENV, OpenURLBase->prefs)))
             {
                 if (GetTagData(URL_SetPrefs_Save,FALSE,attrs))
                 {
-                    res = savePrefs((STRPTR)DEF_ENVARC,lib_prefs);
+                    res = savePrefs((STRPTR)DEF_ENVARC, OpenURLBase->prefs);
                 }
             }
         }
 
-        ReleaseSemaphore(&lib_prefsSem);
+        ReleaseSemaphore(&OpenURLBase->prefsSem);
     }
 
     return res;
@@ -216,10 +234,11 @@ URL_SetPrefsA(REG(a0,struct URL_Prefs *p),REG(a1,struct TagItem *attrs))
 
 /**************************************************************************/
 
-ULONG LIBCALL
+ULONG LIBFUNC
 URL_OldSetPrefs(REG(a0,struct URL_Prefs *p),REG(d0,ULONG save))
 {
-    struct TagItem stags[] = {URL_SetPrefs_Save,0,TAG_DONE,TAG_DONE};
+    struct TagItem stags[] = { { URL_SetPrefs_Save, 0         },
+                               { TAG_DONE,          TAG_DONE  } };
 
     stags[0].ti_Data = save;
 
@@ -228,28 +247,29 @@ URL_OldSetPrefs(REG(a0,struct URL_Prefs *p),REG(d0,ULONG save))
 
 /**************************************************************************/
 
-struct URL_Prefs * LIBCALL
+struct URL_Prefs * LIBFUNC
 URL_OldGetDefaultPrefs(void)
 {
-    struct TagItem gtags[] = {URL_GetPrefs_Mode,URL_GetPrefs_Mode_Default,TAG_DONE,TAG_DONE};
+    struct TagItem gtags[] = { { URL_GetPrefs_Mode, URL_GetPrefs_Mode_Default },
+                               { TAG_DONE,          TAG_DONE                  } };
 
     return URL_GetPrefsA(gtags);
 }
 
 /**************************************************************************/
 
-ULONG LIBCALL
+ULONG LIBFUNC
 URL_LaunchPrefsAppA(REG(a0,UNUSED struct TagItem *attrs))
 {
     BPTR in;
 
-    if (in  = Open("NIL:",MODE_OLDFILE))
+    if((in  = Open("NIL:",MODE_OLDFILE)))
     {
         BPTR out;
 
-        if (out = Open("NIL:",MODE_OLDFILE))
+        if((out = Open("NIL:",MODE_OLDFILE)))
         {
-            TEXT           name[256]={'\0'};
+            TEXT name[256] = "";
 
             LONG len = GetVar("AppPaths/OpenURL",name+1,sizeof(name)-1,GVF_GLOBAL_ONLY);
             if (len<=0)
@@ -267,18 +287,21 @@ URL_LaunchPrefsAppA(REG(a0,UNUSED struct TagItem *attrs))
                 name[len+11]='\0';
             }
 
+            #if defined(__amigaos4__)
+            #define NP_STACKSIZE 48000
+            #else
+            #define NP_STACKSIZE 16000
+            #endif
+            #if !defined(__MORPHOS__)
+            #define NP_PPCStackSize TAG_IGNORE
+            #endif
+
             SystemTags( name,   SYS_Input,       (ULONG)in,
                                 SYS_Output,      (ULONG)out,
-                                #ifdef __amigaos4__
-                                SYS_Error,       0,
-                                NP_StackSize,    48000,
-                                #else
-                                NP_StackSize,    16000,
-                                #endif /* __amigaos4__ */
+                                SYS_Error,       NULL,
+                                NP_StackSize,    NP_STACKSIZE,
                                 SYS_Asynch,      TRUE,
-                                #ifdef __MORPHOS__
                                 NP_PPCStackSize, 32000,
-                                #endif /* __MORPHOS__ */
                                 TAG_END);
 
             return TRUE;
@@ -292,7 +315,7 @@ URL_LaunchPrefsAppA(REG(a0,UNUSED struct TagItem *attrs))
 
 /**************************************************************************/
 
-ULONG LIBCALL
+ULONG LIBFUNC
 URL_OldLaunchPrefsApp(void)
 {
     return URL_LaunchPrefsAppA(NULL);
@@ -300,14 +323,14 @@ URL_OldLaunchPrefsApp(void)
 
 /**************************************************************************/
 
-ULONG LIBCALL
+ULONG LIBFUNC
 URL_GetAttr(REG(d0,ULONG attr),REG(a0,ULONG *storage))
 {
     switch (attr)
     {
-        case URL_GetAttr_Version:          *storage = VERSION;        return TRUE;
-        case URL_GetAttr_Revision:         *storage = REVISION;       return TRUE;
-        case URL_GetAttr_VerString:        *storage = (ULONG)PRGNAME; return TRUE;
+        case URL_GetAttr_Version:          *storage = LIB_VERSION;    return TRUE;
+        case URL_GetAttr_Revision:         *storage = LIB_REVISION;   return TRUE;
+        case URL_GetAttr_VerString:        *storage = (ULONG)"$VER: openurl.library " LIB_REV_STRING " [" SYSTEMSHORT "/" CPU "] (" LIB_DATE ") " LIB_COPYRIGHT;; return TRUE;
 
         case URL_GetAttr_PrefsVer:         *storage = PREFS_VERSION;  return TRUE;
 
@@ -321,15 +344,9 @@ URL_GetAttr(REG(d0,ULONG attr),REG(a0,ULONG *storage))
 
 /**************************************************************************/
 
-#ifdef __MORPHOS__
-LONG dispatch(void)
+LONG LIBFUNC
+dispatch(REG(a0, struct RexxMsg *msg), REG(a1, STRPTR *resPtr))
 {
-    struct RexxMsg *msg = (struct RexxMsg *)REG_A0;
-#else
-LONG ASM SAVEDS dispatch(REG(a0,struct RexxMsg *msg),REG(a1,STRPTR *resPtr))
-{
-#endif
-
     TEXT  *fun = msg->rm_Args[0];
     ULONG  res, na = msg->rm_Action & RXARGMASK;
 
@@ -379,11 +396,7 @@ LONG ASM SAVEDS dispatch(REG(a0,struct RexxMsg *msg),REG(a1,STRPTR *resPtr))
         else return 1;
     }
 
-#ifdef __MORPHOS__
-    return (REG_A0 = (ULONG)CreateArgstring(res ? "1" : "0",1)) ? 0 : 3;
-#else
     return (*resPtr = (STRPTR)CreateArgstring(res ? "1" : "0",1)) ? 0 : 3;
-#endif
 }
 
 /**************************************************************************/
