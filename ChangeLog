@@ -7,6 +7,8 @@ $URL$
 
 2009-05-18  Thore Böckelmann <tboeckel@gmx.de>
 
+  * handler.c, utils.c: replaced the Forbid()/Permit() pair to protect access
+    to the rexx_use var by usage of the library base semaphore.
   * misc: replaced almost all strcpy() calls by strlcpy(). Also removed the
     custom msnprintf() function as they are longer used.
   * api.c: lots of code clean up to make things more readable.

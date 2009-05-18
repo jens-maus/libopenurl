@@ -227,9 +227,9 @@ static BOOL sendRexxMsg(STRPTR rxport, STRPTR rxcmd)
             struct MsgPort  port;
             struct startMsg smsg;
 
-            Forbid();
+            ObtainSemaphore(&OpenURLBase->libSem);
             OpenURLBase->rexx_use++;
-            Permit();
+            ReleaseSemaphore(&OpenURLBase->libSem);
 
             INITPORT(&port, sig);
 

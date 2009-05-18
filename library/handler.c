@@ -105,8 +105,14 @@ void SAVEDS handler(void)
   if(sig != -1)
     FreeSignal(sig);
 
-  Forbid();
+  ObtainSemaphore(&OpenURLBase->libSem);
   OpenURLBase->rexx_use--;
+  ReleaseSemaphore(&OpenURLBase->libSem);
+
+  #if !defined(__amigaos4__)
+  // all systems except OS4 should leave this function in forbidden state
+  Forbid();
+  #endif
 
   LEAVE();
 }
