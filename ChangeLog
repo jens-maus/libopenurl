@@ -5,6 +5,10 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2009-05-18  Thore Böckelmann <tboeckel@gmx.de>
+
+  * misc: added the usual ENTER()/LEAVE()/RETURN() macro calls to all functions.
+
 2009-05-18  Jens Langner <Jens.Langner@light-speed.de>
 
   * library: completely reworked the build system of openurl.library. Now the SDI

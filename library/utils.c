@@ -54,8 +54,10 @@ struct placeHolder
 static STRPTR
 expandPlaceHolders(STRPTR template,struct placeHolder *ph,int num)
 {
-    STRPTR p, res;
+    STRPTR p, res = NULL;
     int   i, length = 0;
+
+    ENTER();
 
     for (p = template; *p; p++)
     {
@@ -68,28 +70,29 @@ expandPlaceHolders(STRPTR template,struct placeHolder *ph,int num)
         length++;
     }
 
-    if (!(res = allocArbitrateVecPooled(length+1)))
-        return NULL;
-
-    for (p = res; *template; template++)
+    if ((res = allocArbitrateVecPooled(length+1)) != NULL)
     {
-        for (i = 0; i<num; i++)
-            if ((*template=='%') && (*(template+1)== ph[i].ph_Char))
-                break;
-
-        if (i<num)
+        for (p = res; *template; template++)
         {
-            strcpy(p,ph[i].ph_String);
-            p += strlen(ph[i].ph_String);
-            template++;
-            continue;
+            for (i = 0; i<num; i++)
+                if ((*template=='%') && (*(template+1)== ph[i].ph_Char))
+                    break;
+
+            if (i<num)
+            {
+                strcpy(p,ph[i].ph_String);
+                p += strlen(ph[i].ph_String);
+                template++;
+                continue;
+            }
+
+            *p++ = *template;
         }
 
-        *p++ = *template;
+        *p = '\0';
     }
 
-    *p = '\0';
-
+    RETURN(res);
     return res;
 }
 
@@ -102,6 +105,8 @@ writeToFile(STRPTR fileName, STRPTR str)
     ULONG res = FALSE;
     LONG  len = strlen(str);
 
+    ENTER();
+
     if((fh = Open(fileName,MODE_NEWFILE)))
     {
         if (Write(fh,str,len)==len)
@@ -110,6 +115,7 @@ writeToFile(STRPTR fileName, STRPTR str)
         Close(fh);
     }
 
+    RETURN(res);
     return res;
 }
 
@@ -118,8 +124,11 @@ writeToFile(STRPTR fileName, STRPTR str)
 static STRPTR
 findRexxPort(struct List *list,STRPTR name)
 {
+    STRPTR portName = NULL;
     struct Node *n;
     ULONG       len;
+
+    ENTER();
 
     /* find a rexx port, allowing a .<number> extension */
 
@@ -130,11 +139,13 @@ findRexxPort(struct List *list,STRPTR name)
         if (n->ln_Name && !strncmp(n->ln_Name,name,len) &&
             (n->ln_Name[len]=='\0' || (n->ln_Name[len]=='.' && isdigits(&n->ln_Name[len+1]))))
         {
-            return n->ln_Name;
+            portName = n->ln_Name;
+            break;
         }
     }
 
-    return NULL;
+    RETURN(portName);
+    return portName;
 }
 
 /**************************************************************************/
@@ -142,6 +153,7 @@ findRexxPort(struct List *list,STRPTR name)
 static STRPTR
 waitForRexxPort(STRPTR port)
 {
+    STRPTR name = NULL;
     int i;
 
     /* (busy) wait for the port to appear */
@@ -154,15 +166,23 @@ waitForRexxPort(STRPTR port)
         rxport = findRexxPort(&((struct ExecBase *)SysBase)->PortList,port);
         Permit();
 
-        if (rxport) return(rxport);
+        if(rxport != NULL)
+        {
+          name = rxport;
+          break;
+        }
 
-        if (SetSignal(0,0) & SIGBREAKF_CTRL_C)
-            return NULL;
+        if(SetSignal(0,0) & SIGBREAKF_CTRL_C)
+        {
+          name = NULL;
+          break;
+        }
 
         Delay(FINDPORT_DTIME);
     }
 
-    return NULL;
+    RETURN(name);
+    return name;
 }
 
 /**************************************************************************/
@@ -172,6 +192,8 @@ sendRexxMsg(STRPTR rxport, STRPTR rxcmd)
 {
     ULONG res = FALSE;
     int   sig;
+
+    ENTER();
 
     if ((sig = AllocSignal(-1))>=0)
     {
@@ -218,6 +240,7 @@ sendRexxMsg(STRPTR rxport, STRPTR rxcmd)
         FreeSignal(sig);
     }
 
+    RETURN(res);
     return res;
 }
 
@@ -236,6 +259,8 @@ sendToBrowser(STRPTR URL,
     STRPTR                 cmd = NULL;
     struct placeHolder     ph[PH_COUNT_BROWSER];
     struct URL_BrowserNode *bn;
+
+    ENTER();
 
     /* set up the placeholder mapping */
 
@@ -362,6 +387,7 @@ done:
     if(cmd)
       freeArbitrateVecPooled(cmd);
 
+    RETURN(res);
     return res;
 }
 
@@ -380,6 +406,8 @@ sendToFTP(STRPTR URL,
     STRPTR             cmd = NULL;
     struct placeHolder ph[PH_COUNT_FTP];
     struct URL_FTPNode *fn;
+
+    ENTER();
 
     /* set up the placeholder mapping */
 
@@ -516,6 +544,7 @@ done:
     if(cmd)
       freeArbitrateVecPooled(cmd);
 
+    RETURN(res);
     return res;
 }
 
@@ -538,6 +567,8 @@ sendToMailer(STRPTR URL,
     TEXT                  fileName[32];
     ULONG                 res = FALSE, written = FALSE;
     UWORD                 offset, len;
+
+    ENTER();
 
     /* setup trans */
     ObtainSemaphore(&OpenURLBase->libSem);
@@ -832,6 +863,7 @@ done:
     if (subject) freeArbitrateVecPooled(subject);
     if (address) freeArbitrateVecPooled(address);
 
+    RETURN(res);
     return res;
 }
 
@@ -840,23 +872,28 @@ done:
 ULONG
 copyList(struct List *dst,struct List *src,ULONG size)
 {
+    ULONG success = TRUE;
     struct Node *n, *new;
+
+    ENTER();
 
     /* copy src list into dst, and return success */
 
-    for (n = src->lh_Head; n->ln_Succ; n = n->ln_Succ)
+    for(n = src->lh_Head; n->ln_Succ; n = n->ln_Succ)
     {
-        if (!(new = allocArbitrateVecPooled(size)))
+        if((new = allocArbitrateVecPooled(size)) == NULL)
         {
             freeList(dst);
-            return FALSE;
+            success = FALSE;
+            break;
         }
 
         CopyMem(n,new,size);
         AddTail(dst,new);
     }
 
-    return TRUE;
+    RETURN(success);
+    return success;
 }
 
 /**************************************************************************/
@@ -866,8 +903,12 @@ freeList(struct List *list)
 {
   struct Node *n;
 
+  ENTER();
+
   while((n = RemHead(list)))
     freeArbitrateVecPooled(n);
+
+  LEAVE();
 }
 
 /**************************************************************************/
@@ -875,13 +916,25 @@ freeList(struct List *list)
 ULONG
 isdigits(STRPTR str)
 {
-    for (;;)
+	ULONG result = FALSE;
+
+	ENTER();
+
+    for(;;)
     {
-        if (!*str) return(TRUE);
-        else if (!isdigit(*str)) return(FALSE);
+        if(*str == '\0')
+        {
+            result = TRUE;
+            break;
+        }
+        else if(!isdigit(*str))
+            break;
 
         str++;
     }
+
+    RETURN(result);
+    return result;
 }
 
 /**************************************************************************/

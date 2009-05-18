@@ -19,41 +19,46 @@
 ***************************************************************************/
 
 #include "lib.h"
+#include "debug.h"
 
 /***********************************************************************/
 
-static ULONG
-sendRexxMsg(struct MsgPort *reply,STRPTR rxport,STRPTR rxcmd)
+static BOOL sendRexxMsg(struct MsgPort *reply,STRPTR rxport,STRPTR rxcmd)
 {
-    struct RexxMsg *rxmsg;
+  BOOL success = FALSE;
+  struct RexxMsg *rxmsg;
 
-    if((rxmsg = CreateRexxMsg(reply,NULL,NULL)))
-    {
-        rxmsg->rm_Action = RXCOMM|RXFF_STRING|RXFF_NOIO;
+  ENTER();
 
-        if((rxmsg->rm_Args[0] = CreateArgstring(rxcmd,strlen(rxcmd))))
-        {
-            struct MsgPort *port;
+  if((rxmsg = CreateRexxMsg(reply, NULL, NULL)) != NULL)
+  {
+    rxmsg->rm_Action = RXCOMM|RXFF_STRING|RXFF_NOIO;
 
-            Forbid();
+     if((rxmsg->rm_Args[0] = CreateArgstring(rxcmd,strlen(rxcmd))) != NULL)
+     {
+       struct MsgPort *port;
 
-            if((port = FindPort(rxport)))
-            {
-                PutMsg(port,(struct Message *)rxmsg);
-                Permit();
+       Forbid();
 
-                return TRUE;
-            }
+       if((port = FindPort(rxport)) != NULL)
+       {
+         PutMsg(port, (struct Message *)rxmsg);
 
-            Permit();
+         success = TRUE;
+       }
 
-            DeleteArgstring(rxmsg->rm_Args[0]);
-        }
+       Permit();
 
-        DeleteRexxMsg(rxmsg);
-    }
+       if(success == FALSE)
+         DeleteArgstring(rxmsg->rm_Args[0]);
+     }
 
-    return FALSE;
+     if(success == FALSE)
+       DeleteRexxMsg(rxmsg);
+  }
+
+  RETURN(success);
+  return success;
 }
 
 /**************************************************************************/
@@ -64,40 +69,46 @@ void handler(void)
 void SAVEDS handler(void)
 #endif
 {
-    struct MsgPort   port;
-    struct Process   *me = (struct Process *)FindTask(NULL);
-    struct startMsg  *smsg;
-    ULONG            res;
-    int              sig;
+  struct MsgPort   port;
+  struct Process   *me = (struct Process *)FindTask(NULL);
+  struct startMsg  *smsg;
+  BOOL res;
+  int sig;
 
-    WaitPort(&me->pr_MsgPort);
-    smsg = (struct startMsg *)GetMsg(&me->pr_MsgPort);
+  ENTER();
 
-    if ((sig = AllocSignal(-1))>=0)
-    {
-        INITPORT(&port,sig);
-    res = sendRexxMsg(&port,smsg->port,smsg->cmd);
-    }
-    else res = FALSE;
+  WaitPort(&me->pr_MsgPort);
+  smsg = (struct startMsg *)GetMsg(&me->pr_MsgPort);
 
-    smsg->res = res;
-    ReplyMsg((struct Message *)smsg);
+  if((sig = AllocSignal(-1)) != -1)
+  {
+    INITPORT(&port, sig);
+    res = sendRexxMsg(&port, smsg->port, smsg->cmd);
+  }
+  else
+    res = FALSE;
 
-    if (res)
-    {
-        struct RexxMsg *rxmsg;
+  smsg->res = res;
+  ReplyMsg((struct Message *)smsg);
 
-        WaitPort(&port);
+  if(res == TRUE)
+  {
+    struct RexxMsg *rxmsg;
+
+    WaitPort(&port);
     rxmsg = (struct RexxMsg *)GetMsg(&port);
 
-        DeleteArgstring(rxmsg->rm_Args[0]);
-        DeleteRexxMsg(rxmsg);
-    }
+    DeleteArgstring(rxmsg->rm_Args[0]);
+    DeleteRexxMsg(rxmsg);
+  }
 
-    if (sig>=0) FreeSignal(sig);
+  if(sig != -1)
+    FreeSignal(sig);
 
-    Forbid();
-    OpenURLBase->rexx_use--;
+  Forbid();
+  OpenURLBase->rexx_use--;
+
+  LEAVE();
 }
 
 /**************************************************************************/
