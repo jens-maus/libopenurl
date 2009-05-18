@@ -63,11 +63,7 @@ static BOOL sendRexxMsg(struct MsgPort *reply,STRPTR rxport,STRPTR rxcmd)
 
 /**************************************************************************/
 
-#ifdef __MORPHOS__
-void handler(void)
-#else
 void SAVEDS handler(void)
-#endif
 {
   struct MsgPort   port;
   struct Process   *me = (struct Process *)FindTask(NULL);
