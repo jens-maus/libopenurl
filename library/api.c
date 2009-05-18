@@ -32,157 +32,157 @@
 
 ULONG LIBFUNC URL_OpenA(REG(a0,STRPTR URL), REG(a1,struct TagItem *attrs))
 {
-    struct List portList;
-    TEXT       buf[256];
-    STRPTR     pubScreenName = NULL, fullURL = NULL;
-    ULONG       res, show, toFront, newWindow, launch, httpPrepend = FALSE;
+  struct List portList;
+  TEXT buf[256];
+  STRPTR pubScreenName = NULL;
+  STRPTR fullURL = NULL;
+  ULONG res, show, toFront, newWindow, launch, httpPrepend = FALSE;
 
-    ENTER();
+  ENTER();
 
-    NewList(&portList);
+  NewList(&portList);
 
-    ObtainSemaphore(&OpenURLBase->prefsSem);
+  ObtainSemaphore(&OpenURLBase->prefsSem);
 
-    /* parse arguments */
-    pubScreenName = (STRPTR)GetTagData(URL_PubScreenName,(ULONG)"Workbench",attrs);
-    show          = GetTagData(URL_Show, OpenURLBase->prefs->up_DefShow,attrs);
-    toFront       = GetTagData(URL_BringToFront, OpenURLBase->prefs->up_DefBringToFront,attrs);
-    newWindow     = GetTagData(URL_NewWindow, OpenURLBase->prefs->up_DefNewWindow,attrs);
-    launch        = GetTagData(URL_Launch, OpenURLBase->prefs->up_DefLaunch,attrs);
+  /* parse arguments */
+  pubScreenName = (STRPTR)GetTagData(URL_PubScreenName, (ULONG)"Workbench", attrs);
+  show          = GetTagData(URL_Show, OpenURLBase->prefs->up_DefShow, attrs);
+  toFront       = GetTagData(URL_BringToFront, OpenURLBase->prefs->up_DefBringToFront, attrs);
+  newWindow     = GetTagData(URL_NewWindow, OpenURLBase->prefs->up_DefNewWindow, attrs);
+  launch        = GetTagData(URL_Launch, OpenURLBase->prefs->up_DefLaunch, attrs);
 
-    /* make a copy of the global list of named ports */
-    Forbid();
-    res = copyList(&portList, &((struct ExecBase *)SysBase)->PortList,sizeof(struct Node));
-    Permit();
+  /* make a copy of the global list of named ports */
+  Forbid();
+  res = copyList(&portList, &((struct ExecBase *)SysBase)->PortList, sizeof(struct Node));
+  Permit();
 
-    if(!res)
-      goto done;
-
+  if(res == TRUE)
+  {
     /* prepend "http://" if URL has no method */
     if(OpenURLBase->prefs->up_Flags & UPF_PREPENDHTTP)
     {
-        TEXT *colon;
+      STRPTR colon;
 
-        colon = strchr((STRPTR)URL,':');
+      colon = strchr((STRPTR)URL,':');
+      if(colon == NULL)
+        httpPrepend = TRUE;
+      else
+      {
+        STRPTR p;
 
-        if (!colon) httpPrepend = TRUE;
-        else
+        for(p = URL; p<colon; p++)
         {
-            TEXT *p;
-
-            for (p = (STRPTR)URL; p<colon; p++)
-            {
-                if (!isalnum(*p) && (*p!='+') && (*p!='-'))
-                {
-                    httpPrepend = TRUE;
-                    break;
-                }
-            }
+          if(!isalnum(*p) && *p != '+' && *p != '-')
+          {
+            httpPrepend = TRUE;
+            break;
+          }
         }
+      }
     }
 
-    if (httpPrepend)
+    if(httpPrepend == TRUE)
     {
-        ULONG len = strlen((STRPTR)URL)+8;
+      ULONG len = strlen(URL) + 8;
 
-        if (len>sizeof(buf))
-        {
-            if(!(fullURL = allocArbitrateVecPooled(strlen((STRPTR)URL)+8)))
-              goto done;
-        }
-        else fullURL = buf;
+      if(len > sizeof(buf))
+        fullURL = allocArbitrateVecPooled(strlen(URL)+8);
+      else
+        fullURL = buf;
 
+      if(fullURL != NULL)
         snprintf(fullURL, len, "http://%s", URL);
     }
     else
-    	fullURL = URL;
+      fullURL = URL;
 
-    /* Be case insensitive - Piru */
-    if((OpenURLBase->prefs->up_Flags & UPF_DOMAILTO) && !Strnicmp((STRPTR)URL,"mailto:",7))
-        res = sendToMailer(fullURL,&portList,show,toFront,launch,pubScreenName);
-    else
-        if ((OpenURLBase->prefs->up_Flags & UPF_DOFTP) && !Strnicmp((STRPTR)URL,"ftp://",6))
-            res = sendToFTP(fullURL,&portList,show,toFront,newWindow,launch,pubScreenName);
-        else res = sendToBrowser(fullURL,&portList,show,toFront,newWindow,launch,pubScreenName);
+    if(fullURL != NULL)
+    {
+      /* Be case insensitive - Piru */
+      if((OpenURLBase->prefs->up_Flags & UPF_DOMAILTO) && Strnicmp((STRPTR)URL,"mailto:", 7) == 0)
+        res = sendToMailer(fullURL, &portList, show, toFront, launch, pubScreenName);
+      else if((OpenURLBase->prefs->up_Flags & UPF_DOFTP) && Strnicmp((STRPTR)URL,"ftp://", 6) == 0)
+        res = sendToFTP(fullURL, &portList, show, toFront, newWindow, launch, pubScreenName);
+      else
+        res = sendToBrowser(fullURL, &portList, show, toFront, newWindow, launch, pubScreenName);
+    }
+  }
 
-done:
-    ReleaseSemaphore(&OpenURLBase->prefsSem);
-    freeList(&portList);
-    if(httpPrepend && fullURL && fullURL!=buf)
-      freeArbitrateVecPooled(fullURL);
+  ReleaseSemaphore(&OpenURLBase->prefsSem);
+  freeList(&portList);
+  if(httpPrepend == TRUE && fullURL != NULL && fullURL != buf)
+    freeArbitrateVecPooled(fullURL);
 
-    RETURN(res);
-    return res;
+  RETURN(res);
+  return res;
 }
 
 /**************************************************************************/
 
 struct URL_Prefs * LIBFUNC URL_GetPrefsA(REG(a0,struct TagItem *attrs))
 {
-    struct URL_Prefs *p;
-    ULONG            mode;
+  struct URL_Prefs *p = NULL;
+  ULONG mode;
 
-    ENTER();
+  ENTER();
 
-    mode = GetTagData(URL_GetPrefs_Mode,URL_GetPrefs_Mode_Env,attrs);
+  mode = GetTagData(URL_GetPrefs_Mode, URL_GetPrefs_Mode_Env, attrs);
 
-    if (mode==URL_GetPrefs_Mode_Default)
+  switch(mode)
+  {
+    case URL_GetPrefs_Mode_Default:
     {
-        if((p = allocArbitrateVecPooled(sizeof(struct URL_Prefs))) == NULL)
-        {
-          RETURN(NULL);
-          return NULL;
-        }
-
+      if((p = allocArbitrateVecPooled(sizeof(*p))) != NULL)
         setDefaultPrefs(p);
-
-        RETURN(p);
-        return p;
     }
+    break;
 
-    if ((mode==URL_GetPrefs_Mode_Env) || (mode==URL_GetPrefs_Mode_Envarc))
+    case URL_GetPrefs_Mode_Env:
+    case URL_GetPrefs_Mode_Envarc:
     {
-        mode = (mode==URL_GetPrefs_Mode_Env) ? LOADPREFS_ENV : LOADPREFS_ENVARC;
+      BOOL ok = FALSE;
 
-        if ((p = allocArbitrateVecPooled(sizeof(struct URL_Prefs))) == NULL)
+      mode = (mode == URL_GetPrefs_Mode_Env) ? LOADPREFS_ENV : LOADPREFS_ENVARC;
+
+      if((p = allocArbitrateVecPooled(sizeof(*p))) != NULL)
+      {
+        if(loadPrefs(p, mode) == TRUE)
         {
-          RETURN(NULL);
-          return NULL;
+          ok = TRUE;
         }
-
-        if (loadPrefs(p,mode))
+        else if(GetTagData(URL_GetPrefs_FallBack, TRUE, attrs) != FALSE)
         {
-          RETURN(p);
-          return p;
-        }
-
-        if (GetTagData(URL_GetPrefs_FallBack,TRUE,attrs))
-        {
-
-            if ((mode==LOADPREFS_ENV) && loadPrefs(p,LOADPREFS_ENVARC))
-            {
-              RETURN(p);
-              return p;
-            }
-
+          if(mode == LOADPREFS_ENV && loadPrefs(p, LOADPREFS_ENVARC) == TRUE)
+          {
+            ok = TRUE;
+          }
+          else
+          {
             setDefaultPrefs(p);
-
-            RETURN(p);
-            return p;
+            ok = TRUE;
+          }
         }
+      }
 
-        URL_FreePrefsA(p,NULL);
-
-        RETURN(NULL);
-        return NULL;
+      if(ok == FALSE)
+      {
+        URL_FreePrefsA(p, NULL);
+        p = NULL;
+      }
     }
+    break;
 
-    ObtainSemaphoreShared(&OpenURLBase->prefsSem);
-    p = copyPrefs(OpenURLBase->prefs);
-    ReleaseSemaphore(&OpenURLBase->prefsSem);
+    default:
+    {
+      ObtainSemaphoreShared(&OpenURLBase->prefsSem);
+      p = copyPrefs(OpenURLBase->prefs);
+      ReleaseSemaphore(&OpenURLBase->prefsSem);
+    }
+    break;
+  }
 
-    RETURN(p);
-    return p;
+  RETURN(p);
+  return p;
 }
 
 /**************************************************************************/
@@ -196,17 +196,17 @@ struct URL_Prefs * LIBFUNC URL_OldGetPrefs(void)
 
 void LIBFUNC URL_FreePrefsA(REG(a0,struct URL_Prefs *p),UNUSED REG(a1,struct TagItem *attrs))
 {
-    ENTER();
+  ENTER();
 
-    if (p)
-    {
-        freeList((struct List *)&p->up_BrowserList);
-        freeList((struct List *)&p->up_MailerList);
-        freeList((struct List *)&p->up_FTPList);
-        freeArbitrateVecPooled(p);
-    }
+  if(p != NULL)
+  {
+    freeList((struct List *)&p->up_BrowserList);
+    freeList((struct List *)&p->up_MailerList);
+    freeList((struct List *)&p->up_FTPList);
+    freeArbitrateVecPooled(p);
+  }
 
-    LEAVE();
+  LEAVE();
 }
 
 /**************************************************************************/
@@ -220,148 +220,149 @@ void LIBFUNC URL_OldFreePrefs(REG(a0,struct URL_Prefs *p))
 
 ULONG LIBFUNC URL_SetPrefsA(REG(a0,struct URL_Prefs *p),REG(a1,struct TagItem *attrs))
 {
-    ULONG res = FALSE;
+  ULONG res = FALSE;
 
-    ENTER();
+  ENTER();
 
-    if (p->up_Version==PREFS_VERSION)
+  if(p->up_Version==PREFS_VERSION)
+  {
+    struct URL_Prefs *newp;
+
+    ObtainSemaphore(&OpenURLBase->prefsSem);
+
+    if((newp = copyPrefs(p)) != NULL)
     {
-        struct URL_Prefs *newp;
+      newp->up_Version = PREFS_VERSION;
+      newp->up_Flags &= ~UPF_ISDEFAULTS;
 
-        ObtainSemaphore(&OpenURLBase->prefsSem);
+      URL_FreePrefsA(OpenURLBase->prefs,NULL);
+      OpenURLBase->prefs = newp;
 
-        if((newp = copyPrefs(p)))
+      if(savePrefs((STRPTR)DEF_ENV, OpenURLBase->prefs) == TRUE)
+      {
+        if(GetTagData(URL_SetPrefs_Save, FALSE, attrs) != FALSE)
         {
-            newp->up_Version = PREFS_VERSION;
-            newp->up_Flags &= ~UPF_ISDEFAULTS;
-
-            URL_FreePrefsA(OpenURLBase->prefs,NULL);
-            OpenURLBase->prefs = newp;
-
-            if((res = savePrefs((STRPTR)DEF_ENV, OpenURLBase->prefs)))
-            {
-                if (GetTagData(URL_SetPrefs_Save,FALSE,attrs))
-                {
-                    res = savePrefs((STRPTR)DEF_ENVARC, OpenURLBase->prefs);
-                }
-            }
+          if(savePrefs((STRPTR)DEF_ENVARC, OpenURLBase->prefs) == TRUE)
+            res = TRUE;
         }
-
-        ReleaseSemaphore(&OpenURLBase->prefsSem);
+      }
     }
 
-    RETURN(res);
-    return res;
+    ReleaseSemaphore(&OpenURLBase->prefsSem);
+  }
+
+  RETURN(res);
+  return res;
 }
 
 /**************************************************************************/
 
 ULONG LIBFUNC URL_OldSetPrefs(REG(a0,struct URL_Prefs *p),REG(d0,ULONG save))
 {
-    struct TagItem stags[] = { { URL_SetPrefs_Save, 0         },
-                               { TAG_DONE,          TAG_DONE  } };
+  struct TagItem stags[] = { { URL_SetPrefs_Save, 0         },
+                             { TAG_DONE,          TAG_DONE  } };
 
-    stags[0].ti_Data = save;
+  stags[0].ti_Data = save;
 
-    return URL_SetPrefsA(p,stags);
+  return URL_SetPrefsA(p,stags);
 }
 
 /**************************************************************************/
 
 struct URL_Prefs * LIBFUNC URL_OldGetDefaultPrefs(void)
 {
-    struct TagItem gtags[] = { { URL_GetPrefs_Mode, URL_GetPrefs_Mode_Default },
-                               { TAG_DONE,          TAG_DONE                  } };
+  struct TagItem gtags[] = { { URL_GetPrefs_Mode, URL_GetPrefs_Mode_Default },
+                             { TAG_DONE,          TAG_DONE                  } };
 
-    return URL_GetPrefsA(gtags);
+  return URL_GetPrefsA(gtags);
 }
 
 /**************************************************************************/
 
 ULONG LIBFUNC URL_LaunchPrefsAppA(REG(a0,UNUSED struct TagItem *attrs))
 {
-    ULONG result = FALSE;
-    BPTR in;
+  ULONG result = FALSE;
+  BPTR in;
 
-    ENTER();
+  ENTER();
 
-    if((in  = Open("NIL:",MODE_OLDFILE)))
+  if((in  = Open("NIL:",MODE_OLDFILE)))
+  {
+    BPTR out;
+
+    if((out = Open("NIL:",MODE_OLDFILE)))
     {
-        BPTR out;
+      TEXT name[256];
+      LONG len;
 
-        if((out = Open("NIL:",MODE_OLDFILE)))
+      if((len = GetVar("AppPaths/OpenURL", name+1, sizeof(name)-1, GVF_GLOBAL_ONLY)) <= 0)
+      {
+        // Ok let's try to be backward compatible
+        if(GetVar("OpenURL_Prefs_Path", name, sizeof(name), GVF_GLOBAL_ONLY) <= 0)
         {
-            TEXT name[256] = "";
-
-            LONG len = GetVar("AppPaths/OpenURL",name+1,sizeof(name)-1,GVF_GLOBAL_ONLY);
-            if (len<=0)
-            {
-                // Ok let's try to be backward compatible
-                if(GetVar("OpenURL_Prefs_Path",name,sizeof(name),GVF_GLOBAL_ONLY)<=0)
-                {
-                    strcpy(name,"\"Sys:Prefs/Open URL\"");
-                }
-            }
-            else
-            {
-                name[0]='\"';
-                strcpy(name+1+len,"/Open URL\"");
-                name[len+11]='\0';
-            }
-
-            #if defined(__amigaos4__)
-            #define NP_STACKSIZE 48000
-            #else
-            #define NP_STACKSIZE 16000
-            #endif
-            #if !defined(__MORPHOS__)
-            #define NP_PPCStackSize TAG_IGNORE
-            #endif
-
-            SystemTags( name,   SYS_Input,       (ULONG)in,
-                                SYS_Output,      (ULONG)out,
-                                SYS_Error,       NULL,
-                                NP_StackSize,    NP_STACKSIZE,
-                                SYS_Asynch,      TRUE,
-                                NP_PPCStackSize, 32000,
-                                TAG_END);
-
-            result = TRUE;
+          strlcpy(name, "\"Sys:Prefs/Open URL\"", sizeof(name));
         }
+      }
+      else
+      {
+        name[0]='\"';
+        strcpy(name+1+len,"/Open URL\"");
+        name[len+11]='\0';
+      }
 
-        if(result == FALSE)
-          Close(in);
+      #if defined(__amigaos4__)
+      #define NP_STACKSIZE 48000
+      #else
+      #define NP_STACKSIZE 16000
+      #endif
+      #if !defined(__MORPHOS__)
+      #define NP_PPCStackSize TAG_IGNORE
+      #endif
+
+      SystemTags(name, SYS_Input,       (ULONG)in,
+                       SYS_Output,      (ULONG)out,
+                       SYS_Error,       NULL,
+                       SYS_Asynch,      TRUE,
+                       NP_StackSize,    NP_STACKSIZE,
+                       NP_PPCStackSize, 32000,
+                       TAG_END);
+
+      result = TRUE;
     }
 
-    RETURN(result);
-    return result;
+    if(result == FALSE)
+      Close(in);
+  }
+
+  RETURN(result);
+  return result;
 }
 
 /**************************************************************************/
 
 ULONG LIBFUNC URL_OldLaunchPrefsApp(void)
 {
-    return URL_LaunchPrefsAppA(NULL);
+  return URL_LaunchPrefsAppA(NULL);
 }
 
 /**************************************************************************/
 
 ULONG LIBFUNC URL_GetAttr(REG(d0,ULONG attr),REG(a0,ULONG *storage))
 {
-    switch (attr)
-    {
-        case URL_GetAttr_Version:          *storage = LIB_VERSION;    return TRUE;
-        case URL_GetAttr_Revision:         *storage = LIB_REVISION;   return TRUE;
-        case URL_GetAttr_VerString:        *storage = (ULONG)"$VER: openurl.library " LIB_REV_STRING " [" SYSTEMSHORT "/" CPU "] (" LIB_DATE ") " LIB_COPYRIGHT;; return TRUE;
+  switch (attr)
+  {
+    case URL_GetAttr_Version:          *storage = LIB_VERSION;    return TRUE;
+    case URL_GetAttr_Revision:         *storage = LIB_REVISION;   return TRUE;
+    case URL_GetAttr_VerString:        *storage = (ULONG)"$VER: openurl.library " LIB_REV_STRING " [" SYSTEMSHORT "/" CPU "] (" LIB_DATE ") " LIB_COPYRIGHT;; return TRUE;
 
-        case URL_GetAttr_PrefsVer:         *storage = PREFS_VERSION;  return TRUE;
+    case URL_GetAttr_PrefsVer:         *storage = PREFS_VERSION;  return TRUE;
 
-        case URL_GetAttr_HandlerVersion:   *storage = 0;              return TRUE;
-        case URL_GetAttr_HandlerRevision:  *storage = 0;              return TRUE;
-        case URL_GetAttr_HandlerVerString: *storage = (ULONG)"";      return TRUE;
+    case URL_GetAttr_HandlerVersion:   *storage = 0;              return TRUE;
+    case URL_GetAttr_HandlerRevision:  *storage = 0;              return TRUE;
+    case URL_GetAttr_HandlerVerString: *storage = (ULONG)"";      return TRUE;
 
-        default: return FALSE;
-    }
+    default: return FALSE;
+  }
 }
 
 /**************************************************************************/
@@ -369,39 +370,44 @@ ULONG LIBFUNC URL_GetAttr(REG(d0,ULONG attr),REG(a0,ULONG *storage))
 LONG LIBFUNC dispatch(REG(a0, struct RexxMsg *msg), REG(a1, STRPTR *resPtr))
 {
     ULONG result = 17;
-    TEXT  *fun = msg->rm_Args[0];
-    ULONG  na = msg->rm_Action & RXARGMASK;
+    STRPTR fun = msg->rm_Args[0];
+    ULONG na = msg->rm_Action & RXARGMASK;
     BOOL res = FALSE;
 
     ENTER();
 
-    if (!stricmp(fun,"OPENURL"))
+    if(stricmp(fun, "OPENURL") == 0)
     {
-        if (na >= 1)
+        if(na >= 1)
         {
             struct TagItem tags[MAXRMARG+1];
             STRPTR url;
             int i, j;
 
-            for (i = na, j = 0, url = NULL; i>0; i--)
+            for(i = na, j = 0, url = NULL; i>0; i--)
             {
                 TEXT *arg = msg->rm_Args[i];
-                Tag   tag;
+                Tag tag;
 
-                if (!arg || !*arg) continue;
+                if(arg == NULL || *arg == '\0')
+                    continue;
 
-                if (!stricmp(arg,"SHOW") || !stricmp(arg,"NOSHOW")) tag = URL_Show;
-                else if (!stricmp(arg,"TOFRONT") || !stricmp(arg,"NOTOFRONT")) tag  = URL_BringToFront;
-                     else if (!stricmp(arg,"NEWWIN") || !stricmp(arg,"NONEWWIN")) tag = URL_NewWindow;
-                          else if (!stricmp(arg,"LAUNCH") || !stricmp(arg,"NOLAUNCH")) tag  = URL_Launch;
-                               else
-                               {
-                                   url = arg;
-                                   continue;
-                               }
+                if(stricmp(arg, "SHOW") == 0 || stricmp(arg, "NOSHOW") == 0)
+                    tag = URL_Show;
+                else if(stricmp(arg, "TOFRONT") == 0 || stricmp(arg, "NOTOFRONT") == 0)
+                    tag  = URL_BringToFront;
+                else if(stricmp(arg, "NEWWIN") == 0 || stricmp(arg, "NONEWWIN") == 0)
+                    tag = URL_NewWindow;
+                else if(stricmp(arg, "LAUNCH") == 0 || stricmp(arg,"NOLAUNCH") == 0)
+                    tag  = URL_Launch;
+                else
+                {
+                    url = arg;
+                    continue;
+                }
 
                 tags[j].ti_Tag  = tag;
-                tags[j++].ti_Data = strnicmp(arg,"NO",2);
+                tags[j++].ti_Data = strnicmp(arg, "NO" , 2);
             }
 
             tags[j].ti_Tag = TAG_END;
@@ -411,9 +417,9 @@ LONG LIBFUNC dispatch(REG(a0, struct RexxMsg *msg), REG(a1, STRPTR *resPtr))
     }
     else
     {
-        if (!stricmp(fun,"OPENURLPREFS"))
+        if (stricmp(fun, "OPENURLPREFS") == 0)
         {
-            if (na == 0)
+            if(na == 0)
               res = URL_LaunchPrefsAppA(NULL);
         }
         else
