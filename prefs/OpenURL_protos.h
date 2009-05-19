@@ -38,8 +38,7 @@ ULONG getKeyChar (STRPTR string , ULONG id);
 
 /* utils.c */
 #if defined(__amigaos4__)
-   int stccpy(char *dst, const char *src, int m);
-   void SetAmiUpdateENVVariable( CONST_STRPTR varname );
+void SetAmiUpdateENVVariable( CONST_STRPTR varname );
 #endif
 Object *olabel ( ULONG id );
 Object *ollabel ( ULONG id );

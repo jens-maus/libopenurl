@@ -294,7 +294,8 @@ OBJS += OpenURL.o \
         applist.o \
         win.o \
         about.o \
-        app.o
+        app.o \
+        debug.o
 
 CATALOGS = $(LOCALE)/german.catalog \
            $(LOCALE)/french.catalog \

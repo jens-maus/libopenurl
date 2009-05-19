@@ -178,13 +178,13 @@ static Object *findWinObjByAttr(Object *app, ULONG attr, ULONG val)
 {
     struct List *winlist;
     Object      *obj;
-    APTR        state;
+    Object      *state;
 
     /* return the window object which supports OM_GET on attr, and
        whose value of attr == val */
 
     get(app,MUIA_Application_WindowList,&winlist);
-    state = winlist->lh_Head;
+    state = (Object *)winlist->lh_Head;
 
     while((obj = NextObject(&state)) != NULL)
     {

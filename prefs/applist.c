@@ -324,7 +324,8 @@ HOOKPROTO(dispFun, void, STRPTR *array, struct URL_Node *node)
             sprintf(data->col0buf,"\33O[%08lx]",(ULONG)data->lamp);
             *array++ = data->col0buf;
         }
-        else *array++ = (node->Flags & UNF_DISABLED) ? (STRPTR)" " : (STRPTR)">";
+        else 
+          *array++ = (STRPTR)((node->Flags & UNF_DISABLED) ? " " : ">");
 
         *array++ = (STRPTR)node+data->nameOfs;
         *array   = (STRPTR)node+data->pathOfs;
