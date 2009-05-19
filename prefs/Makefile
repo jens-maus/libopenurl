@@ -14,7 +14,7 @@
 #
 # openurl.library project: http://sourceforge.net/projects/openurllib/
 #
-# $Id: Makefile 56 2009-05-18 07:28:47Z damato $
+# $Id$
 #
 #***************************************************************************/
 
