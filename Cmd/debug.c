@@ -29,7 +29,7 @@
 #include <proto/dos.h>
 #include <proto/exec.h>
 
-#include "version.h"
+#include "OpenURL_rev.h"
 
 #include "debug.h"
 #include "macros.h"
@@ -46,7 +46,7 @@ void SetupDebug(void)
 {
   char var[256];
 
-  kprintf("** openurl.prefs %s (%s) startup ****************************\n", LIB_REV_STRING, LIB_DATE);
+  kprintf("** openurl.prefs %s (%s) startup ****************************\n", PRGNAME, DATE);
   kprintf("Initializing runtime debugging:\n");
 
   if(GetVar("openurl.prefs.debug", var, sizeof(var), 0) > 0)
