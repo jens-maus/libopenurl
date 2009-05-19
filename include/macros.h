@@ -4,43 +4,15 @@
 
 /****************************************************************************/
 
-#ifdef __MORPHOS__
+#include "SDI_compiler.h"
 
-#define SAVEDS
-#define ASM
-#define REGARGS
-#define STDARGS
-#define INLINE          inline
-#define REG(x,p)        p
-#define LIBCALL
-
-#define M_DISP(n) static ULONG _##n(void)
-#define M_DISPSTART \
-    struct IClass *cl = (struct IClass *)REG_A0; \
-    Object        *obj = (Object *)REG_A2; \
-    Msg            msg  = (Msg)REG_A1;
-#define M_DISPEND(n) static struct EmulLibEntry n = {TRAP_LIB,0,(void *)_##n};
-#define DISP(n) ((APTR)&n)
-
-#else /* __MORPHOS__ */
-
-#if !defined(__amigaos4__)
-#define SAVEDS          __saveds
-#define ASM             __asm
-#define REGARGS         __regargs
-#define STDARGS         __stdargs
-#define INLINE          inline
-#define REG(x,p)        register __ ## x p
-#define __attribute(a)
+#if defined(__amigaos4__)
+#define GETINTERFACE(iface, base)	(iface = (APTR)GetInterface((struct Library *)(base), "main", 1L, NULL))
+#define DROPINTERFACE(iface)			(DropInterface((struct Interface *)iface), iface = NULL)
+#else
+#define GETINTERFACE(iface, base)	TRUE
+#define DROPINTERFACE(iface)
 #endif
-#define LIBCALL         SAVEDS ASM
-
-#define M_DISP(n) static ULONG SAVEDS ASM n(REG(a0,struct IClass *cl),REG(a2,Object *obj),REG(a1,Msg msg))
-#define M_DISPSTART
-#define M_DISPEND(n)
-#define DISP(n) (n)
-
-#endif /* __MORPHOS__ */
 
 #undef NODE
 #define NODE(a) ((struct Node *)(a))
