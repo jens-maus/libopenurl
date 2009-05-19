@@ -7,6 +7,7 @@ $URL$
 
 2009-05-19  Jens Langner <Jens.Langner@light-speed.de>
 
+  * prefs: fixed MOS compilation by updating the ppcinline header files
   * prefs: converted the build system of the MUI preferences application to
     use the generic Makefile we use with every application. Also converted
     everything to use the SDI headers. OS4 compilation seems to work fine and
