@@ -440,7 +440,7 @@ static struct LibraryHeader * LIBFUNC LibInit(REG(d0, struct LibraryHeader *base
 
   // make sure that this is really a 68020+ machine if optimized for 020+
   #if _M68060 || _M68040 || _M68030 || _M68020 || __mc68020 || __mc68030 || __mc68040 || __mc68060
-  if(!(SysBase->AttnFlags & AFF_68020))
+  if(isFlagClear(SysBase->AttnFlags, AFF_68020))
     return(NULL);
   #endif
 
@@ -651,7 +651,7 @@ static BPTR LIBFUNC LibClose(REG(a6, struct LibraryHeader *base))
   {
     // in case the late expunge flag is set we go and
     // expunge the library base right now
-    if(base->libBase.lib_Flags & LIBF_DELEXP)
+    if(isFlagSet(base->libBase.lib_Flags, LIBF_DELEXP))
     {
       #if defined(__amigaos4__)
       rc = LibExpunge(Self);

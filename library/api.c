@@ -66,7 +66,7 @@ ULONG LIBFUNC URL_OpenA(REG(a0,STRPTR URL), REG(a1,struct TagItem *attrs))
   if(res == TRUE)
   {
     /* prepend "http://" if URL has no method */
-    if(OpenURLBase->prefs->up_Flags & UPF_PREPENDHTTP)
+    if(isFlagSet(OpenURLBase->prefs->up_Flags, UPF_PREPENDHTTP))
     {
       STRPTR colon;
 
@@ -106,9 +106,9 @@ ULONG LIBFUNC URL_OpenA(REG(a0,STRPTR URL), REG(a1,struct TagItem *attrs))
     if(fullURL != NULL)
     {
       /* Be case insensitive - Piru */
-      if((OpenURLBase->prefs->up_Flags & UPF_DOMAILTO) && Strnicmp((STRPTR)URL,"mailto:", 7) == 0)
+      if(isFlagSet(OpenURLBase->prefs->up_Flags, UPF_DOMAILTO) && Strnicmp((STRPTR)URL,"mailto:", 7) == 0)
         res = sendToMailer(fullURL, &portList, flags, pubScreenName);
-      else if((OpenURLBase->prefs->up_Flags & UPF_DOFTP) && Strnicmp((STRPTR)URL,"ftp://", 6) == 0)
+      else if(isFlagSet(OpenURLBase->prefs->up_Flags, UPF_DOFTP) && Strnicmp((STRPTR)URL,"ftp://", 6) == 0)
         res = sendToFTP(fullURL, &portList, flags, pubScreenName);
       else
         res = sendToBrowser(fullURL, &portList, flags, pubScreenName);

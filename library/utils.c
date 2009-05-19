@@ -276,7 +276,10 @@ BOOL sendToBrowser(STRPTR URL, struct List *portlist, ULONG flags, STRPTR pubScr
     {
         STRPTR port;
 
-        if (bn->ubn_Flags & UNF_DISABLED) continue;
+        if(isFlagSet(bn->ubn_Flags, UNF_DISABLED))
+            continue;
+        if(bn->ubn_Path[0] == '\0')
+            continue;
 
         port = findRexxPort(portlist,bn->ubn_Port);
 
@@ -321,8 +324,10 @@ BOOL sendToBrowser(STRPTR URL, struct List *portlist, ULONG flags, STRPTR pubScr
         BPTR   lock;
         LONG   error;
 
-        if (bn->ubn_Flags & UNF_DISABLED) continue;
-        if (!*bn->ubn_Path) continue;
+        if(isFlagSet(bn->ubn_Flags, UNF_DISABLED))
+            continue;
+        if(bn->ubn_Path[0] == '\0')
+            continue;
 
         /* compose commandline */
 
@@ -417,7 +422,8 @@ BOOL sendToFTP(STRPTR URL, struct List *portlist, ULONG flags, STRPTR pubScreenN
     {
         STRPTR port;
 
-    if (fn->ufn_Flags & UNF_DISABLED) continue;
+        if(isFlagSet(fn->ufn_Flags, UNF_DISABLED))
+            continue;
 
         port = findRexxPort(portlist,fn->ufn_Port);
 
@@ -435,9 +441,10 @@ BOOL sendToFTP(STRPTR URL, struct List *portlist, ULONG flags, STRPTR pubScreenN
 
             /* try sending openurl msg */
 
-            if (fn->ufn_Flags & UFNF_REMOVEFTP && !Strnicmp(URL,"ftp://",6))
-            ph[0].ph_String = URL+6;
-            else ph[0].ph_String = URL+6;
+            if(isFlagSet(fn->ufn_Flags, UFNF_REMOVEFTP) && !Strnicmp(URL,"ftp://",6))
+                ph[0].ph_String = URL+6;
+            else
+                ph[0].ph_String = URL+6;
 
             if (!(cmd = expandPlaceHolders(isFlagSet(flags, SENDTOF_NEWWINDOW) ? fn->ufn_OpenURLWCmd : fn->ufn_OpenURLCmd,ph,PH_COUNT_FTP)))
                 goto done;
@@ -466,8 +473,10 @@ BOOL sendToFTP(STRPTR URL, struct List *portlist, ULONG flags, STRPTR pubScreenN
         BPTR   lock;
         LONG   error;
 
-    if (fn->ufn_Flags & UNF_DISABLED) continue;
-        if (!*fn->ufn_Path) continue;
+        if(isFlagSet(fn->ufn_Flags, UNF_DISABLED))
+            continue;
+        if(fn->ufn_Path[0] == '\0')
+            continue;
 
         /* compose commandline */
 
@@ -476,9 +485,10 @@ BOOL sendToFTP(STRPTR URL, struct List *portlist, ULONG flags, STRPTR pubScreenN
         else
             startOnly = FALSE;
 
-    if (fn->ufn_Flags & UFNF_REMOVEFTP && !Strnicmp(URL,"ftp://",6))
+        if(isFlagSet(fn->ufn_Flags, UFNF_REMOVEFTP) && !Strnicmp(URL,"ftp://",6))
             ph[0].ph_String = URL+6;
-        else ph[0].ph_String = URL+6;
+        else
+            ph[0].ph_String = URL+6;
 
         if (!(cmd = expandPlaceHolders(fn->ufn_Path,ph,PH_COUNT_FTP)))
             goto done;
@@ -562,7 +572,7 @@ BOOL sendToMailer(STRPTR URL, struct List *portlist, ULONG flags, STRPTR pubScre
 
     /* setup trans */
     ObtainSemaphore(&OpenURLBase->libSem);
-    if(!(OpenURLBase->flags & BASEFLG_Trans))
+    if(isFlagClear(OpenURLBase->flags, BASEFLG_Trans))
     {
         for (len = 0; len<256; len++) trans[len] = -1;
 
@@ -672,7 +682,8 @@ BOOL sendToMailer(STRPTR URL, struct List *portlist, ULONG flags, STRPTR pubScre
     {
         STRPTR rxport;
 
-        if (mn->umn_Flags & UNF_DISABLED) continue;
+        if(isFlagSet(mn->umn_Flags, UNF_DISABLED))
+            continue;
 
         rxport = findRexxPort(portlist,mn->umn_Port);
 
@@ -748,8 +759,10 @@ BOOL sendToMailer(STRPTR URL, struct List *portlist, ULONG flags, STRPTR pubScre
         BPTR   lock;
         LONG   error;
 
-        if (mn->umn_Flags & UNF_DISABLED) continue;
-        if (!*mn->umn_Path) continue;
+        if(isFlagSet(mn->umn_Flags, UNF_DISABLED))
+            continue;
+        if(mn->umn_Path[0] == '\0')
+            continue;
 
         /* compose commandline */
 
