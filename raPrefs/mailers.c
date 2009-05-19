@@ -21,6 +21,7 @@
 #include "mailers.h"
 
 #include "gui_global.h"
+#include "utility.h"
 
 #include <classes/window.h>
 #include <libraries/openurl.h>
@@ -32,6 +33,7 @@
 
 #include <gadgets/getfile.h>
 
+#include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/label.h>
 #include <proto/space.h>
@@ -179,7 +181,6 @@ BOOL updateMailerList( struct List * list, struct MinList PrefsMailerList )
 {
     struct URL_MailerNode   *   mn      = NULL,
                             *   newNode = NULL;
-    struct Node             *   node    = NULL;
 
     // libération de la liste
     freeList( list );
@@ -189,15 +190,15 @@ BOOL updateMailerList( struct List * list, struct MinList PrefsMailerList )
          mn->umn_Node.mln_Succ;
          mn = (struct URL_MailerNode *)mn->umn_Node.mln_Succ)
     {
-        if (newNode = (struct URL_MailerNode*)IListBrowser->AllocListBrowserNode(3,
+        if((newNode = (struct URL_MailerNode*)IListBrowser->AllocListBrowserNode(3,
             LBNA_NodeSize,  sizeof(struct URL_MailerNode),
             LBNA_CheckBox,  TRUE,
             LBNA_Checked,   (mn->umn_Flags&UNF_DISABLED)?FALSE:TRUE,
             LBNA_Column,    1,
-                LBNCA_Text, "",
+            LBNCA_Text, "",
             LBNA_Column, 2,
-                LBNCA_Text, "",
-            TAG_DONE))
+            LBNCA_Text, "",
+            TAG_DONE)) != NULL)
         {
             IExec->CopyMem( mn, newNode, sizeof(struct URL_MailerNode ) );
             IListBrowser->SetListBrowserNodeAttrs( (struct Node*)newNode, LBNA_Column,    1,
@@ -210,7 +211,7 @@ BOOL updateMailerList( struct List * list, struct MinList PrefsMailerList )
         }
         else
         {
-            printf(" AllocListBrowserNode() failed\n");
+            IDOS->Printf(" AllocListBrowserNode() failed\n");
             return(FALSE);
         }
     }

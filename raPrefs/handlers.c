@@ -19,8 +19,11 @@
 ***************************************************************************/
 
 #include "handlers.h"
-
+#include "browsers.h"
+#include "ftps.h"
+#include "mailers.h"
 #include "gui_global.h"
+#include "OpenURL.h"
 
 #include <classes/window.h>
 
@@ -30,6 +33,7 @@
 
 #include <reaction/reaction_macros.h>
 
+#include <proto/dos.h>
 #include <proto/intuition.h>
 
 extern struct Window *window;
@@ -42,7 +46,7 @@ extern Object *edit_brow_win;
 extern Object *edit_mail_win;
 extern Object *edit_ftp_win;
 
-STRPTR hidden_strings[] =
+CONST_STRPTR hidden_strings[] =
 {
     "string 1",
     "string 2",
@@ -72,7 +76,7 @@ BOOL HandleInput_Main_Win(void)
                         uint32 retval = 0;
                         IIntuition->GetAttr( LISTBROWSER_RelEvent, OBJ(OBJ_LBROWSER_BROW), &retval );
                         if (retval != LBRE_DOUBLECLICK) break;
-                        printf("retval == LBRE_DOUBLECLICK\n");
+                        IDOS->Printf("retval == LBRE_DOUBLECLICK\n");
                     }
                     case OBJ_EDIT_BROW:
                     {
@@ -87,7 +91,7 @@ BOOL HandleInput_Main_Win(void)
                         uint32 retval = 0;
                         IIntuition->GetAttr( LISTBROWSER_RelEvent, OBJ(OBJ_LBROWSER_MAIL), &retval );
                         if (retval != LBRE_DOUBLECLICK) break;
-                        printf("retval == LBRE_DOUBLECLICK\n");
+                        IDOS->Printf("retval == LBRE_DOUBLECLICK\n");
                     }
                     case OBJ_EDIT_MAIL:
                     {
@@ -102,7 +106,7 @@ BOOL HandleInput_Main_Win(void)
                         uint32 retval = 0;
                         IIntuition->GetAttr( LISTBROWSER_RelEvent, OBJ(OBJ_LBROWSER_FTP), &retval );
                         if (retval != LBRE_DOUBLECLICK) break;
-                        printf("retval == LBRE_DOUBLECLICK\n");
+                        IDOS->Printf("retval == LBRE_DOUBLECLICK\n");
                     }
                     case OBJ_EDIT_FTP:
                     {

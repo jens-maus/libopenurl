@@ -21,6 +21,7 @@
 #include "browsers.h"
 
 #include "gui_global.h"
+#include "utility.h"
 
 #include <classes/window.h>
 #include <libraries/openurl.h>
@@ -35,6 +36,7 @@
 #include <gadgets/string.h>
 #include <gadgets/getfile.h>
 
+#include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/label.h>
 #include <proto/space.h>
@@ -202,7 +204,6 @@ BOOL updateBrowserList( struct List * list, struct MinList PrefsBrowserList )
 {
     struct URL_BrowserNode  *   bn      = NULL,
                             *   newNode = NULL;
-    struct Node             *   node    = NULL;
 
     // libération de la liste
     freeList( list );
@@ -212,15 +213,15 @@ BOOL updateBrowserList( struct List * list, struct MinList PrefsBrowserList )
          bn->ubn_Node.mln_Succ;
          bn = (struct URL_BrowserNode *)bn->ubn_Node.mln_Succ)
     {
-        if (newNode = (struct URL_BrowserNode*)IListBrowser->AllocListBrowserNode(3,
+        if((newNode = (struct URL_BrowserNode*)IListBrowser->AllocListBrowserNode(3,
             LBNA_NodeSize,  sizeof(struct URL_BrowserNode),
             LBNA_CheckBox,  TRUE,
             LBNA_Checked,   (bn->ubn_Flags&UNF_DISABLED)?FALSE:TRUE,
             LBNA_Column,    1,
-                LBNCA_Text, "",
+            LBNCA_Text, "",
             LBNA_Column, 2,
-                LBNCA_Text, "",
-            TAG_DONE))
+            LBNCA_Text, "",
+            TAG_DONE)) != NULL)
         {
             IExec->CopyMem( bn, newNode, sizeof(struct URL_BrowserNode ) );
             IListBrowser->SetListBrowserNodeAttrs( (struct Node*)newNode, LBNA_Column,    1,
@@ -232,7 +233,7 @@ BOOL updateBrowserList( struct List * list, struct MinList PrefsBrowserList )
         }
         else
         {
-            printf(" AllocListBrowserNode() failed\n");
+            IDOS->Printf(" AllocListBrowserNode() failed\n");
             return(FALSE);
         }
     }
@@ -251,7 +252,8 @@ void updateBrowserWindow( struct URL_BrowserNode  * pBrowser )
         IIntuition->SetGadgetAttrs(GAD(OBJ_BROW_FRONT_STR), edit_brow_window, NULL, STRINGA_TextVal, pBrowser->ubn_ToFrontCmd, TAG_DONE );
         IIntuition->SetGadgetAttrs(GAD(OBJ_BROW_OPEN_STR), edit_brow_window, NULL, STRINGA_TextVal, pBrowser->ubn_OpenURLCmd, TAG_DONE );
         IIntuition->SetGadgetAttrs(GAD(OBJ_BROW_NEW_STR), edit_brow_window, NULL, STRINGA_TextVal, pBrowser->ubn_OpenURLWCmd, TAG_DONE );
-    } else printf("No browser node\n");
+    } else
+    	IDOS->Printf("No browser node\n");
 }
 
 

@@ -35,18 +35,18 @@
 int VARARGS68K RA_Request( Object * pWin, const char * strTitle, const char * strGadgets, const char * strFormat, ... )
 {
 	int nResult = -1;
-	va_list		valist;
-
+	va_list valist;
+	Object * pReq;
 
 	va_startlinear(valist, strFormat);
 
-	Object * pReq = RequesterObject,
-						REQ_Type,		REQTYPE_INFO,
-						REQ_TitleText,	strTitle,
-						REQ_BodyText,	strFormat,
-						REQ_VarArgs,	va_getlinearva(valist,APTR),
-						REQ_GadgetText,	strGadgets,
-					EndObject;
+	pReq = RequesterObject,
+				REQ_Type,		REQTYPE_INFO,
+				REQ_TitleText,	strTitle,
+				REQ_BodyText,	strFormat,
+				REQ_VarArgs,	va_getlinearva(valist,APTR),
+				REQ_GadgetText,	strGadgets,
+			EndObject;
 
 	va_end(valist);
 
@@ -64,9 +64,10 @@ int VARARGS68K RA_Request( Object * pWin, const char * strTitle, const char * st
 // libération de la liste
 void freeList( struct List * list )
 {
-    struct Node * node = NULL;
+    struct Node *node;
 
-    while( node = IExec->RemHead(list) ) IListBrowser->FreeListBrowserNode( node );
+    while((node = IExec->RemHead(list)) != NULL)
+    	IListBrowser->FreeListBrowserNode(node);
 }
 
 

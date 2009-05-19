@@ -21,6 +21,7 @@
 #include "ftps.h"
 
 #include "gui_global.h"
+#include "utility.h"
 
 #include <classes/window.h>
 #include <libraries/openurl.h>
@@ -32,6 +33,7 @@
 
 #include <gadgets/getfile.h>
 
+#include <proto/dos.h>
 #include <proto/exec.h>
 #include <proto/label.h>
 #include <proto/space.h>
@@ -205,7 +207,6 @@ BOOL updateFTPList( struct List * list, struct MinList PrefsFTPList )
 {
     struct URL_FTPNode  *   fn      = NULL,
                         *   newNode = NULL;
-    struct Node         *   node    = NULL;
 
     // libération de la liste
     freeList( list );
@@ -215,15 +216,15 @@ BOOL updateFTPList( struct List * list, struct MinList PrefsFTPList )
          fn->ufn_Node.mln_Succ;
          fn = (struct URL_FTPNode *)fn->ufn_Node.mln_Succ)
     {
-        if (newNode = (struct URL_FTPNode*)IListBrowser->AllocListBrowserNode(3,
+        if((newNode = (struct URL_FTPNode*)IListBrowser->AllocListBrowserNode(3,
             LBNA_NodeSize,  sizeof(struct URL_FTPNode),
             LBNA_CheckBox,  TRUE,
             LBNA_Checked,   (fn->ufn_Flags&UNF_DISABLED)?FALSE:TRUE,
             LBNA_Column,    1,
-                LBNCA_Text, "",
+            LBNCA_Text, "",
             LBNA_Column, 2,
-                LBNCA_Text, "",
-            TAG_DONE))
+            LBNCA_Text, "",
+            TAG_DONE)) != NULL)
         {
             IExec->CopyMem( fn, newNode, sizeof(struct URL_FTPNode ) );
             IListBrowser->SetListBrowserNodeAttrs( (struct Node*)newNode, LBNA_Column,    1,
@@ -236,7 +237,7 @@ BOOL updateFTPList( struct List * list, struct MinList PrefsFTPList )
         }
         else
         {
-            printf(" AllocListBrowserNode() failed\n");
+            IDOS->Printf(" AllocListBrowserNode() failed\n");
             return(FALSE);
         }
     }

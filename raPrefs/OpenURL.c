@@ -66,6 +66,10 @@
 
 #include "gui_global.h"
 #include "browsers.h"
+#include "ftps.h"
+#include "handlers.h"
+#include "mailers.h"
+#include "utility.h"
 
 #include "version.h"
 
@@ -86,36 +90,36 @@ struct OpenURLIFace *IOpenURL = NULL;
 
 Object *Objects[OBJ_NUM];
 
-static UBYTE* PageLabels[] =
+static STRPTR PageLabels[] =
 {
-    (UBYTE *)MSG_Win_Labels_Browsers,
-    (UBYTE *)MSG_Win_Labels_Mailers,
-    (UBYTE *)MSG_Win_Labels_FTPs,
-    (UBYTE *)MSG_Win_Labels_Misc,
+    (STRPTR)MSG_Win_Labels_Browsers,
+    (STRPTR)MSG_Win_Labels_Mailers,
+    (STRPTR)MSG_Win_Labels_FTPs,
+    (STRPTR)MSG_Win_Labels_Misc,
     NULL
 };
 
 struct ColumnInfo BrowsColInfo[] =
 {
-    { 20, "Use", CIF_WEIGHTED },
-    { 20, " Name", CIF_WEIGHTED },
-    { 20, " Path", CIF_WEIGHTED },
+    { 20, (STRPTR)"Use", CIF_WEIGHTED },
+    { 20, (STRPTR)" Name", CIF_WEIGHTED },
+    { 20, (STRPTR)" Path", CIF_WEIGHTED },
     { -1, NULL, -1 }
 };
 
 struct ColumnInfo MailColInfo[] =
 {
-    { 20, "Use", CIF_WEIGHTED },
-    { 20, " Name", CIF_WEIGHTED },
-    { 20, " Path", CIF_WEIGHTED },
+    { 20, (STRPTR)"Use", CIF_WEIGHTED },
+    { 20, (STRPTR)" Name", CIF_WEIGHTED },
+    { 20, (STRPTR)" Path", CIF_WEIGHTED },
     { -1, NULL, -1 }
 };
 
 struct ColumnInfo FTPsColInfo[] =
 {
-    { 20, "Use", CIF_WEIGHTED },
-    { 20, " Name", CIF_WEIGHTED },
-    { 20, " Path", CIF_WEIGHTED },
+    { 20, (STRPTR)"Use", CIF_WEIGHTED },
+    { 20, (STRPTR)" Name", CIF_WEIGHTED },
+    { 20, (STRPTR)" Path", CIF_WEIGHTED },
     { -1, NULL, -1 }
 };
 
@@ -143,7 +147,7 @@ struct Image chooser_image =
 **/
 struct TagItem	lst2btn[] = {
     {LISTBROWSER_SelectedNode, GA_ReadOnly },
-    {TAG_END, }
+    {TAG_END, 0 }
 };
 
 static struct NewMenu menu[] =
@@ -169,9 +173,14 @@ ULONG loadPrefs( ULONG mode );
 ULONG storePrefs( BOOL bStorePrefs );
 void updateFTPWindow( struct URL_FTPNode  * pFTP );
 
-Object *
-make_window(void)
+Object *make_window(void)
 {
+    Object
+        *page1 = NULL,
+        *page2 = NULL,
+        *page3 = NULL,
+        *page4 = NULL;
+
     OBJ(OBJ_HIDDEN_CHOOSER) = ChooserObject,
         GA_ID,                  OBJ_HIDDEN_CHOOSER,
         GA_RelVerify,           TRUE,
@@ -181,12 +190,6 @@ make_window(void)
         CHOOSER_Hidden,         TRUE,
         ICA_TARGET,             ICTARGET_IDCMP,
     End;  // Chooser
-
-    Object
-        *page1 = NULL,
-        *page2 = NULL,
-        *page3 = NULL,
-        *page4 = NULL;
 
     page1 = VLayoutObject,
         LAYOUT_AddChild,    HLayoutObject,
@@ -483,8 +486,7 @@ make_window(void)
 }
 
 
-int
-main()
+int main()
 {
     initStrings();
 
@@ -499,7 +501,7 @@ main()
 
     RA_SetUpHook(idcmphook, IDCMPFunc, NULL);
 
-    if (AppPort = IExec->CreateMsgPort())
+    if((AppPort = IExec->CreateMsgPort()) != NULL)
     {
         IExec->NewList( &list_Brow );
         IExec->NewList( &list_Mail );
@@ -526,13 +528,10 @@ main()
                                 TAG_DONE );
 
 
-        if (window = RA_OpenWindow(win))
+        if((window = RA_OpenWindow(win)) != NULL)
         {
-            uint32
-                sigmask = 0,
-                siggot  = 0;
-            BOOL
-                done    = FALSE;
+            uint32 sigmask = 0, siggot = 0;
+            BOOL done = FALSE;
 
             IIntuition->GetAttr(WINDOW_SigMask, win, &sigmask);
             while (!done)
@@ -571,9 +570,9 @@ main()
     return 0;
 }
 
-void IDCMPFunc(struct Hook *hook,Object *wobj,struct IntuiMessage *Msg)
+void IDCMPFunc(UNUSED struct Hook *hook, UNUSED Object *wobj, struct IntuiMessage *Msg)
 {
-    struct Window *window = Msg->IDCMPWindow;
+    //struct Window *window = Msg->IDCMPWindow;
     uint32 active;
 
     if (Msg->Class == IDCMP_IDCMPUPDATE)
@@ -612,10 +611,10 @@ ULONG loadPrefs( ULONG mode )
 
     if (error)
     {
-        RA_Request(NULL,0,(UBYTE *)getString(MSG_ErrReqTitle),
-                                     (UBYTE *)getString(MSG_ErrReqGadget),
-                                     getString(error),
-                                     p ? p->up_Version : 0);
+        RA_Request(NULL,0,getString(MSG_ErrReqTitle),
+                          getString(MSG_ErrReqGadget),
+                          getString(error),
+                          p ? p->up_Version : 0);
 
         if (p) IOpenURL->URL_FreePrefsA(p,NULL);
 
@@ -655,11 +654,8 @@ ULONG loadPrefs( ULONG mode )
 
 ULONG storePrefs( BOOL bStorePrefs )
 {
+    ULONG lLong = 0;
     struct URL_Prefs     up;
-    ULONG                i;
-    struct URL_BrowserNode * bn;
-    struct URL_MailerNode * mn;
-    struct URL_FTPNode * fn;
 
     /* Copy settings from gadgets into structure */
     up.up_Version = PREFS_VERSION;
@@ -674,35 +670,40 @@ ULONG storePrefs( BOOL bStorePrefs )
     IExec->CopyMem( &list_FTPs, &up.up_FTPList, sizeof(struct List) );
 
     /* Miscellaneous */
-    ULONG lLong = 0;
-    if( IIntuition->GetAttr( GA_Selected, OBJ(OBJ_PREPEND), &lLong ) )
+    if(IIntuition->GetAttr( GA_Selected, OBJ(OBJ_PREPEND), &lLong ))
+    {
         if(lLong)
             up.up_Flags |= UPF_PREPENDHTTP;
         else
             up.up_Flags &= ~UPF_PREPENDHTTP;
-    if( IIntuition->GetAttr( GA_Selected, OBJ(OBJ_SEND_MAILTO), &lLong ) )
+    }
+    if(IIntuition->GetAttr( GA_Selected, OBJ(OBJ_SEND_MAILTO), &lLong ))
+    {
         if(lLong)
             up.up_Flags |= UPF_DOMAILTO;
         else
             up.up_Flags &= ~UPF_DOMAILTO;
-    if( IIntuition->GetAttr( GA_Selected, OBJ(OBJ_SEND_FTP), &lLong ) )
+    }
+    if(IIntuition->GetAttr( GA_Selected, OBJ(OBJ_SEND_FTP), &lLong ))
+    {
         if(lLong)
             up.up_Flags |= UPF_DOFTP;
         else
             up.up_Flags &= ~UPF_DOFTP;
+    }
 
-    if( IIntuition->GetAttr( GA_Selected, OBJ(OBJ_UNICONIFY), &lLong ) )
+    if(IIntuition->GetAttr( GA_Selected, OBJ(OBJ_UNICONIFY), &lLong ))
         up.up_DefShow         = lLong;
-    if( IIntuition->GetAttr( GA_Selected, OBJ(OBJ_BRING), &lLong ) )
+    if(IIntuition->GetAttr( GA_Selected, OBJ(OBJ_BRING), &lLong ))
         up.up_DefBringToFront = lLong;
-    if( IIntuition->GetAttr( GA_Selected, OBJ(OBJ_OPEN), &lLong ) )
+    if(IIntuition->GetAttr( GA_Selected, OBJ(OBJ_OPEN), &lLong ))
         up.up_DefNewWindow    = lLong;
-    if( IIntuition->GetAttr( GA_Selected, OBJ(OBJ_LAUNCH), &lLong ) )
+    if(IIntuition->GetAttr( GA_Selected, OBJ(OBJ_LAUNCH), &lLong ))
         up.up_DefLaunch       = lLong;
 
     /* Save to disk */
     if (!IOpenURL->URL_SetPrefs(&up,URL_SetPrefs_Save,bStorePrefs,TAG_DONE))
-        RA_Request(window,(UBYTE *)getString(MSG_ErrReqTitle),(UBYTE *)getString(MSG_ErrReqGadget),(UBYTE *)getString(MSG_Err_FailedSave),NULL);
+        RA_Request((Object *)window,getString(MSG_ErrReqTitle),getString(MSG_ErrReqGadget),getString(MSG_Err_FailedSave),NULL);
 
     return TRUE;
 }

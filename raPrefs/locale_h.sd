@@ -32,6 +32,9 @@
 #ifndef EXEC_TYPES_H
 #include <exec/types.h>
 #endif
+#ifndef LIBRARIES_GADTOOLS_H
+#include <libraries/gadtools.h>
+#endif
 
 #ifdef CATCOMP_ARRAY
 #undef CATCOMP_NUMBERS
@@ -72,6 +75,14 @@ static const struct CatCompArrayType CatCompArray[] =
 };
 
 #endif /* CATCOMP_ARRAY */
+
+/****************************************************************************/
+
+void initStrings(void);
+void uninitStrings(void);
+void localizeStrings(STRPTR *s);
+void localizeNewMenu(struct NewMenu *nm);
+STRPTR getString(ULONG id);
 
 /****************************************************************************/
 
