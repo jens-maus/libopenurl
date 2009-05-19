@@ -43,12 +43,21 @@ void freeVecPooled(APTR pool, APTR mem);
 APTR reallocVecPooled(APTR pool, APTR mem, ULONG oldSize, ULONG newSize);
 APTR allocArbitrateVecPooled(ULONG size);
 void freeArbitrateVecPooled(APTR mem);
-BOOL sendToBrowser(STRPTR URL, struct List *portlist, BOOL show, BOOL toFront, BOOL newWindow, BOOL launch, STRPTR pubScreenName);
-BOOL sendToFTP(STRPTR URL, struct List *portlist, BOOL show, BOOL toFront, BOOL newWindow, BOOL launch, STRPTR pubScreenName);
-BOOL sendToMailer(STRPTR URL, struct List *portlist, BOOL show, BOOL toFront, BOOL launch, STRPTR pubScreenName);
+BOOL sendToBrowser(STRPTR URL, struct List *portlist, ULONG flags, STRPTR pubScreenName);
+BOOL sendToFTP(STRPTR URL, struct List *portlist, ULONG flags, STRPTR pubScreenName);
+BOOL sendToMailer(STRPTR URL, struct List *portlist, ULONG flags, STRPTR pubScreenName);
 BOOL copyList(struct List *dst, struct List *src, ULONG size);
 void freeList(struct List *list);
 BOOL isdigits(STRPTR str);
+
+#define SENDTOB_SHOW                   0
+#define SENDTOF_SHOW                   (1<<SENDTOB_SHOW)
+#define SENDTOB_TOFRONT                1
+#define SENDTOF_TOFRONT                (1<<SENDTOB_TOFRONT)
+#define SENDTOB_NEWWINDOW              2
+#define SENDTOF_NEWWINDOW              (1<<SENDTOB_NEWWINDOW)
+#define SENDTOB_LAUNCH                 3
+#define SENDTOF_LAUNCH                 (1<<SENDTOB_LAUNCH)
 
 /* api.c */
 LIBPROTO(URL_OpenA, ULONG, REG(a0, STRPTR url), REG(a1, struct TagItem *attrs));

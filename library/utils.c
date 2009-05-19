@@ -254,7 +254,7 @@ static BOOL sendRexxMsg(STRPTR rxport, STRPTR rxcmd)
 
 /****************************************************************************/
 
-BOOL sendToBrowser(STRPTR URL, struct List *portlist, BOOL show, BOOL toFront, BOOL newWindow, BOOL launch, STRPTR pubScreenName)
+BOOL sendToBrowser(STRPTR URL, struct List *portlist, ULONG flags, STRPTR pubScreenName)
 {
     BOOL res = FALSE;
     STRPTR cmd = NULL;
@@ -284,17 +284,17 @@ BOOL sendToBrowser(STRPTR URL, struct List *portlist, BOOL show, BOOL toFront, B
         {
             /* send uniconify msg */
 
-            if (show && *bn->ubn_ShowCmd)
+            if (isFlagSet(flags, SENDTOF_SHOW) && *bn->ubn_ShowCmd)
                 sendRexxMsg(port,bn->ubn_ShowCmd);
 
             /* send screentofront command */
 
-            if (toFront && *bn->ubn_ToFrontCmd)
+            if (isFlagSet(flags, SENDTOF_TOFRONT) && *bn->ubn_ToFrontCmd)
                 sendRexxMsg(port,bn->ubn_ToFrontCmd);
 
             /* try sending openurl msg */
 
-            if (!(cmd = expandPlaceHolders(newWindow ? bn->ubn_OpenURLWCmd : bn->ubn_OpenURLCmd,ph,PH_COUNT_BROWSER)))
+            if (!(cmd = expandPlaceHolders(isFlagSet(flags, SENDTOF_NEWWINDOW) ? bn->ubn_OpenURLWCmd : bn->ubn_OpenURLCmd,ph,PH_COUNT_BROWSER)))
                 goto done;
 
             if (!(res = sendRexxMsg(port,cmd)))
@@ -308,7 +308,8 @@ BOOL sendToBrowser(STRPTR URL, struct List *portlist, BOOL show, BOOL toFront, B
 
     /* no running browser, launch a new one */
 
-    if (!launch) goto done;
+    if (isFlagClear(flags, SENDTOF_LAUNCH))
+        goto done;
 
     for (bn = (struct URL_BrowserNode *)OpenURLBase->prefs->up_BrowserList.mlh_Head;
          bn->ubn_Node.mln_Succ;
@@ -394,7 +395,7 @@ done:
 
 /**************************************************************************/
 
-BOOL sendToFTP(STRPTR URL, struct List *portlist, BOOL show, BOOL toFront, BOOL newWindow, BOOL launch, STRPTR pubScreenName)
+BOOL sendToFTP(STRPTR URL, struct List *portlist, ULONG flags, STRPTR pubScreenName)
 {
     BOOL res = FALSE;
     STRPTR cmd = NULL;
@@ -424,12 +425,12 @@ BOOL sendToFTP(STRPTR URL, struct List *portlist, BOOL show, BOOL toFront, BOOL 
         {
             /* send uniconify msg */
 
-            if (show && *fn->ufn_ShowCmd)
+            if (isFlagSet(flags, SENDTOF_SHOW) && *fn->ufn_ShowCmd)
                 sendRexxMsg(port,fn->ufn_ShowCmd);
 
             /* send screentofront command */
 
-            if (toFront && *fn->ufn_ToFrontCmd)
+            if (isFlagSet(flags, SENDTOF_TOFRONT) && *fn->ufn_ToFrontCmd)
                 sendRexxMsg(port,fn->ufn_ToFrontCmd);
 
             /* try sending openurl msg */
@@ -438,7 +439,7 @@ BOOL sendToFTP(STRPTR URL, struct List *portlist, BOOL show, BOOL toFront, BOOL 
             ph[0].ph_String = URL+6;
             else ph[0].ph_String = URL+6;
 
-            if (!(cmd = expandPlaceHolders(newWindow ? fn->ufn_OpenURLWCmd : fn->ufn_OpenURLCmd,ph,PH_COUNT_FTP)))
+            if (!(cmd = expandPlaceHolders(isFlagSet(flags, SENDTOF_NEWWINDOW) ? fn->ufn_OpenURLWCmd : fn->ufn_OpenURLCmd,ph,PH_COUNT_FTP)))
                 goto done;
 
             if (!(res = sendRexxMsg(port,cmd)))
@@ -452,7 +453,8 @@ BOOL sendToFTP(STRPTR URL, struct List *portlist, BOOL show, BOOL toFront, BOOL 
 
     /* no running ftp client, launch a new one */
 
-    if (!launch) goto done;
+    if (isFlagClear(flags, SENDTOF_LAUNCH))
+        goto done;
 
     for (fn = (struct URL_FTPNode *)OpenURLBase->prefs->up_FTPList.mlh_Head;
          fn->ufn_Node.mln_Succ;
@@ -546,7 +548,7 @@ done:
 
 static WORD trans[256];
 
-BOOL sendToMailer(STRPTR URL, struct List *portlist, BOOL show, BOOL toFront, BOOL launch, STRPTR pubScreenName)
+BOOL sendToMailer(STRPTR URL, struct List *portlist, ULONG flags, STRPTR pubScreenName)
 {
     struct placeHolder    ph[PH_COUNT_MAILER];
     struct URL_MailerNode *mn;
@@ -678,12 +680,12 @@ BOOL sendToMailer(STRPTR URL, struct List *portlist, BOOL show, BOOL toFront, BO
         {
             /* send uniconify msg */
 
-            if (show && *mn->umn_ShowCmd)
+            if (isFlagSet(flags, SENDTOF_SHOW) && *mn->umn_ShowCmd)
                 sendRexxMsg(rxport,mn->umn_ShowCmd);
 
             /* send screentofront command */
 
-            if (toFront && *mn->umn_ToFrontCmd)
+            if (isFlagSet(flags, SENDTOF_TOFRONT) && *mn->umn_ToFrontCmd)
                 sendRexxMsg(rxport,mn->umn_ToFrontCmd);
 
             /* write to temp file */
@@ -733,7 +735,8 @@ BOOL sendToMailer(STRPTR URL, struct List *portlist, BOOL show, BOOL toFront, BO
 
     /* no running ftp client, launch a new one */
 
-    if (!launch) goto done;
+    if (isFlagClear(flags, SENDTOF_LAUNCH))
+        goto done;
 
     for (mn = (struct URL_MailerNode *)OpenURLBase->prefs->up_MailerList.mlh_Head;
          mn->umn_Node.mln_Succ;

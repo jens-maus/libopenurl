@@ -36,7 +36,9 @@ ULONG LIBFUNC URL_OpenA(REG(a0,STRPTR URL), REG(a1,struct TagItem *attrs))
   TEXT buf[256];
   STRPTR pubScreenName = NULL;
   STRPTR fullURL = NULL;
-  ULONG res, show, toFront, newWindow, launch, httpPrepend = FALSE;
+  ULONG res;
+  BOOL httpPrepend = FALSE;
+  ULONG flags;
 
   ENTER();
 
@@ -46,10 +48,15 @@ ULONG LIBFUNC URL_OpenA(REG(a0,STRPTR URL), REG(a1,struct TagItem *attrs))
 
   /* parse arguments */
   pubScreenName = (STRPTR)GetTagData(URL_PubScreenName, (ULONG)"Workbench", attrs);
-  show          = GetTagData(URL_Show, OpenURLBase->prefs->up_DefShow, attrs);
-  toFront       = GetTagData(URL_BringToFront, OpenURLBase->prefs->up_DefBringToFront, attrs);
-  newWindow     = GetTagData(URL_NewWindow, OpenURLBase->prefs->up_DefNewWindow, attrs);
-  launch        = GetTagData(URL_Launch, OpenURLBase->prefs->up_DefLaunch, attrs);
+  flags = 0;
+  if(GetTagData(URL_Show, OpenURLBase->prefs->up_DefShow, attrs))
+    SET_FLAG(flags, SENDTOF_SHOW);
+  if(GetTagData(URL_BringToFront, OpenURLBase->prefs->up_DefBringToFront, attrs))
+    SET_FLAG(flags, SENDTOF_TOFRONT);
+  if(GetTagData(URL_NewWindow, OpenURLBase->prefs->up_DefNewWindow, attrs))
+    SET_FLAG(flags, SENDTOF_NEWWINDOW);
+  if(GetTagData(URL_Launch, OpenURLBase->prefs->up_DefLaunch, attrs))
+    SET_FLAG(flags, SENDTOF_LAUNCH);
 
   /* make a copy of the global list of named ports */
   Forbid();
@@ -100,11 +107,11 @@ ULONG LIBFUNC URL_OpenA(REG(a0,STRPTR URL), REG(a1,struct TagItem *attrs))
     {
       /* Be case insensitive - Piru */
       if((OpenURLBase->prefs->up_Flags & UPF_DOMAILTO) && Strnicmp((STRPTR)URL,"mailto:", 7) == 0)
-        res = sendToMailer(fullURL, &portList, show, toFront, launch, pubScreenName);
+        res = sendToMailer(fullURL, &portList, flags, pubScreenName);
       else if((OpenURLBase->prefs->up_Flags & UPF_DOFTP) && Strnicmp((STRPTR)URL,"ftp://", 6) == 0)
-        res = sendToFTP(fullURL, &portList, show, toFront, newWindow, launch, pubScreenName);
+        res = sendToFTP(fullURL, &portList, flags, pubScreenName);
       else
-        res = sendToBrowser(fullURL, &portList, show, toFront, newWindow, launch, pubScreenName);
+        res = sendToBrowser(fullURL, &portList, flags, pubScreenName);
     }
   }
 

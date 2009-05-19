@@ -5,6 +5,11 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2009-05-19  Thore Böckelmann <tboeckel@gmx.de>
+
+  * library/api.c, library/utils.c: replace the separate BOOL parameters by a
+    combined flags variable.
+
 2009-05-18  Thore Böckelmann <tboeckel@gmx.de>
 
   * prefs/popport.c: added a comment about the unsafe Forbid() situation while
