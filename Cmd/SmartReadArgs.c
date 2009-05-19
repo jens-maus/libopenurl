@@ -87,6 +87,10 @@
 #define EOS    '\0'
 #endif
 
+#ifndef ZERO
+#define ZERO   ((BPTR)0)
+#endif
+
 #define MODE_MULTI      1
 
 #define MAXIMUM_FILENAME_LENGTH 108
@@ -102,10 +106,10 @@ extern struct WBStartup *_WBenchMsg;
 /* -------------------------- static prototypes --------------------------- */
 
 static struct DiskObject *smart_get_icon(struct SmartArgs *args, struct WBStartup *wbarg);
-static void fstrcpy(struct SmartArgs *args, STRPTR string);
+static void fstrcpy(struct SmartArgs *args, CONST_STRPTR string);
 static void get_arg_name(struct SmartArgs *args, STRPTR buffer, ULONG size, ULONG * modes);
 static void get_wbarg_name(struct WBArg *wbarg, STRPTR buffer, ULONG size);
-static BOOL is_in_template(STRPTR name, STRPTR template);
+static BOOL is_in_template(STRPTR name, CONST_STRPTR template);
 
 /****** SmartReadArgs/--background-- ****************************************
  * COPYRIGHT
@@ -161,7 +165,7 @@ static BOOL is_in_template(STRPTR name, STRPTR template);
  *   SmartReadArgs -- Workbench/CLI transparent ReadArgs().
  * SYNOPSIS
  *   error = SmartReadArgs(wb_startup, smart_args);
- * 
+ *
  *   LONG SmartReadArgs(struct WBStartup *, struct SmartArgs *);
  * FUNCTION
  *   This function is a CLI/Workbench transparent interface to ReadArgs().
@@ -173,7 +177,7 @@ static BOOL is_in_template(STRPTR name, STRPTR template);
  *   Tooltypes that are not part of the template are ignored. This includes
  *   tooltypes being disabled with "(...)", NewIcons image data on systems
  *   without NewIcons installed and all this «« Icon by some idiot »» crap.
- * 
+ *
  *   If the application was stared from CLI, it simply calls ReadArgs()
  *   without the conversion step.
  *
@@ -256,42 +260,6 @@ static BOOL is_in_template(STRPTR name, STRPTR template);
  *   "icon.library" and "utility.library" to be open already.
  * SOURCE
  */
-int main(int argc, STRPTR argv[])
-{
-   struct SmartArgs smart_args = {NULL,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-   LONG argument[2];
-   LONG error;
-
-   /* Obtain WBStartup; depends on your compiler environment */
-   struct WBStartup *wb_startup = NULL;
-#if defined(__GNUC__) && !defined(__amigaos4__)
-   wb_startup = _WBenchMsg;
-#else
-   if (argc == 0)
-   {
-      wb_startup = (struct WBStartup *) argv;
-   }
-#endif
-
-   smart_args.sa_Template = "FILES/M/A,VERBOSE";
-   smart_args.sa_Parameter = argument;
-   smart_args.sa_FileParameter = 0;
-   smart_args.sa_Window = "CON:////My WB-Window/AUTO/CLOSE/WAIT";
-
-   error = SmartReadArgs(wb_startup, &smart_args);
-   if (error == 0)
-   {
-      /* do something */
-   }
-   else
-   {
-      PrintFault(error, "MyProgram");
-   }
-
-   SmartFreeArgs(&smart_args);
-
-   return ((error == 0) ? RETURN_OK : RETURN_FAIL);
-}
 /****************************************************************************/
 LONG SmartReadArgs(struct WBStartup * wb_startup, struct SmartArgs * args)
 {
@@ -303,22 +271,22 @@ LONG SmartReadArgs(struct WBStartup * wb_startup, struct SmartArgs * args)
 
    args->sa_Flags = 0;
 
-   D(bug("UtilityBase = 0x%lx\n", (ULONG) UtilityBase));
-   D(bug("IconBase    = 0x%lx\n", (ULONG) IconBase));
-   D(bug("WBStartup   = 0x%lx\n", (ULONG) wb_startup));
+   D(DBF_STARTUP, "UtilityBase = 0x%08lx", (ULONG)UtilityBase);
+   D(DBF_STARTUP, "IconBase    = 0x%08lx", (ULONG)IconBase);
+   D(DBF_STARTUP, "WBStartup   = 0x%08lx", (ULONG)wb_startup);
 
    if (wb_startup != NULL)
    {
       struct WBArg *wbarg = wb_startup->sm_ArgList;
       LONG arg_counter = 0;
 
-      D(bug("  numArgs   = %ld\n", wb_startup->sm_NumArgs));
+      D(DBF_STARTUP, "  numArgs   = %ld", wb_startup->sm_NumArgs);
       while (arg_counter < wb_startup->sm_NumArgs)
       {
-         D(bug("  name[%ld] = \"%s\"\n", arg_counter, wbarg->wa_Name));
+         D(DBF_STARTUP, "  name[%ld] = '%s'", arg_counter, wbarg->wa_Name);
          wbarg += 1;
          arg_counter += 1;
-      }               
+      }
    }
 
    if (wb_startup != NULL)
@@ -386,7 +354,7 @@ LONG SmartReadArgs(struct WBStartup * wb_startup, struct SmartArgs * args)
                   FreeMem(temp, TEMPSIZE);
                }
 
-               D(bug("tooltypes=%lx\n", (ULONG) tooltypes));
+               D(DBF_STARTUP, "tooltypes=%08lx", (ULONG)tooltypes);
                if (tooltypes)
                {
                   while (*tooltypes)
@@ -447,7 +415,7 @@ LONG SmartReadArgs(struct WBStartup * wb_startup, struct SmartArgs * args)
                }                /* if (tooltypes) */
                fstrcpy(args, "\n");
 
-               D(bug("final wb command line : \"%s\"\n", args->sa_Buffer));
+               D(DBF_STARTUP, "final wb command line : '%s'", args->sa_Buffer);
             }
          }
       }
@@ -542,7 +510,7 @@ static struct DiskObject *smart_get_icon(struct SmartArgs *args, struct WBStartu
    new_lock = DupLock(wbarg->wa_Lock);
    if (new_lock != ZERO)
    {
-      D(bug("work_name : \"%s\"\n", work_name));
+      D(DBF_STARTUP, "work_name : '%s'", work_name);
 
       /* go to the directory where the icon resides */
       old_lock = CurrentDir(new_lock);
@@ -564,7 +532,7 @@ static struct DiskObject *smart_get_icon(struct SmartArgs *args, struct WBStartu
             new_lock = new_lock2;
 
             strncpy(work_name, wbarg[1].wa_Name, MAXIMUM_FILENAME_LENGTH);
-            D(bug("work_name2 : \"%s\"\n", work_name));
+            D(DBF_STARTUP, "work_name2 : '%s'", work_name);
 
             if ((prj = GetDiskObjectNew(work_name)))
             {
@@ -592,7 +560,7 @@ static struct DiskObject *smart_get_icon(struct SmartArgs *args, struct WBStartu
 
       if (dob)
       {
-         D(bug("dobj window : %s\n", dob->do_ToolWindow));
+         D(DBF_STARTUP, "dobj window : '%s'", dob->do_ToolWindow);
       }
 
       /* go back to where we used to be */
@@ -605,12 +573,12 @@ static struct DiskObject *smart_get_icon(struct SmartArgs *args, struct WBStartu
       args->sa_NumArgs = num;
    }
 
-   D(bug("return (dob)\n"));
+   D(DBF_STARTUP, "return (dob)");
 
    return (dob);
 }
 
-static void fstrcpy(struct SmartArgs *args, STRPTR string)
+static void fstrcpy(struct SmartArgs *args, CONST_STRPTR string)
 {
    STRPTR ptr = args->sa_ActualPtr;
    STRPTR end = args->sa_EndPtr;
@@ -626,7 +594,7 @@ static void fstrcpy(struct SmartArgs *args, STRPTR string)
 static void get_arg_name(struct SmartArgs *args, STRPTR buffer, ULONG size, ULONG * modes)
 {
    ULONG num = args->sa_FileParameter;
-   STRPTR ptr = args->sa_Template;
+   CONST_STRPTR ptr = args->sa_Template;
 
    *modes = 0;
 
@@ -679,16 +647,10 @@ static void get_wbarg_name(struct WBArg *wbarg, STRPTR buffer, ULONG size)
       *buffer = EOS;
 }
 
-/* Enable extended debugging for is_in_template() */
-#if 0
-#define D2(x) x
-#else
-#define D2(x) /* nufin */
-#endif
-static BOOL is_in_template(STRPTR name, STRPTR template)
+static BOOL is_in_template(STRPTR name, CONST_STRPTR template)
 {
    BOOL found = FALSE;
-   STRPTR current_word = template;
+   CONST_STRPTR current_word = template;
    BOOL skip_switch = FALSE;
    size_t name_length;
 
@@ -700,7 +662,7 @@ static BOOL is_in_template(STRPTR name, STRPTR template)
       name_length += 1;
    }
 
-   D(bug("find `%s' in template `%s'\n", name, template));
+   D(DBF_TEMPLATE, "find '%s' in template '%s'\n", name, template);
    while ((current_word[0] != '\0') && (!found))
    {
       STRPTR next_word = strpbrk(current_word, "/=,");
@@ -708,22 +670,22 @@ static BOOL is_in_template(STRPTR name, STRPTR template)
 
       if (next_word == NULL)
       {
-         next_word = current_word + strlen(current_word);
+         next_word = (STRPTR)current_word + strlen(current_word);
       }
       current_word_length = next_word - current_word;
 
       if (skip_switch)
       {
-         D2(bug("  skip  (`%s', %lu)\n", current_word, current_word_length));
+         D(DBF_TEMPLATE, "  skip  ('%s', %lu)", current_word, current_word_length);
          skip_switch = FALSE;
       }
       else
       {
-         D2(bug("  check (`%s', %lu)\n", current_word, current_word_length));
+         D(DBF_TEMPLATE, "  check ('%s', %lu)", current_word, current_word_length);
          if ((name_length == current_word_length)
              && !Strnicmp(name, current_word, (LONG) name_length))
          {
-            D(bug("  found!\n"));
+            D(DBF_TEMPLATE, "  found!");
             found = TRUE;
          }
       }

@@ -19,6 +19,8 @@ $URL$
 
 2009-05-19  Thore Böckelmann <tboeckel@gmx.de>
 
+  * Cmd: converted the build system to the usual standard. The commandline tool
+    now builds for at least OS3, OS4 and MOS.
   * prefs/OpenURL.c: added debugging initialization.
   * prefs: fixed all remaining issues with the OS3 build. Now the preferences
     program compiles perfectly for OS3 and OS4.
