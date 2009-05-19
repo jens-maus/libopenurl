@@ -1,17 +1,22 @@
-/*
-**  OpenURL - MUI preferences for openurl.library
-**
-**  Written by Troels Walsted Hansen <troels@thule.no>
-**  Placed in the public domain.
-**
-**  Developed by:
-**  - Alfonso Ranieri <alforan@tin.it>
-**  - Stefan Kost <ensonic@sonicpulse.de>
-**
-**
-**  Main includes and definitions
-*/
+/***************************************************************************
 
+ openurl.library - universal URL display and browser launcher library
+ Copyright (C) 1998-2005 by Troels Walsted Hansen, et al.
+ Copyright (C) 2005-2009 by openurl.library Open Source Team
+
+ This library is free software; it has been placed in the public domain
+ and you can freely redistribute it and/or modify it. Please note, however,
+ that some components may be under the LGPL or GPL license.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+ openurl.library project: http://sourceforge.net/projects/openurllib/
+
+ $Id$
+
+***************************************************************************/
 
 #define __NOLIBBASE__
 #define __USE_SYSBASE
@@ -56,8 +61,8 @@ extern APTR                   g_pool;
 #define THIS_PREFS_VERSION ((UBYTE)4)
 
 #define APPBASENAME  "OPENURL"
-#define APPAUTHOR    "Troels Walsted Hansen, Alfonso Ranieri, Stefan Kost"
-#define APPHELP      PRG".guide"
+#define APPAUTHOR    "openurl.library Open Source Team"
+#define APPHELP      "OpenURL.guide"
 
 /**************************************************************************/
 /*

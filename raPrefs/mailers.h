@@ -1,27 +1,23 @@
-/*
-**  RAOpenURL - Reaction preferences for openurl.library
-**
-**  Copyright (C) 2006 by OpenURL Team
-**
-**  This program is free software; you can redistribute it and/or modify
-**  it under the terms of the GNU General Public License as published by
-**  the Free Software Foundation; either version 2 of the License, or
-**  (at your option) any later version.
-**
-**  This program is distributed in the hope that it will be useful,
-**  but WITHOUT ANY WARRANTY; without even the implied warranty of
-**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-**  GNU General Public License for more details.
-**
-**  You should have received a copy of the GNU General Public License
-**  along with this program; if not, write to the Free Software
-**  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-**
-**  Mailers utility functions declaration
-**
-**  $Id: mailers.h,v 1.1 2008-09-02 23:24:26 abalabanb Exp $
-**
-*/
+/***************************************************************************
+
+ openurl.library - universal URL display and browser launcher library
+ Copyright (C) 1998-2005 by Troels Walsted Hansen, et al.
+ Copyright (C) 2005-2009 by openurl.library Open Source Team
+
+ This library is free software; it has been placed in the public domain
+ and you can freely redistribute it and/or modify it. Please note, however,
+ that some components may be under the LGPL or GPL license.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+ openurl.library project: http://sourceforge.net/projects/openurllib/
+
+ $Id$
+
+***************************************************************************/
+
 #ifndef MAILERS_H
 #define MAILERS_H
 

@@ -7,6 +7,9 @@ $URL$
 
 2009-05-19  Jens Langner <Jens.Langner@light-speed.de>
 
+  * raPrefs: updated the build system of the OS4 reaction preferences to match
+    that of our other sub projects. Now the Reaction preferences should work
+    as expected on OS4.
   * cmd: updated the sources to be compile/linkable for AROS.
   * include/macros.h: updated to be the global header file for the macro
     definitions of all our subprojects.

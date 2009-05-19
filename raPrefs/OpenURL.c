@@ -1,12 +1,22 @@
-//
-//  GUI-Design Written Dec 2005, Dave Norris.
-//  This code is public domain.
-//
-//  compiled with:
-//  gcc -o OpenURL OpenURL.c -lraauto -lauto
-//
-//  strip OpenURL
-//
+/***************************************************************************
+
+ openurl.library - universal URL display and browser launcher library
+ Copyright (C) 1998-2005 by Troels Walsted Hansen, et al.
+ Copyright (C) 2005-2009 by openurl.library Open Source Team
+
+ This library is free software; it has been placed in the public domain
+ and you can freely redistribute it and/or modify it. Please note, however,
+ that some components may be under the LGPL or GPL license.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+ openurl.library project: http://sourceforge.net/projects/openurllib/
+
+ $Id$
+
+***************************************************************************/
 
 #include <exec/exec.h>
 #include <intuition/intuition.h>
@@ -56,6 +66,10 @@
 
 #include "gui_global.h"
 #include "browsers.h"
+
+#include "version.h"
+
+static const char USED_VAR version[] = "$VER: OpenURL-Prefs " LIB_REV_STRING " [" SYSTEMSHORT "/" CPU "] (" LIB_DATE ") " LIB_COPYRIGHT;
 
 Object *win;
 struct MsgPort *AppPort;
