@@ -295,6 +295,7 @@ OBJS += OpenURL.o \
         win.o \
         about.o \
         app.o \
+        vastubs.o \
         debug.o
 
 CATALOGS = $(LOCALE)/german.catalog \
