@@ -27,6 +27,7 @@ all: os4 mos os3
 os4:
 	@$(MAKE) -C library OS=os4
 	@$(MAKE) -C prefs OS=os4
+	@$(MAKE) -C raPrefs OS=os4
 	@$(MAKE) -C cmd OS=os4
 
 mos:
