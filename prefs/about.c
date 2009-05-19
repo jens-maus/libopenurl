@@ -18,6 +18,8 @@
 
 ***************************************************************************/
 
+#include <stdio.h>
+
 #include "openurl.h"
 
 #define CATCOMP_NUMBERS
@@ -29,16 +31,19 @@
 
 #include <libraries/openurl.h>
 
+#include "debug.h"
+
 /***********************************************************************/
 /*
 ** If Urltext.mcc is present use it,
 ** otherwise falls back to a text object
 */
 
-static Object *
-ourltext(STRPTR url,STRPTR text)
+static Object *ourltext(CONST_STRPTR url, CONST_STRPTR text)
 {
     Object *o;
+
+    ENTER();
 
     o = UrltextObject,
         MUIA_Urltext_Text,           text,
@@ -47,22 +52,28 @@ ourltext(STRPTR url,STRPTR text)
         MUIA_Urltext_NoOpenURLPrefs, TRUE,
     End;
 
-    if (!o) o = TextObject, MUIA_Text_SetMax, FALSE, MUIA_Text_Contents, text ? text : url, End;
+    if(o == NULL)
+    {
+        o = TextObject,
+            MUIA_Text_SetMax, FALSE,
+            MUIA_Text_Contents, (text != NULL) ? text : url,
+        End;
+    }
 
+    RETURN(o);
     return o;
 }
 
 /***********************************************************************/
 
-static ULONG
-mNew(struct IClass *cl,Object *obj,struct opSet *msg)
+static ULONG mNew(struct IClass *cl,Object *obj,struct opSet *msg)
 {
     TEXT  buf[64];
     STRPTR lver;
     Object *ok;
 
-    if(!URL_GetAttr(URL_GetAttr_VerString,(ULONG *)((void *)&lver)))
-      lver = "";
+    if((STRPTR)URL_GetAttr(URL_GetAttr_VerString,(ULONG *)((void *)&lver)) == NULL)
+      lver = (STRPTR)"";
 
     snprintf(buf, sizeof(buf), "OpenURL\n%s", lver);
 
@@ -140,18 +151,29 @@ SDISPATCHER(dispatcher)
 
 /***********************************************************************/
 
-ULONG
-initAboutClass(void)
+BOOL initAboutClass(void)
 {
-    return (ULONG)(g_aboutClass = MUI_CreateCustomClass(NULL,MUIC_Window,NULL,0,ENTRY(dispatcher)));
+    BOOL success = FALSE;
+
+    ENTER();
+
+    if((g_aboutClass = MUI_CreateCustomClass(NULL, MUIC_Window, NULL, 0, ENTRY(dispatcher))) != NULL)
+        success = TRUE;
+
+    RETURN(success);
+    return success;
 }
 
 /***********************************************************************/
 
-void
-disposeAboutClass(void)
+void disposeAboutClass(void)
 {
-    if (g_aboutClass) MUI_DeleteCustomClass(g_aboutClass);
+    ENTER();
+
+    if(g_aboutClass != NULL)
+        MUI_DeleteCustomClass(g_aboutClass);
+
+    LEAVE();
 }
 
 /***********************************************************************/

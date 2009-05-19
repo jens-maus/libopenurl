@@ -22,6 +22,8 @@
 
 #include "SDI_stdarg.h"
 
+#include "debug.h"
+
 /**************************************************************************/
 
 #define _KEY(k)  ((ULONG)(k)) ? MUIA_ControlChar : TAG_IGNORE, ((ULONG)(k)) ? (ULONG)getKeyChar(NULL,(ULONG)(k)) : 0
@@ -128,60 +130,53 @@ void SetAmiUpdateENVVariable( CONST_STRPTR varname )
 
 /**************************************************************************/
 
-Object *
-olabel(ULONG id)
+Object *olabel(ULONG id)
 {
     return Label((ULONG)getString(id));
 }
 
 /****************************************************************************/
 
-Object *
-ollabel(ULONG id)
+Object *ollabel(ULONG id)
 {
     return LLabel((ULONG)getString(id));
 }
 
 /****************************************************************************/
 
-Object *
-ollabel1(ULONG id)
+Object *ollabel1(ULONG id)
 {
     return LLabel1((ULONG)getString(id));
 }
 
 /****************************************************************************/
 
-Object *
-olabel1(ULONG id)
+Object *olabel1(ULONG id)
 {
     return Label1((ULONG)getString(id));
 }
 
 /***********************************************************************/
 
-Object *
-olabel2(ULONG id)
+Object *olabel2(ULONG id)
 {
     return Label2((ULONG)getString(id));
 }
 
 /****************************************************************************/
 
-Object *
-oflabel(ULONG text)
+Object *oflabel(ULONG text)
 {
     return FreeLabel((ULONG)getString(text));
 }
 
 /****************************************************************************/
 
-Object *
-obutton(ULONG text,ULONG help)
+Object *obutton(ULONG text, ULONG help)
 {
     Object *obj;
 
-    if (obj = MUI_MakeObject(MUIO_Button,(ULONG)getString(text)))
+    if((obj = MUI_MakeObject(MUIO_Button, (ULONG)getString(text))) != NULL)
         SetAttrs(obj,MUIA_CycleChain,TRUE,_HELP(help),TAG_DONE);
 
     return obj;
@@ -189,8 +184,7 @@ obutton(ULONG text,ULONG help)
 
 /***********************************************************************/
 
-Object *
-oibutton(ULONG spec,ULONG help)
+Object *oibutton(ULONG spec, ULONG help)
 {
     if (spec==IBT_Up) spec = (ULONG)"\33I[6:38]";
     else if (spec==IBT_Down) spec = (ULONG)"\33I[6:39]";
@@ -211,8 +205,7 @@ oibutton(ULONG spec,ULONG help)
 
 /****************************************************************************/
 
-Object *
-otbutton(ULONG label,ULONG help)
+Object *otbutton(ULONG label, ULONG help)
 {
     return TextObject,
         _KEY(label),
@@ -230,12 +223,11 @@ otbutton(ULONG label,ULONG help)
 
 /****************************************************************************/
 
-Object *
-ocheckmark(ULONG key,ULONG help)
+Object *ocheckmark(ULONG key, ULONG help)
 {
     Object *obj;
 
-    if (obj = MUI_MakeObject(MUIO_Checkmark,(ULONG)getString(key)))
+    if((obj = MUI_MakeObject(MUIO_Checkmark, (ULONG)getString(key))) != NULL)
         SetAttrs(obj,MUIA_CycleChain,TRUE,_HELP(help),TAG_DONE);
 
     return obj;
@@ -243,12 +235,11 @@ ocheckmark(ULONG key,ULONG help)
 
 /****************************************************************************/
 
-Object *
-opopbutton(ULONG img,ULONG help)
+Object *opopbutton(ULONG img, ULONG help)
 {
     Object *obj;
 
-    if (obj = MUI_MakeObject(MUIO_PopButton,img))
+    if((obj = MUI_MakeObject(MUIO_PopButton, img)) != NULL)
         SetAttrs(obj,MUIA_CycleChain,TRUE,_HELP(help),TAG_DONE);
 
     return obj;
@@ -256,8 +247,7 @@ opopbutton(ULONG img,ULONG help)
 
 /****************************************************************************/
 
-Object *
-ostring(ULONG maxlen,ULONG key,ULONG help)
+Object *ostring(ULONG maxlen, ULONG key, ULONG help)
 {
     return StringObject,
         _KEY(key),
@@ -271,8 +261,7 @@ ostring(ULONG maxlen,ULONG key,ULONG help)
 
 /***********************************************************************/
 
-Object *
-opopport(ULONG maxLen,ULONG key,ULONG help)
+Object *opopport(ULONG maxLen, ULONG key, ULONG help)
 {
     return popportObject,
         _HELP(help),
@@ -283,8 +272,7 @@ opopport(ULONG maxLen,ULONG key,ULONG help)
 
 /***********************************************************************/
 
-Object *
-opopph(STRPTR *syms,STRPTR *names,ULONG maxLen,ULONG key,ULONG asl,ULONG help)
+Object *opopph(CONST_STRPTR *syms, STRPTR *names, ULONG maxLen, ULONG key, ULONG asl, ULONG help)
 {
     return popphObject,
         _HELP(help),
@@ -298,8 +286,7 @@ opopph(STRPTR *syms,STRPTR *names,ULONG maxLen,ULONG key,ULONG asl,ULONG help)
 
 /***********************************************************************/
 
-ULONG
-openWindow(Object *app,Object *win)
+ULONG openWindow(Object *app, Object *win)
 {
     ULONG v;
 
@@ -318,8 +305,7 @@ openWindow(Object *app,Object *win)
 
 /***********************************************************************/
 
-ULONG
-delEntry(Object *obj,APTR entry)
+ULONG delEntry(Object *obj, APTR entry)
 {
     APTR e = NULL;
     int  i;

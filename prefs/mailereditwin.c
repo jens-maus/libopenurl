@@ -28,6 +28,8 @@
 #include "SDI_hook.h"
 #include "macros.h"
 
+#include "debug.h"
+
 /**************************************************************************/
 
 struct data
@@ -57,7 +59,7 @@ enum
 
 /**************************************************************************/
 
-static STRPTR syms[] =
+static CONST_STRPTR syms[] =
 {
     "%a",
     "%s",
@@ -80,8 +82,7 @@ static STRPTR names[] =
 };
 
 
-static ULONG
-mNew(struct IClass *cl,Object *obj,struct opSet *msg)
+static ULONG mNew(struct IClass *cl, Object *obj, struct opSet *msg)
 {
     struct data            temp;
     struct URL_MailerNode  *mn;
@@ -95,7 +96,7 @@ mNew(struct IClass *cl,Object *obj,struct opSet *msg)
     mn = temp.mn  = (struct URL_MailerNode *)GetTagData(MUIA_MailerEditWin_Mailer,(ULONG)NULL,attrs);
     if (!mn) return 0;
 
-    if (obj = (Object *)DoSuperNew(cl,obj,
+    if((obj = (Object *)DoSuperNew(cl,obj,
         MUIA_HelpNode,             "MWIN",
         MUIA_Window_ID,            MAKE_ID('E', 'D', 'M', 'L'),
         MUIA_Window_Title,         getString(MSG_Mailer_WinTitle),
@@ -135,7 +136,7 @@ mNew(struct IClass *cl,Object *obj,struct opSet *msg)
                 Child, temp.cancel = obutton(MSG_Edit_Cancel,MSG_Edit_Cancel_Help),
             End,
         End,
-        TAG_MORE, attrs))
+        TAG_MORE, attrs)) != NULL)
     {
         struct data *data = INST_DATA(cl,obj);
 
@@ -154,8 +155,7 @@ mNew(struct IClass *cl,Object *obj,struct opSet *msg)
 
 /**************************************************************************/
 
-static ULONG
-mGet(struct IClass *cl,Object *obj,struct opGet *msg)
+static ULONG mGet(struct IClass *cl, Object *obj, struct opGet *msg)
 {
     struct data *data = INST_DATA(cl,obj);
 
@@ -169,8 +169,7 @@ mGet(struct IClass *cl,Object *obj,struct opGet *msg)
 
 /**************************************************************************/
 
-static ULONG
-mWindow_Setup(struct IClass *cl,Object *obj,struct MUIP_Window_Setup *msg)
+static ULONG mWindow_Setup(struct IClass *cl, Object *obj, struct MUIP_Window_Setup *msg)
 {
     struct data *data = INST_DATA(cl,obj);
 
@@ -192,8 +191,7 @@ mWindow_Setup(struct IClass *cl,Object *obj,struct MUIP_Window_Setup *msg)
 
 /**************************************************************************/
 
-static ULONG
-mUse(struct IClass *cl,Object *obj,UNUSED Msg msg)
+static ULONG mUse(struct IClass *cl, Object *obj, UNUSED Msg msg)
 {
     struct data           *data = INST_DATA(cl,obj);
     struct URL_MailerNode *mn = data->mn;
@@ -250,25 +248,32 @@ SDISPATCHER(dispatcher)
 
 /**************************************************************************/
 
-ULONG
-initMailerEditWinClass(void)
+BOOL initMailerEditWinClass(void)
 {
-    if (g_mailerEditWinClass = MUI_CreateCustomClass(NULL,MUIC_Window,NULL,sizeof(struct data),ENTRY(dispatcher)))
+    BOOL success = FALSE;
+
+    ENTER();
+
+    if((g_mailerEditWinClass = MUI_CreateCustomClass(NULL, MUIC_Window, NULL, sizeof(struct data), ENTRY(dispatcher))) != NULL)
     {
         localizeStrings(names);
-
-        return TRUE;
+        success = TRUE;
     }
 
-    return FALSE;
+    RETURN(success);
+    return success;
 }
 
 /**************************************************************************/
 
-void
-disposeMailerEditWinClass(void)
+void disposeMailerEditWinClass(void)
 {
-    if (g_mailerEditWinClass) MUI_DeleteCustomClass(g_mailerEditWinClass);
+    ENTER();
+
+    if(g_mailerEditWinClass != NULL)
+        MUI_DeleteCustomClass(g_mailerEditWinClass);
+
+    LEAVE();
 }
 
 /**************************************************************************/

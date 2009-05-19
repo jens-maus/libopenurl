@@ -18,6 +18,8 @@
 
 ***************************************************************************/
 
+#include <stdio.h>
+
 #include "openurl.h"
 
 #define CATCOMP_NUMBERS
@@ -28,6 +30,8 @@
 #include <libraries/openurl.h>
 
 #include "macros.h"
+
+#include "debug.h"
 
 /**************************************************************************/
 
@@ -71,8 +75,7 @@ ULONG                  g_MUI4 = FALSE;
 
 /**************************************************************************/
 
-static ULONG
-openStuff(ULONG *arg0,ULONG *arg1)
+static ULONG openStuff(ULONG *arg0, ULONG *arg1)
 {
     *arg1 = 0;
 
@@ -131,8 +134,7 @@ openStuff(ULONG *arg0,ULONG *arg1)
 
 /**************************************************************************/
 
-static void
-closeStuff(void)
+static void closeStuff(void)
 {
     if (LocaleBase)
     {
@@ -194,25 +196,23 @@ closeStuff(void)
 
 /**************************************************************************/
 
-static ULONG
-createClasses(void)
+static ULONG createClasses(void)
 {
-    if (!initPopphClass())          return MSG_Err_PopphClass;
-    if (!initPopportClass())        return MSG_Err_PopupPortClass;
-    if (!initFTPEditWinClass())     return MSG_Err_NoFTPEditWinClass;
-    if (!initMailerEditWinClass())  return MSG_Err_NoMailerEditWinClass;
-    if (!initBrowserEditWinClass()) return MSG_Err_NoBrowserEditWinClass;
-    if (!initAppListClass())        return MSG_Err_NoAppListClass;
-    if (!initWinClass())            return MSG_Err_NoWinClass;
-    if (!initAppClass())            return MSG_Err_NoAppClass;
+    if (initPopphClass() == FALSE)          return MSG_Err_PopphClass;
+    if (initPopportClass() == FALSE)        return MSG_Err_PopupPortClass;
+    if (initFTPEditWinClass() == FALSE)     return MSG_Err_NoFTPEditWinClass;
+    if (initMailerEditWinClass() == FALSE)  return MSG_Err_NoMailerEditWinClass;
+    if (initBrowserEditWinClass() == FALSE) return MSG_Err_NoBrowserEditWinClass;
+    if (initAppListClass() == FALSE)        return MSG_Err_NoAppListClass;
+    if (initWinClass() == FALSE)            return MSG_Err_NoWinClass;
+    if (initAppClass() == FALSE)            return MSG_Err_NoAppClass;
 
     return 0;
 }
 
 /**************************************************************************/
 
-static void
-disposeClasses(void)
+static void disposeClasses(void)
 {
     if (g_popphClass)          disposePopphClass();
     if (g_popportClass)        disposePopportClass();
@@ -227,10 +227,9 @@ disposeClasses(void)
 
 /**************************************************************************/
 
-int
-main(void)
+int main(void)
 {
-    ULONG error, arg0, arg1;
+    ULONG error, arg0=0, arg1=0;
     int   res = RETURN_FAIL;
 
     initStrings();
@@ -241,7 +240,7 @@ main(void)
         {
             Object *app;
 
-            if (app = appObject, End)
+            if((app = appObject, End) != NULL)
             {
                 ULONG signals;
 
@@ -262,7 +261,7 @@ main(void)
     {
         TEXT buf[256];
 
-        snprintf(buf,sizeof(buf),getString(error),arg0,arg1);
+        snprintf(buf, sizeof(buf), getString(error), arg0, arg1);
 
         if (MUIMasterBase)
         {

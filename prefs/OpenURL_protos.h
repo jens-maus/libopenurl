@@ -34,7 +34,7 @@ void uninitStrings( void );
 STRPTR getString ( ULONG id );
 void localizeStrings ( STRPTR *s );
 void localizeNewMenu ( struct NewMenu *nm );
-ULONG getKeyChar ( UBYTE *string , ULONG id );
+ULONG getKeyChar (STRPTR string , ULONG id);
 
 /* utils.c */
 #if defined(__amigaos4__)
@@ -54,48 +54,44 @@ Object *ocheckmark ( ULONG key , ULONG help );
 Object *opopbutton ( ULONG img , ULONG help );
 Object *ostring ( ULONG maxlen , ULONG key , ULONG help );
 Object *opopport ( ULONG maxLen , ULONG key , ULONG help );
-Object *opopph ( STRPTR *syms , STRPTR *names , ULONG maxLen , ULONG key , ULONG asl , ULONG help );
+Object *opopph ( CONST_STRPTR *syms , STRPTR *names , ULONG maxLen , ULONG key , ULONG asl , ULONG help );
 ULONG openWindow ( Object *app , Object *win );
 ULONG delEntry ( Object *obj , APTR entry );
 void STDARGS msprintf ( STRPTR to , STRPTR fmt , ... ) VARARGS68K;
 int STDARGS msnprintf ( STRPTR buf , int size , STRPTR fmt , ... ) VARARGS68K;
 
 /* ftpeditwin.c */
-ULONG initFTPEditWinClass ( void );
+BOOL initFTPEditWinClass ( void );
 void disposeFTPEditWinClass ( void );
 
 /* mailereditwin.c */
-ULONG initMailerEditWinClass ( void );
+BOOL initMailerEditWinClass ( void );
 void disposeMailerEditWinClass ( void );
 
 /* browsereditwin.c */
-ULONG initBrowserEditWinClass ( void );
+BOOL initBrowserEditWinClass ( void );
 void disposeBrowserEditWinClass ( void );
 
 /* applist.c */
-ULONG initAppListClass ( void );
+BOOL initAppListClass ( void );
 void disposeAppListClass ( void );
 
 /* win.c */
-ULONG initWinClass ( void );
+BOOL initWinClass ( void );
 void disposeWinClass ( void );
 
 /* about.c */
-ULONG initAboutClass ( void );
+BOOL initAboutClass ( void );
 void disposeAboutClass ( void );
 
 /* app.c */
-ULONG initAppClass ( void );
+BOOL initAppClass ( void );
 void disposeAppClass ( void );
 
 /* popport.c */
-ULONG initPopportClass ( void );
+BOOL initPopportClass ( void );
 void disposePopportClass ( void );
 
 /* popph.c */
-ULONG initPopphClass ( void );
+BOOL initPopphClass ( void );
 void disposePopphClass ( void );
-
-/* about.c */
-ULONG initAboutClass ( void );
-void disposeAboutClass ( void );

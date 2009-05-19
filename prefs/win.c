@@ -28,6 +28,8 @@
 #include "SDI_hook.h"
 #include "macros.h"
 
+#include "debug.h"
+
 /**************************************************************************/
 
 struct data
@@ -78,14 +80,13 @@ static STRPTR tabs[] =
     NULL
 };
 
-static ULONG
-mNew(struct IClass *cl,Object *obj,struct opSet *msg)
+static ULONG mNew(struct IClass *cl, Object *obj, struct opSet *msg)
 {
     struct data temp;
 
     memset(&temp,0,sizeof(temp));
 
-    if (obj = (Object *)DoSuperNew(cl,obj,
+    if((obj = (Object *)DoSuperNew(cl,obj,
         MUIA_HelpNode,           "WIN",
         MUIA_Window_ID,          MAKE_ID('M', 'W', 'I', 'N'),
         MUIA_Window_Title,       getString(MSG_Win_WinTitle),
@@ -165,7 +166,7 @@ mNew(struct IClass *cl,Object *obj,struct opSet *msg)
             End,
 
         End,
-        TAG_MORE, msg->ops_AttrList))
+        TAG_MORE, msg->ops_AttrList)) != NULL)
     {
         struct data *data = INST_DATA(cl,obj);
 
@@ -195,8 +196,7 @@ mNew(struct IClass *cl,Object *obj,struct opSet *msg)
 
 /**************************************************************************/
 
-static ULONG
-mGetPrefs(struct IClass *cl,Object *obj,struct MUIP_Win_GetPrefs *msg)
+static ULONG mGetPrefs(struct IClass *cl,Object *obj, struct MUIP_Win_GetPrefs *msg)
 {
     struct data            *data = INST_DATA(cl,obj);
     struct URL_Prefs       *p;
@@ -295,8 +295,7 @@ mGetPrefs(struct IClass *cl,Object *obj,struct MUIP_Win_GetPrefs *msg)
 
 /**************************************************************************/
 
-static ULONG
-mStorePrefs(struct IClass *cl,Object *obj,struct MUIP_Win_StorePrefs *msg)
+static ULONG mStorePrefs(struct IClass *cl, Object *obj, struct MUIP_Win_StorePrefs *msg)
 {
     struct data *data = INST_DATA(cl,obj);
     struct URL_Prefs     up;
@@ -375,8 +374,7 @@ mStorePrefs(struct IClass *cl,Object *obj,struct MUIP_Win_StorePrefs *msg)
 
 /**************************************************************************/
 
-static ULONG
-mDelete(struct IClass *cl,Object *obj,struct MUIP_Win_Delete *msg)
+static ULONG mDelete(struct IClass *cl, Object *obj, struct MUIP_Win_Delete *msg)
 {
     struct data *data = INST_DATA(cl,obj);
 
@@ -389,8 +387,7 @@ mDelete(struct IClass *cl,Object *obj,struct MUIP_Win_Delete *msg)
 
 /**************************************************************************/
 
-static ULONG
-mCheckSave(struct IClass *cl,Object *obj,UNUSED Msg msg)
+static ULONG mCheckSave(struct IClass *cl, Object *obj, UNUSED Msg msg)
 {
     struct data *data = INST_DATA(cl,obj);
 
@@ -419,25 +416,32 @@ SDISPATCHER(dispatcher)
 
 /**************************************************************************/
 
-ULONG
-initWinClass(void)
+BOOL initWinClass(void)
 {
-    if (g_winClass = MUI_CreateCustomClass(NULL,MUIC_Window,NULL,sizeof(struct data),ENTRY(dispatcher)))
+    BOOL success = FALSE;
+
+    ENTER();
+
+    if((g_winClass = MUI_CreateCustomClass(NULL, MUIC_Window, NULL, sizeof(struct data), ENTRY(dispatcher))) != NULL)
     {
         localizeStrings(tabs);
-
-        return TRUE;
+        success = TRUE;
     }
 
-    return FALSE;
+    RETURN(success);
+    return success;
 }
 
 /**************************************************************************/
 
-void
-disposeWinClass(void)
+void disposeWinClass(void)
 {
-    if (g_winClass) MUI_DeleteCustomClass(g_winClass);
+    ENTER();
+
+    if(g_winClass != NULL)
+        MUI_DeleteCustomClass(g_winClass);
+
+    LEAVE();
 }
 
 /**************************************************************************/

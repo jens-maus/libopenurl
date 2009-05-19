@@ -16,6 +16,8 @@ $URL$
 
 2009-05-19  Thore Böckelmann <tboeckel@gmx.de>
 
+  * prefs/*.c fixed tons of warnings. At least the OS4 build is done without a
+    single warning.
   * library/*.c: replaced all handcrafted flag checks by macro calls.
   * library/api.c, library/utils.c: replace the separate BOOL parameters by a
     combined flags variable.

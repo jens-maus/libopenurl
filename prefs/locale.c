@@ -34,12 +34,11 @@ struct CatCompArrayType * privateCatCompArray = NULL;
 
 /***********************************************************************/
 
-static struct Catalog *
-openCatalog(STRPTR name,ULONG minVer,ULONG minRev)
+static struct Catalog *openCatalog(CONST_STRPTR name, ULONG minVer, ULONG minRev)
 {
     struct Catalog *cat;
 
-    if ((cat = OpenCatalog(NULL,name,OC_BuiltInLanguage,(ULONG)"english",TAG_DONE)))
+    if((cat = OpenCatalog(NULL,name,OC_BuiltInLanguage,(ULONG)"english",TAG_DONE)) != NULL)
     {
         ULONG ver = cat->cat_Version;
 
@@ -55,8 +54,7 @@ openCatalog(STRPTR name,ULONG minVer,ULONG minRev)
 
 /***********************************************************************/
 
-void
-initStrings(void)
+void initStrings(void)
 {
     if((LocaleBase = (APTR)OpenLibrary("locale.library",36)) &&
        GETINTERFACE(ILocale, LocaleBase))
@@ -64,7 +62,7 @@ initStrings(void)
         // to be on the safe side, we initialize our CatCompArray to point on the CatComp's one
         privateCatCompArray = (struct CatCompArrayType *)CatCompArray;
 
-        if (g_cat = openCatalog(CATNAME,7,0))
+        if((g_cat = openCatalog(CATNAME,7,0)) != NULL)
         {
             struct CatCompArrayType *cca;
             int                     cnt;
@@ -82,7 +80,8 @@ initStrings(void)
                 {
                     CONST_STRPTR s;
 
-                    if (s = GetCatalogStr(g_cat,cca->cca_ID,cca->cca_Str)) cca->cca_Str = (STRPTR)s;
+                    if((s = GetCatalogStr(g_cat,cca->cca_ID,cca->cca_Str)) != NULL)
+                        cca->cca_Str = (STRPTR)s;
                 }
             }
 
@@ -92,8 +91,7 @@ initStrings(void)
 
 /***********************************************************************/
 
-void
-uninitStrings(void)
+void uninitStrings(void)
 {
     if( privateCatCompArray != CatCompArray )
     {
@@ -104,8 +102,7 @@ uninitStrings(void)
 
 /***********************************************************************/
 
-STRPTR
-getString(ULONG id)
+STRPTR getString(ULONG id)
 {
     struct CatCompArrayType *cca;
     int                     cnt;
@@ -114,21 +111,20 @@ getString(ULONG id)
          cnt>=0;
          cnt--, cca--) if (cca->cca_ID==id) return cca->cca_Str;
 
-    return "";
+    return (STRPTR)"";
 }
 
 /***********************************************************************/
 
-void
-localizeStrings(STRPTR *s)
+void localizeStrings(STRPTR *s)
 {
-    for (; *s; s++) *s = getString((ULONG)*s);
+    for (; *s; s++)
+        *s = getString((ULONG)*s);
 }
 
 /***********************************************************************/
 
-void
-localizeNewMenu(struct NewMenu *nm)
+void localizeNewMenu(struct NewMenu *nm)
 {
     for ( ; nm->nm_Type!=NM_END; nm++)
         if (nm->nm_Label!=NM_BARLABEL)
@@ -137,12 +133,12 @@ localizeNewMenu(struct NewMenu *nm)
 
 /***********************************************************************/
 
-ULONG
-getKeyChar(UBYTE *string,ULONG id)
+ULONG getKeyChar(STRPTR string, ULONG id)
 {
     ULONG res = 0;
 
-    if (!string) string = (UBYTE *)getString(id);
+    if(string == NULL)
+        string = getString(id);
 
     for (; *string && *string!='_'; string++);
     if (*string++) res = ToLower(*string);

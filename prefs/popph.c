@@ -25,6 +25,8 @@
 
 #include "SDI_hook.h"
 
+#include "debug.h"
+
 /**************************************************************************/
 /*
 ** Place holders list
@@ -35,8 +37,8 @@ static struct MUI_CustomClass *listClass = NULL;
 
 struct listData
 {
-    UBYTE       **phs;
-    UBYTE       **names;
+    STRPTR *phs;
+    STRPTR *names;
     struct Hook dispHook;
 };
 
@@ -50,7 +52,7 @@ MakeStaticHook(conHook, conFun);
 
 /**************************************************************************/
 
-HOOKPROTO(dispFun, void, UBYTE **array, ULONG num)
+HOOKPROTO(dispFun, void, STRPTR *array, ULONG num)
 {
     struct listData *data = hook->h_Data;
 
@@ -70,18 +72,18 @@ static ULONG
 mListNew(struct IClass *cl,Object *obj,struct opSet *msg)
 {
     struct TagItem *attrs = msg->ops_AttrList;
-    UBYTE          **phs, **names;
+    STRPTR *phs, *names;
 
-    phs   = (UBYTE **)GetTagData(MUIA_Popph_Syms,(ULONG)NULL,attrs);
-    names = (UBYTE **)GetTagData(MUIA_Popph_Names,(ULONG)NULL,attrs);
+    phs   = (STRPTR *)GetTagData(MUIA_Popph_Syms,(ULONG)NULL,attrs);
+    names = (STRPTR *)GetTagData(MUIA_Popph_Names,(ULONG)NULL,attrs);
     if (!phs || !names) return 0;
 
-    if (obj = (Object *)DoSuperNew(cl,obj,
+    if((obj = (Object *)DoSuperNew(cl,obj,
             InputListFrame,
             MUIA_List_Format,        ",",
             MUIA_List_Pool,          g_pool,
             MUIA_List_ConstructHook, &conHook,
-            TAG_MORE, attrs))
+            TAG_MORE, attrs)) != NULL)
     {
         struct listData *data = INST_DATA(cl,obj);
         int             i;
@@ -170,7 +172,7 @@ HOOKPROTO(closeFun, void, Object *list, Object *str)
         lx = strlen(x);
         l  = strlen(data->phs[a]);
 
-        if (buf = AllocPooled(g_pool,lx+l+1))
+        if((buf = AllocPooled(g_pool,lx+l+1)) != NULL)
         {
             if (pos>0) CopyMem(x,buf,pos);
             CopyMem(data->phs[a],buf+pos,l);
@@ -182,8 +184,7 @@ HOOKPROTO(closeFun, void, Object *list, Object *str)
 }
 MakeStaticHook(closeHook, closeFun);
 
-static ULONG
-mNew(struct IClass *cl,Object *obj,struct opSet *msg)
+static ULONG mNew(struct IClass *cl, Object *obj, struct opSet *msg)
 {
     Object         *str, *lv;
     struct TagItem *attrs = msg->ops_AttrList;
@@ -195,7 +196,7 @@ mNew(struct IClass *cl,Object *obj,struct opSet *msg)
     names = (STRPTR*)GetTagData(MUIA_Popph_Names,FALSE,attrs);
     if (!names) return 0;
 
-    if (obj = (Object *)DoSuperNew(cl,obj,
+    if((obj = (Object *)DoSuperNew(cl,obj,
             MUIA_Group_Horiz,        TRUE,
             MUIA_Group_HorizSpacing, 1,
 
@@ -211,7 +212,7 @@ mNew(struct IClass *cl,Object *obj,struct opSet *msg)
                 MUIA_Popobject_WindowHook, &windowHook,
             End,
 
-            TAG_MORE, attrs))
+            TAG_MORE, attrs)) != NULL)
     {
 
         struct data *data = INST_DATA(cl,obj);
@@ -228,11 +229,11 @@ mNew(struct IClass *cl,Object *obj,struct opSet *msg)
         {
             APTR req;
 
-            if (req = MUI_AllocAslRequest(ASL_FileRequest,NULL))
+            if((req = MUI_AllocAslRequest(ASL_FileRequest, NULL)) != NULL)
             {
                 Object *bt;
 
-                if (bt = opopbutton(MUII_PopFile,0))
+                if((bt = opopbutton(MUII_PopFile, 0)) != NULL)
                 {
                     DoSuperMethod(cl,obj,OM_ADDMEMBER,(ULONG)bt);
 
@@ -252,8 +253,7 @@ mNew(struct IClass *cl,Object *obj,struct opSet *msg)
 
 /***********************************************************************/
 
-static ULONG
-mDispose(struct IClass *cl,Object *obj,Msg msg)
+static ULONG mDispose(struct IClass *cl, Object *obj, Msg msg)
 {
     struct data *data = INST_DATA(cl,obj);
 
@@ -271,8 +271,7 @@ HOOKPROTONO(reqIntuiFun, void, struct IntuiMessage *imsg)
 }
 MakeStaticHook(reqIntuiHook, reqIntuiFun);
 
-static ULONG
-mRequestFile(struct IClass *cl,Object *obj,UNUSED Msg msg)
+static ULONG mRequestFile(struct IClass *cl, Object *obj, UNUSED Msg msg)
 {
     struct data *data = INST_DATA(cl,obj);
     struct Hook intuiHook;
@@ -284,7 +283,7 @@ mRequestFile(struct IClass *cl,Object *obj,UNUSED Msg msg)
 
     get(data->str,MUIA_String_Contents,&x);
     file = FilePart(x);
-    if (p = PathPart(x))
+    if((p = PathPart(x)) != NULL)
     {
         stccpy(path,x,p-x+1);
         p = path;
@@ -330,29 +329,35 @@ SDISPATCHER(dispatcher)
 
 /***********************************************************************/
 
-ULONG
-initPopphClass(void)
+BOOL initPopphClass(void)
 {
-    if (initListClass())
-    {
-        if (g_popphClass = MUI_CreateCustomClass(NULL,MUIC_Group,NULL,sizeof(struct data),ENTRY(dispatcher)))
-        {
-            return TRUE;
-        }
+    BOOL success = TRUE;
 
-        disposeListClass();
+    ENTER();
+
+    if(initListClass() == TRUE)
+    {
+        if((g_popphClass = MUI_CreateCustomClass(NULL, MUIC_Group, NULL, sizeof(struct data), ENTRY(dispatcher))) != NULL)
+            success = TRUE;
+        else
+            disposeListClass();
     }
 
-    return FALSE;
+    RETURN(success);
+    return success;
 }
 
 /**************************************************************************/
 
-void
-disposePopphClass(void)
+void disposePopphClass(void)
 {
+    ENTER();
+
     disposeListClass();
-    if (g_popphClass) MUI_DeleteCustomClass(g_popphClass);
+    if(g_popphClass != NULL)
+        MUI_DeleteCustomClass(g_popphClass);
+
+    LEAVE();
 }
 
 /**************************************************************************/

@@ -26,6 +26,8 @@
 #include "SDI_hook.h"
 #include "macros.h"
 
+#include "debug.h"
+
 /**************************************************************************/
 /*
 ** Public ports list
@@ -34,8 +36,7 @@
 static struct MUI_CustomClass *listClass = NULL;
 #define listObject NewObject(listClass->mcc_Class,NULL
 
-static ULONG
-mListNew(struct IClass *cl,Object *obj,struct opSet *msg)
+static ULONG mListNew(struct IClass *cl, Object *obj, struct opSet *msg)
 {
     return (ULONG)DoSuperNew(cl,obj,
       MUIA_Frame,              MUIV_Frame_InputList,
@@ -48,8 +49,7 @@ mListNew(struct IClass *cl,Object *obj,struct opSet *msg)
 
 /**************************************************************************/
 
-static ULONG
-mListSetup(struct IClass *cl,Object *obj,Msg msg)
+static ULONG mListSetup(struct IClass *cl, Object *obj, Msg msg)
 {
     struct Node *mstate;
 
@@ -85,18 +85,29 @@ SDISPATCHER(listDispatcher)
 
 /**************************************************************************/
 
-static ULONG
-initListClass(void)
+static BOOL initListClass(void)
 {
-    return (ULONG)(listClass = MUI_CreateCustomClass(NULL,MUIC_List,NULL,0,ENTRY(listDispatcher)));
+    BOOL success = FALSE;
+
+    ENTER();
+
+    if((listClass = MUI_CreateCustomClass(NULL, MUIC_List, NULL, 0, ENTRY(listDispatcher))) != NULL)
+        success = TRUE;
+
+    RETURN(success);
+    return success;
 }
 
 /**************************************************************************/
 
-static void
-disposeListClass(void)
+static void disposeListClass(void)
 {
-    if (listClass) MUI_DeleteCustomClass(listClass);
+    ENTER();
+
+    if(listClass != NULL)
+       MUI_DeleteCustomClass(listClass);
+
+    LEAVE();
 }
 
 /**************************************************************************/
@@ -174,12 +185,11 @@ MakeStaticHook(closeHook, closeFun);
 
 /***********************************************************************/
 
-static ULONG
-mNew(struct IClass *cl,Object *obj,struct opSet *msg)
+static ULONG mNew(struct IClass *cl, Object *obj, struct opSet *msg)
 {
     Object *lv;
 
-    if (obj = (Object *)DoSuperNew(cl,obj,
+    if((obj = (Object *)DoSuperNew(cl,obj,
 
             MUIA_Popstring_String, ostring(GetTagData(MUIA_Popport_Len,64,msg->ops_AttrList),GetTagData(MUIA_Popport_Key,0,msg->ops_AttrList),0),
             MUIA_Popstring_Button, opopbutton(MUII_PopUp,0),
@@ -191,7 +201,7 @@ mNew(struct IClass *cl,Object *obj,struct opSet *msg)
             MUIA_Popobject_StrObjHook, &openHook,
             MUIA_Popobject_ObjStrHook, &closeHook,
 
-            TAG_MORE,(ULONG)msg->ops_AttrList))
+            TAG_MORE,(ULONG)msg->ops_AttrList)) != NULL)
     {
         DoMethod(lv,MUIM_Notify,MUIA_Listview_DoubleClick,TRUE,(ULONG)obj,2,MUIM_Popstring_Close,TRUE);
     }
@@ -212,27 +222,35 @@ SDISPATCHER(dispatcher)
 
 /***********************************************************************/
 
-ULONG
-initPopportClass(void)
+BOOL initPopportClass(void)
 {
-    if (initListClass())
-    {
-        if (g_popportClass = MUI_CreateCustomClass(NULL,MUIC_Popobject,NULL,0,ENTRY(dispatcher)))
-            return TRUE;
+    BOOL success = FALSE;
 
-        disposeListClass();
+    ENTER();
+
+    if(initListClass() == TRUE)
+    {
+        if((g_popportClass = MUI_CreateCustomClass(NULL, MUIC_Popobject, NULL, 0, ENTRY(dispatcher))) != NULL)
+            success = TRUE;
+        else
+            disposeListClass();
     }
 
-    return FALSE;
+    RETURN(success);
+    return success;
 }
 
 /**************************************************************************/
 
-void
-disposePopportClass(void)
+void disposePopportClass(void)
 {
+    ENTER();
+
     disposeListClass();
-    if (g_popportClass) MUI_DeleteCustomClass(g_popportClass);
+    if(g_popportClass != NULL)
+        MUI_DeleteCustomClass(g_popportClass);
+
+    LEAVE();
 }
 
 /**************************************************************************/
