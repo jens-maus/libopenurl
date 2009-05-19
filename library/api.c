@@ -240,7 +240,7 @@ ULONG LIBFUNC URL_SetPrefsA(REG(a0,struct URL_Prefs *p),REG(a1,struct TagItem *a
     if((newp = copyPrefs(p)) != NULL)
     {
       newp->up_Version = PREFS_VERSION;
-      newp->up_Flags &= ~UPF_ISDEFAULTS;
+      CLEAR_FLAG(newp->up_Flags, UPF_ISDEFAULTS);
 
       URL_FreePrefsA(OpenURLBase->prefs,NULL);
       OpenURLBase->prefs = newp;

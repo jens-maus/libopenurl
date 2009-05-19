@@ -108,7 +108,7 @@ freeBase(struct LibraryHeader *lib)
     DOSBase = NULL;
   }
 
-  lib->flags &= ~BASEFLG_Init;
+  CLEAR_FLAG(lib->flags, BASEFLG_Init);
 
   RETURN(TRUE);
   return TRUE;
@@ -160,7 +160,7 @@ initBase(struct LibraryHeader *lib)
 
           if(lib->prefs != NULL)
           {
-            lib->flags |= BASEFLG_Init;
+            SET_FLAG(lib->flags, BASEFLG_Init);
 
             RETURN(TRUE);
             return TRUE;

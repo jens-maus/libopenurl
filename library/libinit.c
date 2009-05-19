@@ -546,7 +546,7 @@ static BPTR LIBFUNC LibExpunge(REG(a6, struct LibraryHeader *base))
   // to set the late expunge flag and return immediately
   if(base->libBase.lib_OpenCnt > 0)
   {
-    base->libBase.lib_Flags |= LIBF_DELEXP;
+    SET_FLAG(base->libBase.lib_Flags, LIBF_DELEXP);
     rc = 0;
   }
   else
@@ -619,7 +619,7 @@ static struct LibraryHeader * LIBFUNC LibOpen(REG(d0, UNUSED ULONG version), REG
   base->libBase.lib_OpenCnt++;
 
   // delete the late expunge flag
-  base->libBase.lib_Flags &= ~LIBF_DELEXP;
+  CLEAR_FLAG(base->libBase.lib_Flags, LIBF_DELEXP);
 
   return res;
 }

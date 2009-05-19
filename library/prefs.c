@@ -467,7 +467,7 @@ BOOL loadPrefs(struct URL_Prefs *p,ULONG mode)
                     }
                 }
 
-                p->up_Flags &= ~UPF_ISDEFAULTS;
+                CLEAR_FLAG(p->up_Flags, UPF_ISDEFAULTS);
 
                 res = TRUE;
 

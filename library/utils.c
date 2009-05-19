@@ -593,7 +593,7 @@ BOOL sendToMailer(STRPTR URL, struct List *portlist, ULONG flags, STRPTR pubScre
         trans['E'] = trans['e'] = 14;
         trans['F'] = trans['f'] = 15;
 
-        OpenURLBase->flags |= BASEFLG_Trans;
+        SET_FLAG(OpenURLBase->flags, BASEFLG_Trans);
     }
     ReleaseSemaphore(&OpenURLBase->libSem);
 
