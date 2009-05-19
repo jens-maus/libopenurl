@@ -274,7 +274,7 @@ int main(void)
 
             if (app) MUI_DisposeObject(app);
         }
-        else Printf("%s\n",(ULONG)buf);
+        else printf("%s\n", buf);
     }
 
     closeStuff();

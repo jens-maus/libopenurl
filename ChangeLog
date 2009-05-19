@@ -7,6 +7,8 @@ $URL$
 
 2009-05-19  Jens Langner <Jens.Langner@light-speed.de>
 
+  * prefs, misc: now the preference application also properly compiles and
+    links for AROS. If it works have to be seen. But it looks quite promising.
   * prefs: fixed MOS compilation by updating the ppcinline header files
   * prefs: converted the build system of the MUI preferences application to
     use the generic Makefile we use with every application. Also converted

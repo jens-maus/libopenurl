@@ -39,7 +39,10 @@
 #include <libraries/iffparse.h>
 
 #include <clib/alib_protos.h>
+
+#if !defined(__AROS__)
 #include <clib/debug_protos.h>
+#endif
 
 #include <mui/textinput_mcc.h>
 #include <mui/Urltext_mcc.h>

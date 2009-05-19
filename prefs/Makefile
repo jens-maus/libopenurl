@@ -181,7 +181,8 @@ ifeq ($(OS), os4)
   CRT      = newlib
   CPU      = -mcpu=powerpc
   WARN     += -Wdeclaration-after-statement -Wdisabled-optimization
-  REDEFINE =
+  REDEFINE = -DCoerceMethod=ICoerceMethod -DDoMethod=IDoMethod \
+             -DDoSuperMethod=IDoSuperMethod -DDoSuperMethodA=IDoSuperMethodA
   CFLAGS   += -mcrt=$(CRT) -D__USE_INLINE__ -D__NEW_TIMEVAL_DEFINITION_USED__ \
               $(REDEFINE) -Wa,-mregnames
   LDFLAGS  += -mcrt=$(CRT)
@@ -238,7 +239,7 @@ ifeq ($(OS), aros-i386)
 
   # Compiler/Linker flags
   CFLAGS += -Wno-pointer-sign -DNO_INLINE_STDARG
-  LDLIBS += -larossupport -lrom
+  LDLIBS += -larossupport -lrom -lmui
 
 else
 ifeq ($(OS), aros-ppc)
@@ -254,7 +255,7 @@ ifeq ($(OS), aros-ppc)
 
   # Compiler/Linker flags
   CFLAGS += -Wno-pointer-sign -DNO_INLINE_STDARG
-  LDLIBS += -larossupport -lrom
+  LDLIBS += -larossupport -lrom -lmui
 
 else
 ifeq ($(OS), aros-x86_64)
@@ -270,7 +271,7 @@ ifeq ($(OS), aros-x86_64)
 
   # Compiler/Linker flags
   CFLAGS += -Wno-pointer-sign -DNO_INLINE_STDARG
-  LDLIBS += -larossupport -lrom
+  LDLIBS += -larossupport -lrom -lmui
 
 endif
 endif

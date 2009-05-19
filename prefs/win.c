@@ -18,6 +18,12 @@
 
 ***************************************************************************/
 
+#if defined(__AROS__) && defined(NO_INLINE_STDARG)
+#undef NO_INLINE_STDARG
+#include <proto/openurl.h>
+#define NO_INLINE_STDARG
+#endif
+
 #include "openurl.h"
 
 #define CATCOMP_NUMBERS
