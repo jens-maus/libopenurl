@@ -285,7 +285,7 @@ static ULONG mRequestFile(struct IClass *cl, Object *obj, UNUSED Msg msg)
     file = FilePart(x);
     if((p = PathPart(x)) != NULL)
     {
-        stccpy(path,x,p-x+1);
+        strlcpy(path, x, p-x+1);
         p = path;
     }
 

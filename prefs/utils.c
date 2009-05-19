@@ -59,26 +59,6 @@ Object * VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...)
 /**************************************************************************/
 
 #ifdef __amigaos4__
-int stccpy(char *dst, const char *src, int m)
-{
-    char c;
-    int  j = m;
-
-    while((c = *src++) != '\0')
-    {
-        if (--j > 0)
-            *dst++ = c;
-        else
-            break;
-    }
-    *dst = '\0';
-    return m - j;
-}
-#endif /* __amigaos4__ */
-
-/**************************************************************************/
-
-#ifdef __amigaos4__
 /**********************************************************
 **
 ** The following function saves the variable name passed in

@@ -28,6 +28,8 @@
 #include "SDI_hook.h"
 #include "macros.h"
 
+#include "debug.h"
+
 /**************************************************************************/
 
 struct data
@@ -59,7 +61,7 @@ enum
 
 /**************************************************************************/
 
-static STRPTR syms[] =
+static CONST_STRPTR syms[] =
 {
     "%u",
     "%p",
@@ -73,8 +75,7 @@ static STRPTR names[] =
     NULL
 };
 
-static ULONG
-mNew(struct IClass *cl,Object *obj,struct opSet *msg)
+static ULONG mNew(struct IClass *cl, Object *obj, struct opSet *msg)
 {
     struct data        temp;
     struct URL_FTPNode *fn;
@@ -89,7 +90,7 @@ mNew(struct IClass *cl,Object *obj,struct opSet *msg)
     if (!fn) return 0;
 
 
-    if (obj = (Object *)DoSuperNew(cl,obj,
+    if((obj = (Object *)DoSuperNew(cl,obj,
         MUIA_HelpNode,             "FWIN",
         MUIA_Window_ID,            MAKE_ID('E','D','B','R'),
         MUIA_Window_Title,         getString(MSG_FTP_WinTitle),
@@ -137,7 +138,7 @@ mNew(struct IClass *cl,Object *obj,struct opSet *msg)
                 Child, temp.cancel = obutton(MSG_Edit_Cancel,MSG_Edit_Cancel_Help),
             End,
         End,
-        TAG_MORE, attrs))
+        TAG_MORE, attrs)) != NULL)
     {
         struct data *data = INST_DATA(cl,obj);
 
@@ -158,8 +159,7 @@ mNew(struct IClass *cl,Object *obj,struct opSet *msg)
 
 /**************************************************************************/
 
-static ULONG
-mGet(struct IClass *cl,Object *obj,struct opGet *msg)
+static ULONG mGet(struct IClass *cl, Object *obj, struct opGet *msg)
 {
     struct data *data = INST_DATA(cl,obj);
 
@@ -173,8 +173,7 @@ mGet(struct IClass *cl,Object *obj,struct opGet *msg)
 
 /**************************************************************************/
 
-static ULONG
-mWindow_Setup(struct IClass *cl,Object *obj,struct MUIP_Window_Setup *msg)
+static ULONG mWindow_Setup(struct IClass *cl, Object *obj, struct MUIP_Window_Setup *msg)
 {
     struct data *data = INST_DATA(cl,obj);
 
@@ -196,8 +195,7 @@ mWindow_Setup(struct IClass *cl,Object *obj,struct MUIP_Window_Setup *msg)
 
 /**************************************************************************/
 
-static ULONG
-mUse(struct IClass *cl,Object *obj,UNUSED Msg msg)
+static ULONG mUse(struct IClass *cl, Object *obj, UNUSED Msg msg)
 {
     struct data        *data = INST_DATA(cl,obj);
     struct URL_FTPNode *fn = data->fn;
@@ -260,25 +258,30 @@ SDISPATCHER(dispatcher)
 
 /**************************************************************************/
 
-ULONG
-initFTPEditWinClass(void)
+BOOL initFTPEditWinClass(void)
 {
-    if (g_FTPEditWinClass = MUI_CreateCustomClass(NULL,MUIC_Window,NULL,sizeof(struct data),ENTRY(dispatcher)))
+    BOOL success = FALSE;
+
+    if((g_FTPEditWinClass = MUI_CreateCustomClass(NULL, MUIC_Window, NULL, sizeof(struct data), ENTRY(dispatcher))) != NULL)
     {
         localizeStrings(names);
-
-        return TRUE;
+        success = TRUE;
     }
 
-    return FALSE;
+    RETURN(success);
+    return success;
 }
 
 /**************************************************************************/
 
-void
-disposeFTPEditWinClass(void)
+void disposeFTPEditWinClass(void)
 {
-    if (g_FTPEditWinClass) MUI_DeleteCustomClass(g_FTPEditWinClass);
+    ENTER();
+
+    if(g_FTPEditWinClass != NULL)
+        MUI_DeleteCustomClass(g_FTPEditWinClass);
+
+    LEAVE();
 }
 
 /**************************************************************************/
