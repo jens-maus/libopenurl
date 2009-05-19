@@ -232,6 +232,11 @@ int main(void)
     ULONG error, arg0=0, arg1=0;
     int   res = RETURN_FAIL;
 
+    // setup the debugging stuff
+    #if defined(DEBUG)
+    SetupDebug();
+    #endif
+
     initStrings();
 
     if (!(error = openStuff(&arg0,&arg1)))
