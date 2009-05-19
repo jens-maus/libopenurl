@@ -1,23 +1,32 @@
-/*
-**  OpenURL - MUI preferences for openurl.library
-**
-**  Written by Troels Walsted Hansen <troels@thule.no>
-**  Placed in the public domain.
-**
-**  Developed by:
-**  - Alfonso Ranieri <alforan@tin.it>
-**  - Stefan Kost <ensonic@sonicpulse.de>
-**
-**  Ported to OS4 by Alexandre Balaban <alexandre@balaban.name>
-**
-**  Edit browser window
-*/
+/***************************************************************************
 
+ openurl.library - universal URL display and browser launcher library
+ Copyright (C) 1998-2005 by Troels Walsted Hansen, et al.
+ Copyright (C) 2005-2009 by openurl.library Open Source Team
 
-#include "OpenURL.h"
+ This library is free software; it has been placed in the public domain
+ and you can freely redistribute it and/or modify it. Please note, however,
+ that some components may be under the LGPL or GPL license.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+ openurl.library project: http://sourceforge.net/projects/openurllib/
+
+ $Id: version.h 56 2009-05-18 07:28:47Z damato $
+
+***************************************************************************/
+
+#include "openurl.h"
+
 #define CATCOMP_NUMBERS
-#include "loc.h"
-#include "libraries/openurl.h"
+#include "locale.h"
+
+#include <libraries/openurl.h>
+
+#include "SDI_hook.h"
+#include "macros.h"
 
 /**************************************************************************/
 
@@ -222,10 +231,8 @@ mUse(struct IClass *cl,Object *obj,UNUSED Msg msg)
 
 /**************************************************************************/
 
-M_DISP(dispatcher)
+SDISPATCHER(dispatcher)
 {
-    M_DISPSTART
-
     switch (msg->MethodID)
     {
         case OM_NEW:                  return mNew(cl,obj,(APTR)msg);
@@ -239,14 +246,12 @@ M_DISP(dispatcher)
     }
 }
 
-M_DISPEND(dispatcher)
-
 /**************************************************************************/
 
 ULONG
 initBrowserEditWinClass(void)
 {
-    if (g_browserEditWinClass = MUI_CreateCustomClass(NULL,MUIC_Window,NULL,sizeof(struct data),DISP(dispatcher)))
+    if (g_browserEditWinClass = MUI_CreateCustomClass(NULL,MUIC_Window,NULL,sizeof(struct data),ENTRY(dispatcher)))
     {
         localizeStrings(names);
 

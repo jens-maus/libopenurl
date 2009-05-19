@@ -1,30 +1,32 @@
-/*
-**  OpenURL - MUI preferences for openurl.library
-**
-**  Written by Troels Walsted Hansen <troels@thule.no>
-**  Placed in the public domain.
-**
-**  Developed by:
-**  - Alfonso Ranieri <alforan@tin.it>
-**  - Stefan Kost <ensonic@sonicpulse.de>
-**
-**  Ported to OS4 by Alexandre Balaban <alexandre@balaban.name>
-**
-*/
+/***************************************************************************
 
-#if !defined(__amigaos4__)
-#  undef VARARGS68K
-#  define VARARGS68K
-#endif /* !__amigaos4__ */
+ openurl.library - universal URL display and browser launcher library
+ Copyright (C) 1998-2005 by Troels Walsted Hansen, et al.
+ Copyright (C) 2005-2009 by openurl.library Open Source Team
+
+ This library is free software; it has been placed in the public domain
+ and you can freely redistribute it and/or modify it. Please note, however,
+ that some components may be under the LGPL or GPL license.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+ openurl.library project: http://sourceforge.net/projects/openurllib/
+
+ $Id: macros.h 56 2009-05-18 07:28:47Z damato $
+
+***************************************************************************/
+
+#include "SDI_compiler.h"
 
 #ifdef __MORPHOS__
-#  undef NewObject
-#  undef MUI_NewObject
-#  undef DoSuperNew
-   APTR STDARGS NewObject ( struct IClass *classPtr , STRPTR classID , ...);
-   APTR STDARGS MUI_NewObject ( char classID[] , ...);
-#endif /* __MORPHOS__ */
-APTR STDARGS DoSuperNew ( struct IClass *cl , Object *obj , ...) VARARGS68K;
+APTR DoSuperNew( struct IClass *cl, APTR obj, ... );
+#elif defined(__AROS__)
+Object *DoSuperNew(struct IClass *cl, Object *obj, IPTR tag1, ...);
+#else
+Object * VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...);
+#endif
 
 /* loc.c */
 void initStrings ( void );
@@ -39,7 +41,6 @@ ULONG getKeyChar ( UBYTE *string , ULONG id );
    int stccpy(char *dst, const char *src, int m);
    void SetAmiUpdateENVVariable( CONST_STRPTR varname );
 #endif
-ULONG xget ( Object *obj , ULONG attribute );
 Object *olabel ( ULONG id );
 Object *ollabel ( ULONG id );
 Object *ollabel1 ( ULONG id );

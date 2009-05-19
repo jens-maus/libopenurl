@@ -1,24 +1,30 @@
-/*
-**  OpenURL - MUI preferences for openurl.library
-**
-**  Written by Troels Walsted Hansen <troels@thule.no>
-**  Placed in the public domain.
-**
-**  Developed by:
-**  - Alfonso Ranieri <alforan@tin.it>
-**  - Stefan Kost <ensonic@sonicpulse.de>
-**
-**  Ported to OS4 by Alexandre Balaban <alexandre@balaban.name>
-**
-**  Localization
-*/
+/***************************************************************************
 
+ openurl.library - universal URL display and browser launcher library
+ Copyright (C) 1998-2005 by Troels Walsted Hansen, et al.
+ Copyright (C) 2005-2009 by openurl.library Open Source Team
 
-#include "OpenURL.h"
+ This library is free software; it has been placed in the public domain
+ and you can freely redistribute it and/or modify it. Please note, however,
+ that some components may be under the LGPL or GPL license.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+ openurl.library project: http://sourceforge.net/projects/openurllib/
+
+ $Id: version.h 56 2009-05-18 07:28:47Z damato $
+
+***************************************************************************/
+
+#include "openurl.h"
 #define CATCOMP_ARRAY
-#include "loc.h"
+#include "locale.h"
 
 #include <proto/exec.h>
+
+#include "macros.h"
 
 /***********************************************************************/
 
@@ -52,12 +58,9 @@ openCatalog(STRPTR name,ULONG minVer,ULONG minRev)
 void
 initStrings(void)
 {
-    if (LocaleBase = (struct LocaleBase *)OpenLibrary("locale.library",36))
+    if((LocaleBase = (APTR)OpenLibrary("locale.library",36)) &&
+       GETINTERFACE(ILocale, LocaleBase))
     {
-        #if defined(__amigaos4__)
-        if ( NULL == (ILocale = (struct LocaleIFace*)GetInterface((struct Library*)LocaleBase, "main", 1L, NULL)) ) return;
-        #endif
-
         // to be on the safe side, we initialize our CatCompArray to point on the CatComp's one
         privateCatCompArray = (struct CatCompArrayType *)CatCompArray;
 

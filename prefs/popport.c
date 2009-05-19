@@ -1,22 +1,30 @@
-/*
-**  OpenURL - MUI preferences for openurl.library
-**
-**  Written by Troels Walsted Hansen <troels@thule.no>
-**  Placed in the public domain.
-**
-**  Developed by:
-**  - Alfonso Ranieri <alforan@tin.it>
-**  - Stefan Kost <ensonic@sonicpulse.de>
-**
-**  Ported to OS4 by Alexandre Balaban <alexandre@balaban.name>
-**
-**  Pop public ports object
-*/
+/***************************************************************************
 
+ openurl.library - universal URL display and browser launcher library
+ Copyright (C) 1998-2005 by Troels Walsted Hansen, et al.
+ Copyright (C) 2005-2009 by openurl.library Open Source Team
 
-#include "OpenURL.h"
-#include "libraries/openurl.h"
+ This library is free software; it has been placed in the public domain
+ and you can freely redistribute it and/or modify it. Please note, however,
+ that some components may be under the LGPL or GPL license.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+ openurl.library project: http://sourceforge.net/projects/openurllib/
+
+ $Id: version.h 56 2009-05-18 07:28:47Z damato $
+
+***************************************************************************/
+
+#include "openurl.h"
+
+#include <libraries/openurl.h>
 #include <exec/execbase.h>
+
+#include "SDI_hook.h"
+#include "macros.h"
 
 /**************************************************************************/
 /*
@@ -63,10 +71,8 @@ mListSetup(struct IClass *cl,Object *obj,Msg msg)
 
 /**************************************************************************/
 
-M_DISP(listDispatcher)
+SDISPATCHER(listDispatcher)
 {
-    M_DISPSTART
-
     switch (msg->MethodID)
     {
         case OM_NEW:     return mListNew(cl,obj,(APTR)msg);
@@ -77,14 +83,12 @@ M_DISP(listDispatcher)
     }
 }
 
-M_DISPEND(listDispatcher)
-
 /**************************************************************************/
 
 static ULONG
 initListClass(void)
 {
-    return (ULONG)(listClass = MUI_CreateCustomClass(NULL,MUIC_List,NULL,0,DISP(listDispatcher)));
+    return (ULONG)(listClass = MUI_CreateCustomClass(NULL,MUIC_List,NULL,0,ENTRY(listDispatcher)));
 }
 
 /**************************************************************************/
@@ -97,42 +101,16 @@ disposeListClass(void)
 
 /**************************************************************************/
 
-#ifdef __MORPHOS__
-static void
-windowFun(void)
+HOOKPROTONH(windowFun, void, Object *pop, Object *win)
 {
-    //struct Hook *hook = (struct Hook *)REG_A0;
-    Object      *pop = (Object *)REG_A2;
-    Object      *win = (Object *)REG_A1;
-#else
-static void SAVEDS ASM
-windowFun(UNUSED REG(a0,struct Hook *hook),REG(a2,Object *pop),REG(a1,Object *win))
-{
-#endif
-    set(win,MUIA_Window_DefaultObject,pop);
+  set(win,MUIA_Window_DefaultObject,pop);
 }
-
-#ifdef __MORPHOS__
-static struct EmulLibEntry windowTrap = {TRAP_LIB,0,(void (*)(void))windowFun};
-static struct Hook windowHook = {0,0,(HOOKFUNC)&windowTrap};
-#else
-static struct Hook windowHook = {{0,0},(HOOKFUNC)&windowFun,0,0};
-#endif
+MakeStaticHook(windowHook, windowFun);
 
 /***********************************************************************/
 
-#ifdef __MORPHOS__
-static ULONG
-openFun(void)
+HOOKPROTONH(openFun, ULONG, Object *list, Object *str)
 {
-    //struct Hook *hook = (struct Hook *)REG_A0;
-    Object      *list = (Object *)REG_A2;
-    Object      *str = (Object *)REG_A1;
-#else
-static ULONG SAVEDS ASM
-openFun(UNUSED REG(a0,struct Hook *hook),REG(a2,Object *list),REG(a1,Object *str))
-{
-#endif
     STRPTR s, x;
     int   i;
 
@@ -156,27 +134,12 @@ openFun(UNUSED REG(a0,struct Hook *hook),REG(a2,Object *list),REG(a1,Object *str
 
     return TRUE;
 }
-
-#ifdef __MORPHOS__
-static struct EmulLibEntry openTrap = {TRAP_LIB,0,(void (*)(void))openFun};
-static struct Hook openHook = {0,0,(HOOKFUNC)&openTrap};
-#else
-static struct Hook openHook = {{0,0},(HOOKFUNC)&openFun,0,0};
-#endif
+MakeStaticHook(openHook, openFun);
 
 /***********************************************************************/
 
-#ifdef __MORPHOS__
-static void closeFun(void)
+HOOKPROTONH(closeFun, void, Object *list, Object *str)
 {
-    //struct Hook *hook = (struct Hook *)REG_A0;
-    Object      *list = (Object *)REG_A2;
-    Object      *str = (Object *)REG_A1;
-#else
-static void SAVEDS ASM
-closeFun(UNUSED REG(a0,struct Hook *hook),REG(a2,Object *list),REG(a1,Object *str))
-{
-#endif
     STRPTR port;
 
     DoMethod(list,MUIM_List_GetEntry,MUIV_List_GetEntry_Active,(ULONG)&port);
@@ -207,13 +170,7 @@ closeFun(UNUSED REG(a0,struct Hook *hook),REG(a2,Object *list),REG(a1,Object *st
 
     set(str,MUIA_String_Contents,port);
 }
-
-#ifdef __MORPHOS__
-static struct EmulLibEntry closeTrap = {TRAP_LIB,0,(void (*)(void))closeFun};
-static struct Hook closeHook = {0,0,(HOOKFUNC)&closeTrap};
-#else
-static struct Hook closeHook = {{0,0},(HOOKFUNC)&closeFun,0,0};
-#endif
+MakeStaticHook(closeHook, closeFun);
 
 /***********************************************************************/
 
@@ -244,18 +201,14 @@ mNew(struct IClass *cl,Object *obj,struct opSet *msg)
 
 /***********************************************************************/
 
-M_DISP(dispatcher)
+SDISPATCHER(dispatcher)
 {
-    M_DISPSTART
-
     switch (msg->MethodID)
     {
         case OM_NEW: return mNew(cl,obj,(APTR)msg);
         default:     return DoSuperMethodA(cl,obj,msg);
     }
 }
-
-M_DISPEND(dispatcher)
 
 /***********************************************************************/
 
@@ -264,7 +217,7 @@ initPopportClass(void)
 {
     if (initListClass())
     {
-        if (g_popportClass = MUI_CreateCustomClass(NULL,MUIC_Popobject,NULL,0,DISP(dispatcher)))
+        if (g_popportClass = MUI_CreateCustomClass(NULL,MUIC_Popobject,NULL,0,ENTRY(dispatcher)))
             return TRUE;
 
         disposeListClass();

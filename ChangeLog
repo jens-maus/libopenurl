@@ -5,6 +5,15 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2009-05-19  Jens Langner <Jens.Langner@light-speed.de>
+
+  * prefs: converted the build system of the MUI preferences application to
+    use the generic Makefile we use with every application. Also converted
+    everything to use the SDI headers. OS4 compilation seems to work fine and
+    the app seems also to work properly. However, further testing and
+    especially work into getting it compiled/linked for OS3 and MOS have to
+    be done.
+
 2009-05-19  Thore Böckelmann <tboeckel@gmx.de>
 
   * library/*.c: replaced all handcrafted flag checks by macro calls.

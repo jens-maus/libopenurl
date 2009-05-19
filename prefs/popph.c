@@ -1,22 +1,29 @@
-/*
-**  OpenURL - MUI preferences for openurl.library
-**
-**  Written by Troels Walsted Hansen <troels@thule.no>
-**  Placed in the public domain.
-**
-**  Developed by:
-**  - Alfonso Ranieri <alforan@tin.it>
-**  - Stefan Kost <ensonic@sonicpulse.de>
-**
-**  Ported to OS4 by Alexandre Balaban <alexandre@balaban.name>
-**
-**  Popplaceholder replacement
-*/
+/***************************************************************************
 
+ openurl.library - universal URL display and browser launcher library
+ Copyright (C) 1998-2005 by Troels Walsted Hansen, et al.
+ Copyright (C) 2005-2009 by openurl.library Open Source Team
 
-#include "OpenURL.h"
+ This library is free software; it has been placed in the public domain
+ and you can freely redistribute it and/or modify it. Please note, however,
+ that some components may be under the LGPL or GPL license.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+ openurl.library project: http://sourceforge.net/projects/openurllib/
+
+ $Id: version.h 56 2009-05-18 07:28:47Z damato $
+
+***************************************************************************/
+
+#include "openurl.h"
+
 #include <exec/execbase.h>
 #include <libraries/asl.h>
+
+#include "SDI_hook.h"
 
 /**************************************************************************/
 /*
@@ -35,40 +42,16 @@ struct listData
 
 /**************************************************************************/
 
-#ifdef __MORPHOS__
-static ULONG
-conFun(void)
+HOOKPROTONHNO(conFun, ULONG, ULONG num)
 {
-    ULONG num = REG_A1;
-#else
-static ULONG SAVEDS ASM
-conFun(UNUSED REG(a0,struct Hook *hook), UNUSED REG(a2,APTR pool),REG(a1,ULONG num))
-{
-#endif
     return num+1;
 }
-
-#ifdef __MORPHOS__
-static struct EmulLibEntry conTrap = {TRAP_LIB,0,(void (*)(void))conFun};
-static struct Hook conHook = {0,0,(HOOKFUNC)&conTrap};
-#else
-static struct Hook conHook = {{0,0},(HOOKFUNC)conFun,0,0};
-#endif
+MakeStaticHook(conHook, conFun);
 
 /**************************************************************************/
 
-#ifdef __MORPHOS__
-static void
-dispFun(void)
+HOOKPROTO(dispFun, void, UBYTE **array, ULONG num)
 {
-    struct Hook  *hook = (struct Hook *)REG_a0;
-    UBYTE        **array = (UBYTE **)REG_A2;
-    ULONG        num = REG_A1;
-#else
-static void SAVEDS ASM
-dispFun(REG(a0,struct Hook *hook),REG(a2,UBYTE **array),REG(a1,ULONG num))
-{
-#endif
     struct listData *data = hook->h_Data;
 
     if (num)
@@ -79,10 +62,7 @@ dispFun(REG(a0,struct Hook *hook),REG(a2,UBYTE **array),REG(a1,ULONG num))
         *array   = data->names[num];
     }
 }
-
-#ifdef __MORPHOS__
-static struct EmulLibEntry dispTrap = {TRAP_LIBNR,0,(void (*)(void))dispFun};
-#endif
+MakeStaticHook(dispHook, dispFun);
 
 /**************************************************************************/
 
@@ -109,12 +89,7 @@ mListNew(struct IClass *cl,Object *obj,struct opSet *msg)
         data->phs   = phs;
         data->names = names;
 
-        #ifdef __MORPHOS__
-        data->dispHook.h_Entry = (HOOKFUNC)&dispTrap;
-        #else
-        data->dispHook.h_Entry = (HOOKFUNC)dispFun;
-        #endif
-        data->dispHook.h_Data  = data;
+        InitHook(&data->dispHook, dispHook, data);
 
         superset(cl,obj,MUIA_List_DisplayHook,&data->dispHook);
 
@@ -129,10 +104,8 @@ mListNew(struct IClass *cl,Object *obj,struct opSet *msg)
 
 /**************************************************************************/
 
-M_DISP(listDispatcher)
+SDISPATCHER(listDispatcher)
 {
-    M_DISPSTART
-
     switch (msg->MethodID)
     {
         case OM_NEW: return mListNew(cl,obj,(APTR)msg);
@@ -141,14 +114,12 @@ M_DISP(listDispatcher)
     }
 }
 
-M_DISPEND(listDispatcher)
-
 /**************************************************************************/
 
 static ULONG
 initListClass(void)
 {
-    return (ULONG)(listClass = MUI_CreateCustomClass(NULL,MUIC_List,NULL,sizeof(struct listData),DISP(listDispatcher)));
+    return (ULONG)(listClass = MUI_CreateCustomClass(NULL,MUIC_List,NULL,sizeof(struct listData),ENTRY(listDispatcher)));
 }
 
 /**************************************************************************/
@@ -174,41 +145,16 @@ struct data
 
 /**************************************************************************/
 
-#ifdef __MORPHOS__
-static void
-windowFun(void)
+HOOKPROTONH(windowFun, void, Object *pop, Object *win)
 {
-    //struct Hook *hook = (struct Hook *)REG_A0;
-    Object      *pop = (Object *)REG_A2;
-    Object      *win = (Object *)REG_A1;
-#else
-static void SAVEDS ASM
-windowFun(UNUSED REG(a0,struct Hook *hook),REG(a2,Object *pop),REG(a1,Object *win))
-{
-#endif
-    set(win,MUIA_Window_DefaultObject,pop);
+  set(win,MUIA_Window_DefaultObject,pop);
 }
-
-#ifdef __MORPHOS__
-static struct EmulLibEntry windowTrap = {TRAP_LIB,0,(void (*)(void))windowFun};
-static struct Hook windowHook = {0,0,(HOOKFUNC)&windowTrap};
-#else
-static struct Hook windowHook = {{0,0},(HOOKFUNC)&windowFun,0,0};
-#endif
+MakeStaticHook(windowHook, windowFun);
 
 /***********************************************************************/
 
-#ifdef __MORPHOS__
-static void closeFun(void)
+HOOKPROTO(closeFun, void, Object *list, Object *str)
 {
-    struct Hook *hook = (struct Hook *)REG_A0;
-    Object      *list = (Object *)REG_A2;
-    Object      *str = (Object *)REG_A1;
-#else
-static void SAVEDS ASM
-closeFun(REG(a0,struct Hook *hook),REG(a2,Object *list),REG(a1,Object *str))
-{
-#endif
     struct data *data = hook->h_Data;
     LONG       a;
 
@@ -234,10 +180,7 @@ closeFun(REG(a0,struct Hook *hook),REG(a2,Object *list),REG(a1,Object *str))
         }
     }
 }
-
-#ifdef __MORPHOS__
-static struct EmulLibEntry closeTrap = {TRAP_LIB,0,(void (*)(void))closeFun};
-#endif
+MakeStaticHook(closeHook, closeFun);
 
 static ULONG
 mNew(struct IClass *cl,Object *obj,struct opSet *msg)
@@ -278,12 +221,7 @@ mNew(struct IClass *cl,Object *obj,struct opSet *msg)
         data->phs   = phs;
         data->names = names;
 
-        #ifdef __MORPHOS__
-        data->closeHook.h_Entry = (HOOKFUNC)&closeTrap;
-        #else
-        data->closeHook.h_Entry = (HOOKFUNC)closeFun;
-        #endif
-        data->closeHook.h_Data  = data;
+        InitHook(&data->closeHook, closeHook, data);
         set(obj,MUIA_Popobject_ObjStrHook,&data->closeHook);
 
         if (GetTagData(MUIA_Popph_Asl,FALSE,attrs))
@@ -326,41 +264,23 @@ mDispose(struct IClass *cl,Object *obj,Msg msg)
 
 /***********************************************************************/
 
-#ifdef __MORPHOS__
-static void
-reqIntuiFun(void)
+HOOKPROTONO(reqIntuiFun, void, struct IntuiMessage *imsg)
 {
-    struct Hook     *hook = (struct Hook *)REG_A0;
-    struct IntuiMessage *imsg = (struct IntuiMessage *)REG_A1;
-#else
-static void SAVEDS ASM
-reqIntuiFun(REG(a0,struct Hook *hook),REG(a1,struct IntuiMessage *imsg))
-{
-#endif
-    if (imsg->Class==IDCMP_REFRESHWINDOW)
+  if(imsg->Class==IDCMP_REFRESHWINDOW)
     DoMethod(hook->h_Data,MUIM_Application_CheckRefresh);
 }
-
-#ifdef __MORPHOS__
-static struct EmulLibEntry reqIntuiTrap = {TRAP_LIBNR,0,(void (*)(void))reqIntuiFun};
-#endif
+MakeStaticHook(reqIntuiHook, reqIntuiFun);
 
 static ULONG
 mRequestFile(struct IClass *cl,Object *obj,UNUSED Msg msg)
 {
     struct data *data = INST_DATA(cl,obj);
-    struct Hook reqIntuiHook = {{0,0},0,0,0};
+    struct Hook intuiHook;
     TEXT       path[256], *x, *file, *p;
 
     set(_app(obj),MUIA_Application_Sleep,TRUE);
 
-    #ifdef __MORPHOS__
-    reqIntuiHook.h_Entry = (HOOKFUNC)&reqIntuiTrap;
-    #else
-    reqIntuiHook.h_Entry = (HOOKFUNC)reqIntuiFun;
-    #endif
-    reqIntuiHook.h_Data  = _app(obj);
-
+    InitHook(&intuiHook, reqIntuiHook, _app(obj));
 
     get(data->str,MUIA_String_Contents,&x);
     file = FilePart(x);
@@ -373,7 +293,7 @@ mRequestFile(struct IClass *cl,Object *obj,UNUSED Msg msg)
     if (MUI_AslRequestTags(data->req,
                            ASLFR_InitialFile,       (ULONG)file,
                            p ? ASLFR_InitialDrawer : TAG_IGNORE, (ULONG)p,
-                           ASLFR_IntuiMsgFunc,      (ULONG)&reqIntuiHook,
+                           ASLFR_IntuiMsgFunc,      (ULONG)&intuiHook,
                            ASLFR_Window,            (ULONG)_window(obj),
                            ASLFR_PrivateIDCMP,      TRUE,
                            ASLFR_Flags1,            FRF_INTUIFUNC,
@@ -395,10 +315,8 @@ mRequestFile(struct IClass *cl,Object *obj,UNUSED Msg msg)
 
 /***********************************************************************/
 
-M_DISP(dispatcher)
+SDISPATCHER(dispatcher)
 {
-    M_DISPSTART
-
     switch (msg->MethodID)
     {
         case OM_NEW:                 return mNew(cl,obj,(APTR)msg);
@@ -410,8 +328,6 @@ M_DISP(dispatcher)
     }
 }
 
-M_DISPEND(dispatcher)
-
 /***********************************************************************/
 
 ULONG
@@ -419,7 +335,7 @@ initPopphClass(void)
 {
     if (initListClass())
     {
-        if (g_popphClass = MUI_CreateCustomClass(NULL,MUIC_Group,NULL,sizeof(struct data),DISP(dispatcher)))
+        if (g_popphClass = MUI_CreateCustomClass(NULL,MUIC_Group,NULL,sizeof(struct data),ENTRY(dispatcher)))
         {
             return TRUE;
         }

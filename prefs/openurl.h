@@ -1,16 +1,22 @@
-/*
-**  OpenURL - MUI preferences for openurl.library
-**
-**  Written by Troels Walsted Hansen <troels@thule.no>
-**  Placed in the public domain.
-**
-**  Developed by:
-**  - Alfonso Ranieri <alforan@tin.it>
-**  - Stefan Kost <ensonic@sonicpulse.de>
-**
-**
-**  Main includes and definitions
-*/
+/***************************************************************************
+
+ openurl.library - universal URL display and browser launcher library
+ Copyright (C) 1998-2005 by Troels Walsted Hansen, et al.
+ Copyright (C) 2005-2009 by openurl.library Open Source Team
+
+ This library is free software; it has been placed in the public domain
+ and you can freely redistribute it and/or modify it. Please note, however,
+ that some components may be under the LGPL or GPL license.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+ openurl.library project: http://sourceforge.net/projects/openurllib/
+
+ $Id: version.h 56 2009-05-18 07:28:47Z damato $
+
+***************************************************************************/
 
 #define __NOLIBBASE__
 #define __USE_SYSBASE
@@ -35,14 +41,12 @@
 #include <clib/alib_protos.h>
 #include <clib/debug_protos.h>
 
-#include <mui/Textinput_mcc.h>
+#include <mui/textinput_mcc.h>
 #include <mui/Urltext_mcc.h>
 #include <mui/MUIundoc.h>
 
 #include <string.h>
 #include <ctype.h>
-
-#include <macros.h>
 
 /**************************************************************************/
 /*
@@ -56,7 +60,11 @@ extern struct GfxBase         *GfxBase;
 extern struct Library         *MUIMasterBase;
 extern struct Library         *UtilityBase;
 extern struct Library         *IconBase;
+#if !defined(__MORPHOS__)
 extern struct LocaleBase      *LocaleBase;
+#else
+extern struct Library         *LocaleBase;
+#endif
 extern struct Library         *OpenURLBase;
 
 extern struct MUI_CustomClass *g_appClass;
@@ -81,8 +89,8 @@ extern ULONG                  g_MUI4;
 #define THIS_PREFS_VERSION ((UBYTE)4)
 
 #define APPBASENAME  "OPENURL"
-#define APPAUTHOR    "Troels Walsted Hansen, Alfonso Ranieri, Stefan Kost"
-#define APPHELP      PRG".guide"
+#define APPAUTHOR    "openurl.library Open Source Team"
+#define APPHELP      "OpenURL.guide"
 
 /**************************************************************************/
 /*
@@ -396,12 +404,6 @@ enum
 #define MBAR      {NM_ITEM,(STRPTR)NM_BARLABEL,0,0,0,NULL}
 #define MEND      {NM_END,NULL,0,0,0,NULL}
 
-#undef set
-#undef get
-#undef nnset
-#define get(obj,attr,store)            GetAttr((ULONG)(attr),(Object *)obj,(ULONG *)(void *)(store))
-#define set(obj,attr,value)            SetAttrs((Object *)(obj),(ULONG)(attr),(ULONG)(value),TAG_DONE)
-#define nnset(obj,attr,value)          SetAttrs((Object *)(obj),MUIA_NoNotify,TRUE,(ULONG)(attr),(ULONG)(value),TAG_DONE)
 #define superset(cl,obj,attr,value)    SetSuperAttrs((APTR)(cl),(Object *)(obj),(ULONG)(attr),(ULONG)(value),TAG_DONE)
 #define supernnset(cl,obj,attr,value)  SetSuperAttrs((APTR)(cl),(Object *)(obj),(ULONG)(attr),(ULONG)(value),MUIA_NoNotify,TRUE,TAG_DONE)
 #define superget(cl,obj,attr,valPtr)   DoSuperMethod((APTR)(cl),(Object *)(obj),OM_GET,(ULONG)(attr),(ULONG)(valPtr))

@@ -1,25 +1,33 @@
-/*
-**  OpenURL - MUI preferences for openurl.library
-**
-**  Written by Troels Walsted Hansen <troels@thule.no>
-**  Placed in the public domain.
-**
-**  Developed by:
-**  - Alfonso Ranieri <alforan@tin.it>
-**  - Stefan Kost <ensonic@sonicpulse.de>
-**
-**  Ported to OS4 by Alexandre Balaban <alexandre@balaban.name>
-**
-**  Main
-*/
+/***************************************************************************
 
+ openurl.library - universal URL display and browser launcher library
+ Copyright (C) 1998-2005 by Troels Walsted Hansen, et al.
+ Copyright (C) 2005-2009 by openurl.library Open Source Team
 
-#include "OpenURL.h"
+ This library is free software; it has been placed in the public domain
+ and you can freely redistribute it and/or modify it. Please note, however,
+ that some components may be under the LGPL or GPL license.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+ openurl.library project: http://sourceforge.net/projects/openurllib/
+
+ $Id: version.h 56 2009-05-18 07:28:47Z damato $
+
+***************************************************************************/
+
+#include "openurl.h"
+
 #define CATCOMP_NUMBERS
-#include "loc.h"
+#include "locale.h"
+
 #include <graphics/gfxbase.h>
 
 #include <libraries/openurl.h>
+
+#include "macros.h"
 
 /**************************************************************************/
 
@@ -31,7 +39,11 @@ struct Library         *MUIMasterBase = NULL;
 struct Library         *UtilityBase = NULL;
 struct Library         *IconBase = NULL;
 struct Library         *OpenURLBase = NULL;
+#if !defined(__MORPHOS__)
 struct LocaleBase      *LocaleBase = NULL;
+#else
+struct Library         *LocaleBase = NULL;
+#endif
 
 #if defined(__amigaos4__)
 struct IntuitionIFace  *IIntuition = NULL;
@@ -64,38 +76,43 @@ openStuff(ULONG *arg0,ULONG *arg1)
 {
     *arg1 = 0;
 
-    if (!(MUIMasterBase = OpenLibrary("muimaster.library",19)))
+    if((MUIMasterBase = OpenLibrary("muimaster.library",19)) == NULL ||
+       GETINTERFACE(IMUIMaster, MUIMasterBase) == NULL)
     {
         *arg0 = 19;
         return MSG_Err_NoMUI;
     }
 
-    if (MUIMasterBase->lib_Version<20) g_MUI4 = FALSE;
-    else if (MUIMasterBase->lib_Version==20) g_MUI4 = MUIMasterBase->lib_Revision>5341;
-		 else g_MUI4 = TRUE;
+    if(MUIMasterBase->lib_Version < 20)
+      g_MUI4 = FALSE;
+    else if (MUIMasterBase->lib_Version==20)
+      g_MUI4 = MUIMasterBase->lib_Revision>5341;
+		else g_MUI4 = TRUE;
 
-#if defined(__amigaos4__)
-    if (!(IMUIMaster = (struct MUIMasterIFace *)GetInterface( MUIMasterBase, "main", 1L, NULL))) return MSG_Err_NoMUI;
-#endif /* __amigaos4__ */
-
-    if (!(g_pool = CreatePool(MEMF_PUBLIC|MEMF_CLEAR,8192,4196))) return MSG_Err_NoMem;
+    if(!(g_pool = CreatePool(MEMF_PUBLIC|MEMF_CLEAR,8192,4196)))
+      return MSG_Err_NoMem;
 
     *arg0 = 37;
 
-    if (!(IntuitionBase = (struct IntuitionBase *)OpenLibrary("intuition.library",37))) return MSG_Err_NoIntuition;
-    if (!(GfxBase = (struct GfxBase *)OpenLibrary("graphics.library",37))) return MSG_Err_NoGfx;
-    if (!(UtilityBase = OpenLibrary("utility.library",37))) return MSG_Err_NoUtility;
-    if (!(IconBase = OpenLibrary("icon.library",37))) return MSG_Err_NoIcon;
+    if((IntuitionBase = (struct IntuitionBase *)OpenLibrary("intuition.library",37)) == NULL ||
+       GETINTERFACE(IIntuition, IntuitionBase) == NULL)
+       return MSG_Err_NoIntuition;
 
-#if defined(__amigaos4__)
-    if (!(IIntuition = (struct IntuitionIFace *)GetInterface( (struct Library*)IntuitionBase, "main", 1L, NULL))) return MSG_Err_NoIntuition;
-    if (!(IGraphics = (struct GraphicsIFace *)GetInterface( (struct Library*)GfxBase, "main", 1L, NULL))) return MSG_Err_NoGfx;
-    if (!(IUtility = (struct UtilityIFace *)GetInterface( UtilityBase, "main", 1L, NULL))) return MSG_Err_NoUtility;
-    if (!(IIcon = (struct IconIFace *)GetInterface( IconBase, "main", 1L, NULL))) return MSG_Err_NoIcon;
-#endif /* __amigaos4__ */
+    if((GfxBase = (struct GfxBase *)OpenLibrary("graphics.library",37)) == NULL ||
+       GETINTERFACE(IGraphics, GfxBase) == NULL)
+       return MSG_Err_NoGfx;
 
-    if (!(OpenURLBase = OpenLibrary(OPENURLNAME,OPENURLVER)) ||
-        ((OpenURLBase->lib_Version==7) && (OpenURLBase->lib_Revision<1)))
+    if((UtilityBase = OpenLibrary("utility.library",37)) == NULL ||
+       GETINTERFACE(IUtility, UtilityBase) == NULL)
+       return MSG_Err_NoUtility;
+
+    if((IconBase = OpenLibrary("icon.library",37)) == NULL ||
+       GETINTERFACE(IIcon, IconBase) == NULL)
+       return MSG_Err_NoIcon;
+
+    if((OpenURLBase = OpenLibrary(OPENURLNAME,OPENURLVER)) == NULL||
+       GETINTERFACE(IOpenURL, OpenURLBase) == NULL ||
+       ((OpenURLBase->lib_Version==7) && (OpenURLBase->lib_Revision<1)))
         //((OpenURLBase->lib_Version==OPENURLREV) && (OpenURLBase->lib_Revision<OPENURLREV)))
     {
         *arg0 = OPENURLVER;
@@ -104,18 +121,10 @@ openStuff(ULONG *arg0,ULONG *arg1)
         return MSG_Err_NoOpenURL;
     }
 
-#if defined(__amigaos4__)
-    if (!(IOpenURL = (struct OpenURLIFace *)GetInterface( OpenURLBase, "main", 1L, NULL)))
-    {
-        *arg0 = OPENURLVER;
-        *arg1 = OPENURLREV;
-
-        return MSG_Err_NoOpenURL;
-    }
-
+    #if defined(__amigaos4__)
     // setup the AmiUpdate variable
     SetAmiUpdateENVVariable( "OpenURL" );
-#endif /* __amigaos4__ */
+    #endif /* __amigaos4__ */
 
     return 0;
 }
@@ -129,56 +138,58 @@ closeStuff(void)
     {
         uninitStrings();
 
-        if (g_cat) CloseCatalog(g_cat);
+        if(g_cat)
+          CloseCatalog(g_cat);
 
-        #if defined(__amigaos4__)
-        if (ILocale)
-        {
-            DropInterface((struct Interface*)ILocale);
-            ILocale = NULL;
-        }
-        #endif
-
+        DROPINTERFACE(ILocale);
         CloseLibrary((struct Library *)LocaleBase);
         LocaleBase = NULL;
     }
 
-#if defined(__amigaos4__)
-    if (IMUIMaster)
+    if(OpenURLBase)
     {
-        DropInterface((struct Interface*)IMUIMaster);
-        IMUIMaster = NULL;
+      DROPINTERFACE(IOpenURL);
+      CloseLibrary(OpenURLBase);
+      OpenURLBase = NULL;
     }
-    if (IIntuition)
-    {
-        DropInterface((struct Interface*)IIntuition);
-        IIntuition = NULL;
-    }
-    if (IUtility)
-    {
-        DropInterface((struct Interface*)IUtility);
-        IUtility = NULL;
-    }
-    if (IIcon)
-    {
-        DropInterface((struct Interface*)IIcon);
-        IIcon = NULL;
-    }
-    if (IOpenURL)
-    {
-        DropInterface((struct Interface*)IOpenURL);
-        IOpenURL = NULL;
-    }
-#endif /* __amigaos4__ */
 
-    if (OpenURLBase)   CloseLibrary(OpenURLBase);
-    if (IconBase)      CloseLibrary(IconBase);
-    if (UtilityBase)   CloseLibrary(UtilityBase);
-    if (GfxBase)       CloseLibrary((struct Library *)GfxBase);
-    if (IntuitionBase) CloseLibrary((struct Library *)IntuitionBase);
-    if (MUIMasterBase) CloseLibrary(MUIMasterBase);
+    if(IconBase)
+    {
+      DROPINTERFACE(IIcon);
+      CloseLibrary(IconBase);
+      IconBase = NULL;
+    }
 
-    if (g_pool) DeletePool(g_pool);
+    if(UtilityBase)
+    {
+      DROPINTERFACE(IUtility);
+      CloseLibrary(UtilityBase);
+      UtilityBase = NULL;
+    }
+
+    if(GfxBase)
+    {
+      DROPINTERFACE(IGraphics);
+      CloseLibrary((struct Library *)GfxBase);
+      GfxBase = NULL;
+    }
+
+    if(IntuitionBase)
+    {
+      DROPINTERFACE(IIntuition);
+      CloseLibrary((struct Library *)IntuitionBase);
+      IntuitionBase = NULL;
+    }
+
+    if(MUIMasterBase)
+    {
+      DROPINTERFACE(IMUIMaster);
+      CloseLibrary(MUIMasterBase);
+      MUIMasterBase = NULL;
+    }
+
+    if(g_pool)
+      DeletePool(g_pool);
 }
 
 /**************************************************************************/
@@ -251,7 +262,7 @@ main(void)
     {
         TEXT buf[256];
 
-        msnprintf(buf,sizeof(buf),getString(error),arg0,arg1);
+        snprintf(buf,sizeof(buf),getString(error),arg0,arg1);
 
         if (MUIMasterBase)
         {

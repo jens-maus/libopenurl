@@ -1,23 +1,26 @@
-/*
-**  OpenURL - MUI preferences for openurl.library
-**
-**  Written by Troels Walsted Hansen <troels@thule.no>
-**  Placed in the public domain.
-**
-**  Developed by:
-**  - Alfonso Ranieri <alforan@tin.it>
-**  - Stefan Kost <ensonic@sonicpulse.de>
-**
-**  Ported to OS4 by Alexandre Balaban <alexandre@balaban.name>
-**
-*/
+/***************************************************************************
 
+ openurl.library - universal URL display and browser launcher library
+ Copyright (C) 1998-2005 by Troels Walsted Hansen, et al.
+ Copyright (C) 2005-2009 by openurl.library Open Source Team
 
-#include "OpenURL.h"
+ This library is free software; it has been placed in the public domain
+ and you can freely redistribute it and/or modify it. Please note, however,
+ that some components may be under the LGPL or GPL license.
 
-#if defined(__amigaos4__)
-#include <stdarg.h>
-#endif
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+ openurl.library project: http://sourceforge.net/projects/openurllib/
+
+ $Id: macros.h 56 2009-05-18 07:28:47Z damato $
+
+***************************************************************************/
+
+#include "openurl.h"
+
+#include "SDI_stdarg.h"
 
 /**************************************************************************/
 
@@ -26,24 +29,28 @@
 
 /***********************************************************************/
 
-#if defined(__amigaos4__)
-APTR VARARGS68K
-DoSuperNew(struct IClass *cl,Object *obj,...)
+// DoSuperNew()
+// Calls parent NEW method within a subclass
+#ifdef __MORPHOS__
+
+#elif defined(__AROS__)
+Object * DoSuperNew(struct IClass *cl, Object *obj, IPTR tag1, ...)
 {
-    APTR    res;
-    va_list va;
-
-    va_startlinear(va,obj);
-    res = (APTR)DoSuperMethod(cl,obj,OM_NEW,va_getlinearva(va,ULONG),NULL);
-    va_end(va);
-
-    return res;
+  AROS_SLOWSTACKTAGS_PRE(tag1)
+  retval = DoSuperMethod(cl, obj, OM_NEW, AROS_SLOWSTACKTAGS_ARG(tag1));
+  AROS_SLOWSTACKTAGS_POST
 }
-#elif !defined(__MORPHOS__)
-APTR STDARGS
-DoSuperNew(struct IClass *cl,Object *obj,...)
+#else
+Object * VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...)
 {
-    return (APTR)DoSuperMethod(cl,obj,OM_NEW,(struct TagItem *)(&obj+1),NULL);
+  Object *rc;
+  VA_LIST args;
+
+  VA_START(args, obj);
+  rc = (Object *)DoSuperMethod(cl, obj, OM_NEW, VA_ARG(args, ULONG), NULL);
+  VA_END(args);
+
+  return rc;
 }
 #endif
 
@@ -118,17 +125,6 @@ void SetAmiUpdateENVVariable( CONST_STRPTR varname )
 }
 
 #endif /* __amigaos4__ */
-
-/**************************************************************************/
-ULONG
-xget(Object *obj,ULONG attribute)
-{
-    ULONG x;
-
-    get(obj,attribute,&x);
-
-    return x;
-}
 
 /**************************************************************************/
 
@@ -321,109 +317,6 @@ openWindow(Object *app,Object *win)
 }
 
 /***********************************************************************/
-
-#ifdef __MORPHOS__
-void
-msprintf(STRPTR buf,STRPTR fmt,...)
-{
-    va_list va;
-
-    va_start(va,fmt);
-    VNewRawDoFmt(fmt,(APTR)0,buf,va);
-    va_end(va);
-}
-#else
-static UWORD fmtfunc[] = { 0x16c0, 0x4e75 };
-
-void
-msprintf(STRPTR to,STRPTR fmt,...)
-{
-    #if defined(__amigaos4__)
-    va_list       va;
-    va_startlinear(va,fmt);
-    RawDoFmt(fmt,va_getlinearva(va,CONST APTR),(APTR)&fmtfunc,to);
-    va_end(va);
-    #else
-    RawDoFmt(fmt,&fmt+1,(APTR)&fmtfunc,to);
-    #endif /* __amigaos4__ */
-}
-#endif /* __MORPHOS__ */
-
-/***********************************************************************/
-
-struct stream
-{
-    STRPTR  buf;
-    int     size;
-    int     counter;
-    int     stop;
-};
-
-static void
-#ifdef __MORPHOS__
-msnprintfStuff(struct stream *st,UBYTE c)
-{
-#else
-ASM msnprintfStuff(REG(d0,UBYTE c),REG(a3,struct stream *st))
-{
-#endif
-    if (!st->stop)
-    {
-        if (++st->counter>=st->size)
-        {
-            *(st->buf) = 0;
-            st->stop   = 1;
-        }
-        else *(st->buf++) = c;
-    }
-}
-
-#if defined(__MORPHOS__) || defined(__amigaos4__)
-int
-msnprintf(STRPTR buf,int size,STRPTR fmt,...)
-{
-    struct stream st;
-    va_list       va;
-
-    #if defined(__amigaos4__)
-    va_startlinear(va,fmt);
-    #else
-    va_start(va,fmt);
-    #endif
-
-    st.buf     = buf;
-    st.size    = size;
-    st.counter = 0;
-    st.stop    = 0;
-
-    #if defined(__amigaos4__)
-    RawDoFmt(fmt,va_getlinearva(va,CONST APTR),(APTR)msnprintfStuff,&st);
-    #else
-    VNewRawDoFmt(fmt,(APTR)msnprintfStuff,(STRPTR)&st,va);
-    #endif
-
-    va_end(va);
-
-    return st.counter-1;
-}
-#else
-int
-msnprintf(STRPTR buf,int size,STRPTR fmt,...)
-{
-    struct stream st;
-
-    st.buf     = buf;
-    st.size    = size;
-    st.counter = 0;
-    st.stop    = 0;
-
-    RawDoFmt(fmt,&fmt+1,(APTR)msnprintfStuff,&st);
-
-    return st.counter-1;
-}
-#endif
-
-/**************************************************************************/
 
 ULONG
 delEntry(Object *obj,APTR entry)

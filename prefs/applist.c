@@ -1,22 +1,33 @@
-/*
-**  OpenURL - MUI preferences for openurl.library
-**
-**  Written by Troels Walsted Hansen <troels@thule.no>
-**  Placed in the public domain.
-**
-**  Developed by:
-**  - Alfonso Ranieri <alforan@tin.it>
-**  - Stefan Kost <ensonic@sonicpulse.de>
-**
-**  Ported to OS4 by Alexandre Balaban <alexandre@balaban.name>
-**
-**  A clients page
-*/
+/***************************************************************************
 
-#include "OpenURL.h"
+ openurl.library - universal URL display and browser launcher library
+ Copyright (C) 1998-2005 by Troels Walsted Hansen, et al.
+ Copyright (C) 2005-2009 by openurl.library Open Source Team
+
+ This library is free software; it has been placed in the public domain
+ and you can freely redistribute it and/or modify it. Please note, however,
+ that some components may be under the LGPL or GPL license.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+ openurl.library project: http://sourceforge.net/projects/openurllib/
+
+ $Id: version.h 56 2009-05-18 07:28:47Z damato $
+
+***************************************************************************/
+
+#include "openurl.h"
+
 #define CATCOMP_NUMBERS
-#include "loc.h"
-#include "libraries/openurl.h"
+#include "locale.h"
+#include "macros.h"
+
+#include <libraries/openurl.h>
+#include <stdio.h>
+
+#include "SDI_hook.h"
 
 /**************************************************************************/
 /*
@@ -60,7 +71,7 @@ mLampSets(struct IClass *cl,Object *obj,struct opSet *msg)
     struct lampData *data = INST_DATA(cl,obj);
     struct TagItem  *tag;
 
-    if (tag = FindTagItem(MUIA_Lamp_Disabled,msg->ops_AttrList))
+    if((tag = FindTagItem(MUIA_Lamp_Disabled,msg->ops_AttrList)))
     {
         if (tag->ti_Data) data->flags |= FLG_LampDisabled;
         else data->flags &= ~FLG_LampDisabled;
@@ -201,10 +212,8 @@ mLampDraw(struct IClass *cl,Object *obj,struct MUIP_Draw *msg)
 
 /***********************************************************************/
 
-M_DISP(lampDispatcher)
+SDISPATCHER(lampDispatcher)
 {
-    M_DISPSTART
-
     switch(msg->MethodID)
     {
         case OM_NEW:         return mLampNew(cl,obj,(APTR)msg);
@@ -219,14 +228,12 @@ M_DISP(lampDispatcher)
     }
 }
 
-M_DISPEND(lampDispatcher)
-
 /***********************************************************************/
 
 static ULONG
 initLampClass(void)
 {
-    return (ULONG)(lampClass = MUI_CreateCustomClass(NULL,MUIC_Rectangle,NULL,sizeof(struct lampData),DISP(lampDispatcher)));
+    return (ULONG)(lampClass = MUI_CreateCustomClass(NULL,MUIC_Rectangle,NULL,sizeof(struct lampData),ENTRY(lampDispatcher)));
 }
 
 /**************************************************************************/
@@ -274,18 +281,8 @@ struct listIO
 
 /**************************************************************************/
 
-#ifdef __MORPHOS__
-static struct URL_Node *
-conFun(void)
+HOOKPROTO(conFun, struct URL_Node *, APTR pool, struct URL_Node *node)
 {
-    struct Hook     *hook = (struct Hook *)REG_a0;
-    APTR            pool = (APTR)REG_A2;
-    struct URL_Node *node = (struct URL_Node *)REG_A1;
-#else
-static struct URL_Node * SAVEDS ASM
-conFun(REG(a0,struct Hook *hook),REG(a2,APTR pool),REG(a1,struct URL_Node *node))
-{
-#endif
     struct listData *data = hook->h_Data;
     struct URL_Node *new;
 
@@ -294,81 +291,41 @@ conFun(REG(a0,struct Hook *hook),REG(a2,APTR pool),REG(a1,struct URL_Node *node)
         new = node;
         node->Flags &= ~UNF_NTALLOC;
     }
-    else if (new = AllocPooled(pool,data->nodeSize)) CopyMem(node,new,data->nodeSize);
+    else if((new = AllocPooled(pool,data->nodeSize)))
+      CopyMem(node,new,data->nodeSize);
 
     return new;
 }
-
-#ifdef __MORPHOS__
-static struct EmulLibEntry conTrap = {TRAP_LIB,0,(void (*)(void))conFun};
-static struct Hook conHook = {0,0,(HOOKFUNC)&conTrap};
-#else
-static struct Hook conHook = {{0,0},(HOOKFUNC)conFun,0,0};
-#endif
+MakeStaticHook(conHook, conFun);
 
 /**************************************************************************/
 
-#ifdef __MORPHOS__
-static void
-destFun(void)
+HOOKPROTO(destFun, void, APTR pool, struct URL_Node *node)
 {
-    struct Hook     *hook = (struct Hook *)REG_a0;
-    APTR            pool   = (APTR)REG_A2;
-    struct URL_Node *node = (struct URL_Node *)REG_A1;
-#else
-static void SAVEDS ASM
-destFun(REG(a0,struct Hook *hook),REG(a2,APTR pool),REG(a1,struct URL_Node *node))
-{
-#endif
     struct listData *data = hook->h_Data;
 
     FreePooled(pool,node,data->nodeSize);
 }
-
-#ifdef __MORPHOS__
-static struct EmulLibEntry destTrap = {TRAP_LIBNR,0,(void (*)(void))destFun};
-static struct Hook destHook = {0,0,(HOOKFUNC)&destTrap};
-#else
-static struct Hook destHook = {{0,0},(HOOKFUNC)destFun,0,0};
-#endif
+MakeStaticHook(destHook, destFun);
 
 /**************************************************************************/
 
-#ifdef __MORPHOS__
-static ULONG
-mListDisplay(struct IClass *cl,Object *obj,struct MUIP_List_Display *msg)
-{
-    struct listData *data = INST_DATA(cl,obj);
-    struct URL_Node *node = (struct URL_Node *)msg->entry;
-    STRPTR          *array = (STRPTR*)msg->array;
-#else
-static void SAVEDS ASM
-dispFun(REG(a0,struct Hook *hook),REG(a2,STRPTR *array),REG(a1,struct URL_Node *node))
+HOOKPROTO(dispFun, void, STRPTR *array, struct URL_Node *node)
 {
     struct listData *data = hook->h_Data;
-#endif
 
     if (node)
     {
         if (data->lamp)
         {
             set(data->olamp,MUIA_Lamp_Disabled,node->Flags & UNF_DISABLED);
-            msprintf(data->col0buf,"\33O[%08lx]",(ULONG)data->lamp);
+            sprintf(data->col0buf,"\33O[%08lx]",(ULONG)data->lamp);
             *array++ = data->col0buf;
         }
         else *array++ = (node->Flags & UNF_DISABLED) ? " " : ">";
 
         *array++ = (STRPTR)node+data->nameOfs;
         *array   = (STRPTR)node+data->pathOfs;
-
-        #ifdef __MORPHOS__
-        if (g_MUI4)
-        {
-            msg->array[-7] = (STRPTR)2;
-            if ((ULONG)msg->array[-1] % 2) msg->array[-9] = (STRPTR)40;
-            else msg->array[-9] = (STRPTR)20;
-        }
-        #endif
     }
     else
     {
@@ -376,15 +333,8 @@ dispFun(REG(a0,struct Hook *hook),REG(a2,STRPTR *array),REG(a1,struct URL_Node *
         *array++ = getString(MSG_Edit_ListName);
         *array   = getString(MSG_Edit_ListPath);
     }
-
-    #ifdef __MORPHOS__
-    return 0;
-    #endif
 }
-
-#ifndef __MORPHOS__
-static struct Hook dispHook = {{0,0},(HOOKFUNC)dispFun,0,0};
-#endif
+MakeStaticHook(dispHook, dispFun);
 
 /**************************************************************************/
 
@@ -399,12 +349,9 @@ mListNew(struct IClass *cl,Object *obj,struct opSet *msg)
             MUIA_List_Pool,          g_pool,
             MUIA_List_ConstructHook, &conHook,
             MUIA_List_DestructHook,  &destHook,
-			#ifndef __MORPHOS__
             MUIA_List_DisplayHook,   &dispHook,
-            #endif
             MUIA_List_DragSortable,  TRUE,
             MUIA_List_ShowDropMarks, TRUE,
-            0x8042bc08,              1, /* MUI4 Auto Line Height: put the real name if you know it :P */
             TAG_MORE, msg->ops_AttrList))
     {
         struct listData *data = INST_DATA(cl,obj);
@@ -417,11 +364,9 @@ mListNew(struct IClass *cl,Object *obj,struct opSet *msg)
 
         if (lampClass) data->olamp = lampObject, End;
 
-        conHook.h_Data  = data;
+        conHook.h_Data = data;
         destHook.h_Data = data;
-		#ifndef __MORPHOS__
         dispHook.h_Data = data;
-        #endif
     }
 
     return (ULONG)obj;
@@ -551,10 +496,8 @@ mListCheckSave(struct IClass *cl,Object *obj,UNUSED Msg msg)
 
 /**************************************************************************/
 
-M_DISP(listDispatcher)
+SDISPATCHER(listDispatcher)
 {
-    M_DISPSTART
-
     switch (msg->MethodID)
     {
         case OM_NEW:                  return mListNew(cl,obj,(APTR)msg);
@@ -564,9 +507,6 @@ M_DISP(listDispatcher)
         case MUIM_Cleanup:            return mListCleanup(cl,obj,(APTR)msg);
         case MUIM_Import:             return mListImport(cl,obj,(APTR)msg);
         case MUIM_Export:             return mListExport(cl,obj,(APTR)msg);
-		#ifdef __MORPHOS__
-        case MUIM_List_Display:		  return mListDisplay(cl,obj,(APTR)msg);
-		#endif
 
         case MUIM_App_CheckSave:      return mListCheckSave(cl,obj,(APTR)msg);
 
@@ -574,14 +514,12 @@ M_DISP(listDispatcher)
     }
 }
 
-M_DISPEND(listDispatcher)
-
 /**************************************************************************/
 
 static ULONG
 initListClass(void)
 {
-    return (ULONG)(listClass = MUI_CreateCustomClass(NULL,MUIC_List,NULL,sizeof(struct listData),DISP(listDispatcher)));
+    return (ULONG)(listClass = MUI_CreateCustomClass(NULL,MUIC_List,NULL,sizeof(struct listData),ENTRY(listDispatcher)));
 }
 
 /**************************************************************************/
@@ -973,10 +911,8 @@ mCheckSave(struct IClass *cl,Object *obj,UNUSED Msg msg)
 
 /**************************************************************************/
 
-M_DISP(dispatcher)
+SDISPATCHER(dispatcher)
 {
-    M_DISPSTART
-
     switch (msg->MethodID)
     {
         case OM_NEW:                     return mNew(cl,obj,(APTR)msg);
@@ -995,8 +931,6 @@ M_DISP(dispatcher)
     }
 }
 
-M_DISPEND(dispatcher)
-
 /**************************************************************************/
 
 ULONG
@@ -1004,7 +938,7 @@ initAppListClass(void)
 {
     if (initListClass())
     {
-        if (g_appListClass = MUI_CreateCustomClass(NULL,MUIC_Group,NULL,sizeof(struct data),DISP(dispatcher)))
+        if (g_appListClass = MUI_CreateCustomClass(NULL,MUIC_Group,NULL,sizeof(struct data),ENTRY(dispatcher)))
         {
             initLampClass();
 
