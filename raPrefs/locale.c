@@ -91,13 +91,13 @@ void initStrings(void)
 
 void uninitStrings(void)
 {
-    if( LocaleBase )
+    if(privateCatCompArray != NULL && privateCatCompArray != (struct CatCompArrayType *)CatCompArray)
     {
-        IExec->FreeVec( privateCatCompArray );
+        IExec->FreeVec(privateCatCompArray);
     }
     privateCatCompArray = NULL;
 
-    if( g_cat )
+    if(g_cat != NULL)
     {
         ILocale->CloseCatalog(g_cat);
     }

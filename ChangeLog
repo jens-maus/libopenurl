@@ -25,6 +25,7 @@ $URL$
 
 2009-05-19  Thore Böckelmann <tboeckel@gmx.de>
 
+  * raPrefs/locale.c: fixed possible crash upon program termination.
   * raPrefs: fixed all warnings.
   * Cmd: converted the build system to the usual standard. The commandline tool
     now builds for at least OS3, OS4 and MOS.
