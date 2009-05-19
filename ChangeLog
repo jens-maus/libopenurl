@@ -16,6 +16,8 @@ $URL$
 
 2009-05-19  Thore Böckelmann <tboeckel@gmx.de>
 
+  * prefs: fixed all remaining issues with the OS3 build. Now the preferences
+    program compiles perfectly for OS3 and OS4.
   * prefs: replaced all stccpy() calls by strlcpy().
   * prefs/*.c fixed tons of warnings. At least the OS4 build is done without a
     single warning.

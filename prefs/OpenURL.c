@@ -80,7 +80,7 @@ static ULONG openStuff(ULONG *arg0, ULONG *arg1)
     *arg1 = 0;
 
     if((MUIMasterBase = OpenLibrary("muimaster.library",19)) == NULL ||
-       GETINTERFACE(IMUIMaster, MUIMasterBase) == NULL)
+       !GETINTERFACE(IMUIMaster, MUIMasterBase))
     {
         *arg0 = 19;
         return MSG_Err_NoMUI;
@@ -98,23 +98,23 @@ static ULONG openStuff(ULONG *arg0, ULONG *arg1)
     *arg0 = 37;
 
     if((IntuitionBase = (struct IntuitionBase *)OpenLibrary("intuition.library",37)) == NULL ||
-       GETINTERFACE(IIntuition, IntuitionBase) == NULL)
+       !GETINTERFACE(IIntuition, IntuitionBase))
        return MSG_Err_NoIntuition;
 
     if((GfxBase = (struct GfxBase *)OpenLibrary("graphics.library",37)) == NULL ||
-       GETINTERFACE(IGraphics, GfxBase) == NULL)
+       !GETINTERFACE(IGraphics, GfxBase))
        return MSG_Err_NoGfx;
 
     if((UtilityBase = OpenLibrary("utility.library",37)) == NULL ||
-       GETINTERFACE(IUtility, UtilityBase) == NULL)
+       !GETINTERFACE(IUtility, UtilityBase))
        return MSG_Err_NoUtility;
 
     if((IconBase = OpenLibrary("icon.library",37)) == NULL ||
-       GETINTERFACE(IIcon, IconBase) == NULL)
+       !GETINTERFACE(IIcon, IconBase))
        return MSG_Err_NoIcon;
 
     if((OpenURLBase = OpenLibrary(OPENURLNAME,OPENURLVER)) == NULL||
-       GETINTERFACE(IOpenURL, OpenURLBase) == NULL ||
+       !GETINTERFACE(IOpenURL, OpenURLBase) ||
        ((OpenURLBase->lib_Version==7) && (OpenURLBase->lib_Revision<1)))
         //((OpenURLBase->lib_Version==OPENURLREV) && (OpenURLBase->lib_Revision<OPENURLREV)))
     {

@@ -49,12 +49,12 @@ ULONG URL_LaunchPrefsAppA(struct TagItem *);
 /* Information */
 ULONG URL_GetAttr(ULONG attr,ULONG *storage);
 
-#if defined(_DCC) || defined(__SASC) || defined (__STORM__)
-ULONG URL_Open(STRPTR, ...);
-struct URL_Prefs *URL_GetPrefs(...);
-void URL_FreePrefs(struct URL_Prefs *,...);
-ULONG URL_SetPrefs(struct URL_Prefs *,...);
-ULONG URL_LaunchPrefsApp(...);
+#if defined(_DCC) || defined(__SASC) || defined (__STORM__) || defined(__GNUC__)
+ULONG URL_Open(STRPTR, Tag tag1, ...);
+struct URL_Prefs *URL_GetPrefs(Tag tag1, ...);
+void URL_FreePrefs(struct URL_Prefs *, Tag tag1, ...);
+ULONG URL_SetPrefs(struct URL_Prefs *, Tag tag1, ...);
+ULONG URL_LaunchPrefsApp(Tag tag1, ...);
 #endif
 
 #ifdef __cplusplus

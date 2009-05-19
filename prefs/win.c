@@ -23,6 +23,8 @@
 #define CATCOMP_NUMBERS
 #include "locale.h"
 
+#include <proto/openurl.h>
+
 #include <libraries/openurl.h>
 
 #include "SDI_hook.h"

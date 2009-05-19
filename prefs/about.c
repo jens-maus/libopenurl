@@ -72,10 +72,15 @@ static ULONG mNew(struct IClass *cl,Object *obj,struct opSet *msg)
     STRPTR lver;
     Object *ok;
 
-    if((STRPTR)URL_GetAttr(URL_GetAttr_VerString,(ULONG *)((void *)&lver)) == NULL)
-      lver = (STRPTR)"";
-
-    snprintf(buf, sizeof(buf), "OpenURL\n%s", lver);
+    if((STRPTR)URL_GetAttr(URL_GetAttr_VerString,(ULONG *)((void *)&lver)) != NULL)
+    {
+      if(strncmp(lver, "$VER: ", 6) == 0)
+        snprintf(buf, sizeof(buf), "OpenURL\n%s", lver+6);
+      else
+        snprintf(buf, sizeof(buf), "OpenURL\n%s", lver);
+    }
+    else
+      strlcpy(buf, "OpenURL", sizeof(buf));
 
     if ((obj = (Object *)DoSuperNew(cl,obj,
             MUIA_Window_Title,          getString(MSG_About_WinTitle),
@@ -108,7 +113,6 @@ static ULONG mNew(struct IClass *cl,Object *obj,struct opSet *msg)
                         MUIA_Text_Contents, buf,
                     End,
                     Child, HSpace(0),
-                    Child, ourltext("http://sourceforge.net/projects/openurllib",NULL),
                 End,
 
                 Child, HGroup,

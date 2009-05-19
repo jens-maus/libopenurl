@@ -33,8 +33,12 @@
 #ifndef MUI_UNDOC_H
 #define MUI_UNDOC_H
 
-#if defined(__GNUC__)
-# pragma pack(2)
+#ifdef __GNUC__
+   #ifdef __PPC__
+    #pragma pack(2)
+   #endif
+#elif defined(__VBCC__)
+   #pragma amiga-align
 #endif
 
 
@@ -304,8 +308,12 @@ struct MUI_DragImage
 #define MUIA_Window_AllowTopMenus 0x8042fe69
 #endif
 
-#if defined(__GNUC__)
-# pragma pack()
+#ifdef __GNUC__
+   #ifdef __PPC__
+    #pragma pack()
+   #endif
+#elif defined(__VBCC__)
+   #pragma default-align
 #endif
 
 #endif /* MUI_UNDOC_H */

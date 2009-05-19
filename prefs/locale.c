@@ -72,7 +72,7 @@ void initStrings(void)
             if( privateCatCompArray )
             {
                 // ok we have allocated our memory, go for initialization : we copy the whole memory into it
-                CopyMem(CatCompArray,privateCatCompArray,sizeof(CatCompArray));
+                memcpy(privateCatCompArray,CatCompArray,sizeof(CatCompArray));
 
                 for (cnt = (sizeof(CatCompArray)/sizeof(struct CatCompArrayType))-1, cca = (struct CatCompArrayType *)privateCatCompArray+cnt;
                      cnt>=0;
