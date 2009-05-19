@@ -107,7 +107,7 @@ static ULONG mNew(struct IClass *cl, Object *obj, struct opSet *msg)
 
         data->win  = win;
 
-        if((data->icon = GetDiskObject("PROGDIR:OpenURL")) != NULL)
+        if((data->icon = GetDiskObject((STRPTR)"PROGDIR:OpenURL")) != NULL)
             superset(cl,obj,MUIA_Application_DiskObject,data->icon);
 
         /* Menus */
