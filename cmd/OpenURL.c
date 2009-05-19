@@ -1,14 +1,22 @@
-/*
- * OpenURL -- A Workbech/CLI frontend for "openurl.library".
- *
- * Written by Thomas Aglassinger <agi@sbox.tu-graz.ac.at>
- * Placed in the public domain.
- *
- * Based on material provided by Troels Walsted Hansen <troels@thule.no>
- *
- * Ported to OS4 by Alexandre Balaban <alexandre -@- balaban -.- name>
- * Argument handling fix by Jeff Gilpin
- */
+/***************************************************************************
+
+ openurl.library - universal URL display and browser launcher library
+ Copyright (C) 1998-2005 by Troels Walsted Hansen, et al.
+ Copyright (C) 2005-2009 by openurl.library Open Source Team
+
+ This library is free software; it has been placed in the public domain
+ and you can freely redistribute it and/or modify it. Please note, however,
+ that some components may be under the LGPL or GPL license.
+
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+ openurl.library project: http://sourceforge.net/projects/openurllib/
+
+ $Id$
+
+***************************************************************************/
 
 #include <proto/exec.h>
 #include <proto/dos.h>
@@ -25,11 +33,11 @@
 
 #include "SmartReadArgs.h"
 #include "macros.h"
-#include "OpenURL_rev.h"
+#include "version.h"
 
 #include "debug.h"
 
-static const char USED_VAR version[] = VERSTAG;
+static const char USED_VAR version[] = "$VER: OpenURL " LIB_REV_STRING " [" SYSTEMSHORT "/" CPU "] (" LIB_DATE ") " LIB_COPYRIGHT;
 
 /**************************************************************************/
 

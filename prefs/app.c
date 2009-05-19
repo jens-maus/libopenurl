@@ -88,7 +88,7 @@ static ULONG mNew(struct IClass *cl, Object *obj, struct opSet *msg)
 
     if((obj = (Object *)DoSuperNew(cl,obj,
             MUIA_Application_Title,       "OpenURL-Prefs",
-            MUIA_Application_Version,     "$VER: OpenURL-Prefs " LIB_REV_STRING CPU " (" LIB_DATE ") " LIB_COPYRIGHT,
+            MUIA_Application_Version,     "$VER: OpenURL-Prefs " LIB_REV_STRING " [" SYSTEMSHORT "/" CPU "] (" LIB_DATE ") " LIB_COPYRIGHT,
             MUIA_Application_Author,      APPAUTHOR,
             MUIA_Application_Copyright,   getString(MSG_App_Copyright),
             MUIA_Application_Description, getString(MSG_App_Description),

@@ -97,7 +97,11 @@
 
 /* --------------------------- library bases ------------------------------ */
 extern struct Library *IconBase;
+#if defined(__AROS__)
+extern struct UtilityBase *UtilityBase;
+#else
 extern struct Library *UtilityBase;
+#endif
 
 #if defined(__GNUC__) && !defined(__amigaos4__)
 extern struct WBStartup *_WBenchMsg;

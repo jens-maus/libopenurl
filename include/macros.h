@@ -1,4 +1,3 @@
-
 #ifndef _MACROS_H
 #define _MACROS_H
 
@@ -22,67 +21,43 @@
 #define CLEAR_FLAG(v,f)     ((v) &= ~(f))         // clear the flag f in v
 #define MASK_FLAG(v,f)      ((v) &= (f))          // mask the variable v with flag f bitwise
 
-#undef NODE
-#define NODE(a) ((struct Node *)(a))
+// transforms a define into a string
+#define STR(x)  STR2(x)
+#define STR2(x) #x
 
-#undef MINNODE
-#define MINNODE(a) ((struct MinNode *)(a))
+#define INITPORT(p,s) (((struct MsgPort *)(p))->mp_Flags = PA_SIGNAL, \
+                       ((struct MsgPort *)(p))->mp_SigBit = (UBYTE)(s), \
+                       ((struct MsgPort *)(p))->mp_SigTask = FindTask(NULL), \
+                       NewList(&(((struct MsgPort *)(p))->mp_MsgList)))
 
-#undef LIST
-#define LIST(a) ((struct List *)(a))
+#define INITMESSAGE(m,p,l) (((struct Message *)(m))->mn_Node.ln_Type = NT_MESSAGE, \
+                            ((struct Message *)(m))->mn_ReplyPort = ((struct MsgPort *)(p)), \
+                            ((struct Message *)(m))->mn_Length = ((UWORD)l))
 
-#undef MINLIST
-#define MINLIST(a) ((struct MinList *)(a))
-
-#undef MESSAGE
-#define MESSAGE(m) ((struct Message *)(m))
-
-#undef NEWLIST
-#define NEWLIST(l) (LIST(l)->lh_Head = NODE(&LIST(l)->lh_Tail), \
-                    LIST(l)->lh_Tail = NULL, \
-                    LIST(l)->lh_TailPred = NODE(&LIST(l)->lh_Head))
-
-#undef QUICKNEWLIST
-#define QUICKNEWLIST(l) (LIST(l)->lh_Head = NODE(&LIST(l)->lh_Tail), \
-                         LIST(l)->lh_TailPred = NODE(&LIST(l)->lh_Head))
-
-#undef ADDTAIL
-#define ADDTAIL(l,n) AddTail(LIST(l),NODE(n))
-
-#undef PORT
-#define PORT(p) ((struct MsgPort *)(p))
-
-#undef INITPORT
-#define INITPORT(p,s) (PORT(p)->mp_Flags = PA_SIGNAL, \
-                       PORT(p)->mp_SigBit = (UBYTE)(s), \
-                       PORT(p)->mp_SigTask = FindTask(NULL), \
-                       NEWLIST(&(PORT(p)->mp_MsgList)))
-
-#undef QUICKINITPORT
-#define QUICKINITPORT(p,s,t) (PORT(p)->mp_Flags = PA_SIGNAL, \
-                              PORT(p)->mp_SigBit = (UBYTE)(s), \
-                              PORT(p)->mp_SigTask = (t), \
-                              QUICKNEWLIST(&(PORT(p)->mp_MsgList)))
-
-#undef INITMESSAGE
-#define INITMESSAGE(m,p,l) (MESSAGE(m)->mn_Node.ln_Type = NT_MESSAGE, \
-                            MESSAGE(m)->mn_ReplyPort = PORT(p), \
-                            MESSAGE(m)->mn_Length = ((UWORD)l))
-
-#undef MAKE_ID
 #define MAKE_ID(a,b,c,d) ((ULONG) (a)<<24 | (ULONG) (b)<<16 | (ULONG) (c)<<8 | (ULONG) (d))
-
-#undef MIN
 #define MIN(a,b) ((a<b) ? (a) : (b))
-
-#undef MAX
 #define MAX(a,b) ((a>b) ? (a) : (b))
-
-#undef ABS
 #define ABS(a) (((a)>0) ? (a) : -(a))
-
-#undef BOOLSAME
 #define BOOLSAME(a,b) (((a) ? TRUE : FALSE)==((b) ? TRUE : FALSE))
+
+#if !defined(__amigaos4__) && !defined(__AROS__)
+#define SYS_Error TAG_IGNORE
+#endif
+
+#if defined(__AROS__)
+#define MAXRMARG  15 /* maximum arguments */
+#endif
+
+// xget()
+// Gets an attribute value from a MUI object
+//ULONG xget(Object *obj, const IPTR attr);
+#if defined(__GNUC__)
+  // please note that we do not evaluate the return value of GetAttr()
+  // as some attributes (e.g. MUIA_Selected) always return FALSE, even
+  // when they are supported by the object. But setting b=0 right before
+  // the GetAttr() should catch the case when attr doesn't exist at all
+  #define xget(OBJ, ATTR) ({IPTR b=0; GetAttr(ATTR, OBJ, &b); b;})
+#endif
 
 /****************************************************************************/
 
