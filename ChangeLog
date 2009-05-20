@@ -7,6 +7,9 @@ $URL$
 
 2009-05-20  Thore Böckelmann <tboeckel@gmx.de>
 
+  * prefs/popport.c: replaced the clumsy port scanning by a hopefully bullet
+    proof version. This new version does not break any Forbid() while scanning
+    the public port list.
   * library/utils.c, library/handler.c: replaced the handcrafted message and
     port creation by proper allocations to get rid of the stack based stuff.
     Also shrunk the asynchronous startup message to what is really needed.

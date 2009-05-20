@@ -51,22 +51,82 @@ static ULONG mListNew(struct IClass *cl, Object *obj, struct opSet *msg)
 
 static ULONG mListSetup(struct IClass *cl, Object *obj, Msg msg)
 {
-    struct Node *mstate;
+  ULONG success = FALSE;
 
-    if (!DoSuperMethodA(cl,obj,msg)) return FALSE;
+  ENTER();
 
-    DoSuperMethod(cl,obj,MUIM_List_Clear);
+  if(DoSuperMethodA(cl, obj, msg))
+  {
+    struct List *portList;
+    struct PortNode
+    {
+    	struct Node node;
+    	STRPTR name;
+    };
 
-    // this Forbid() will very likely be broken by any memory allocation during the
-    // MUIM_List_InsertSingle invocation. Better replace this by a more secure approach.
-    Forbid();
+    DoSuperMethod(cl, obj, MUIM_List_Clear);
 
-    for (mstate = SysBase->PortList.lh_Head; mstate->ln_Succ; mstate = mstate->ln_Succ)
-        DoSuperMethod(cl,obj,MUIM_List_InsertSingle,(ULONG)mstate->ln_Name,MUIV_List_Insert_Sorted);
+    #if defined(__amigaos4__)
+    portList = AllocSysObjectTags(ASOT_LIST, TAG_DONE);
+    #else
+    portList = AllocVec(sizeof(*portList), MEMF_ANY);
+    #endif
 
-    Permit();
+    if(portList != NULL)
+    {
+      struct Node *mstate;
+      struct PortNode *portNode;
 
-    return TRUE;
+      #if !defined(__amigaos4__)
+      NewList(portList);
+      #endif
+
+      Forbid();
+
+      for(mstate = SysBase->PortList.lh_Head; mstate->ln_Succ; mstate = mstate->ln_Succ)
+      {
+        // don't distinguish between OS4 and other systems here, because AllocSysObject()
+        // might do things which break the surrounding Forbid(), which AllocVec() is
+        // guaranteed *NOT* to do.
+        if((portNode = AllocVec(sizeof(*portNode), MEMF_CLEAR)) != NULL)
+        {
+          if((portNode->name = AllocVec(strlen(mstate->ln_Name)+1, MEMF_ANY)) != NULL)
+          {
+            strcpy(portNode->name, mstate->ln_Name);
+            AddTail(portList, &portNode->node);
+          }
+          else
+            FreeVec(portNode);
+        }
+      }
+
+      Permit();
+
+      // now that the port names have been copied we can insert them into the list
+      while((portNode = (struct PortNode *)RemHead(portList)) != NULL)
+      {
+        DoSuperMethod(cl, obj, MUIM_List_InsertSingle, portNode->name, MUIV_List_Insert_Sorted);
+
+        // free the complete node, the name was already copied during MUIM_List_InsertSingle
+        // due to the given construct hook
+        FreeVec(portNode->name);
+        FreeVec(portNode);
+      }
+
+      #if defined(__amigaos4__)
+      FreeSysObject(ASOT_LIST, portList);
+      #else
+      FreeVec(portList);
+      #endif
+    }
+
+    // signal success, even if copying the list failed for some reason
+    // but the MUIM_Setup invocation of the super class succeeded.
+    success = TRUE;
+  }
+
+  RETURN(success);
+  return success;
 }
 
 /**************************************************************************/
