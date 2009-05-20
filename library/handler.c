@@ -23,7 +23,7 @@
 
 /***********************************************************************/
 
-static BOOL sendRexxMsg(struct MsgPort *reply,STRPTR rxport,STRPTR rxcmd)
+static BOOL localSendRexxMsg(struct MsgPort *reply, STRPTR rxport, STRPTR rxcmd)
 {
   BOOL success = FALSE;
   struct RexxMsg *rxmsg;
@@ -65,24 +65,24 @@ static BOOL sendRexxMsg(struct MsgPort *reply,STRPTR rxport,STRPTR rxcmd)
 
 void SAVEDS handler(void)
 {
-  struct MsgPort   port;
-  struct Process   *me = (struct Process *)FindTask(NULL);
-  struct startMsg  *smsg;
-  BOOL res;
-  int sig;
+  struct Process *me = (struct Process *)FindTask(NULL);
+  struct startMsg *smsg;
+  struct MsgPort *port;
+  BOOL res = FALSE;
 
   ENTER();
 
   WaitPort(&me->pr_MsgPort);
   smsg = (struct startMsg *)GetMsg(&me->pr_MsgPort);
 
-  if((sig = AllocSignal(-1)) != -1)
-  {
-    INITPORT(&port, sig);
-    res = sendRexxMsg(&port, smsg->port, smsg->cmd);
-  }
-  else
-    res = FALSE;
+  #if defined(__amigaos4__)
+  port = AllocSysObject(ASOT_PORT, TAG_DONE);
+  #else
+  port = CreateMsgPort();
+  #endif
+
+  if(port != NULL)
+    res = localSendRexxMsg(port, smsg->port, smsg->cmd);
 
   smsg->res = res;
   ReplyMsg((struct Message *)smsg);
@@ -91,15 +91,21 @@ void SAVEDS handler(void)
   {
     struct RexxMsg *rxmsg;
 
-    WaitPort(&port);
-    rxmsg = (struct RexxMsg *)GetMsg(&port);
+    WaitPort(port);
+    rxmsg = (struct RexxMsg *)GetMsg(port);
 
     DeleteArgstring(rxmsg->rm_Args[0]);
     DeleteRexxMsg(rxmsg);
   }
 
-  if(sig != -1)
-    FreeSignal(sig);
+  if(port != NULL)
+  {
+    #if defined(__amigaos4__)
+    FreeSysObject(ASOT_PORT, port);
+    #else
+    DeleteMsgPort(port);
+    #endif
+  }
 
   ObtainSemaphore(&OpenURLBase->libSem);
   OpenURLBase->rexx_use--;

@@ -63,10 +63,9 @@
 struct startMsg
 {
     struct Message link;
-    STRPTR         port;
-    STRPTR         cmd;
-    ULONG          res;
-    ULONG          flags;
+    STRPTR port;
+    STRPTR cmd;
+    BOOL res;
 };
 
 /**************************************************************************/

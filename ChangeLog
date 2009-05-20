@@ -5,6 +5,12 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2009-05-20  Thore Böckelmann <tboeckel@gmx.de>
+
+  * library/utils.c, library/handler.c: replaced the handcrafted message and
+    port creation by proper allocations to get rid of the stack based stuff.
+    Also shrunk the asynchronous startup message to what is really needed.
+
 2009-05-19  Jens Langner <Jens.Langner@light-speed.de>
 
   * raPrefs: updated the build system of the OS4 reaction preferences to match

@@ -186,70 +186,97 @@ static STRPTR waitForRexxPort(STRPTR port)
 
 static BOOL sendRexxMsg(STRPTR rxport, STRPTR rxcmd)
 {
-    ULONG res = FALSE;
-    int sig;
+  BOOL res = FALSE;
+  struct Process *proc;
 
-    ENTER();
+  ENTER();
 
-    if((sig = AllocSignal(-1))>=0)
+  #if defined(__MORPHOS__)
+  proc = CreateNewProcTags(NP_Entry,        handler,
+                           NP_CodeType,     CODETYPE_PPC,
+                           NP_PPCStackSize, 8192,
+                           NP_StackSize,    4196,
+                           NP_Name,         "OpenURL - Handler",
+                           NP_CopyVars,     FALSE,
+                           NP_Input,        NULL,
+                           NP_CloseInput,   FALSE,
+                           NP_Output,       NULL,
+                           NP_CloseOutput,  FALSE,
+                           NP_Error,        NULL,
+                           NP_CloseError,   FALSE,
+                           TAG_DONE);
+  #else
+  proc = CreateNewProcTags(NP_Entry,        handler,
+                           NP_StackSize,    4196,
+                           NP_Name,         "OpenURL - Handler",
+                           NP_CopyVars,     FALSE,
+                           NP_Input,        NULL,
+                           NP_CloseInput,   FALSE,
+                           NP_Output,       NULL,
+                           NP_CloseOutput,  FALSE,
+                           NP_Error,        NULL,
+                           NP_CloseError,   FALSE,
+                           TAG_DONE);
+  #endif
+
+  if(proc != NULL)
+  {
+    struct MsgPort *port;
+
+    #if defined(__amigaos4__)
+    port = AllocSysObjectTags(ASOT_PORT, TAG_DONE);
+    #else
+    port = CreateMsgPort();
+    #endif
+
+    if(port != NULL)
     {
-        struct Process *proc;
+      struct startMsg *smsg;
 
-        #if defined(__MORPHOS__)
-        proc = CreateNewProcTags(NP_Entry,        handler,
-                                 NP_CodeType,     CODETYPE_PPC,
-                                 NP_PPCStackSize, 8192,
-                                 NP_StackSize,    4196,
-                                 NP_Name,         "OpenURL - Handler",
-                                 NP_CopyVars,     FALSE,
-                                 NP_Input,        NULL,
-                                 NP_CloseInput,   FALSE,
-                                 NP_Output,       NULL,
-                                 NP_CloseOutput,  FALSE,
-                                 NP_Error,        NULL,
-                                 NP_CloseError,   FALSE,
-                                 TAG_DONE);
-        #else
-        proc = CreateNewProcTags(NP_Entry,        handler,
-                                 NP_StackSize,    4196,
-                                 NP_Name,         "OpenURL - Handler",
-                                 NP_CopyVars,     FALSE,
-                                 NP_Input,        NULL,
-                                 NP_CloseInput,   FALSE,
-                                 NP_Output,       NULL,
-                                 NP_CloseOutput,  FALSE,
-                                 NP_Error,        NULL,
-                                 NP_CloseError,   FALSE,
-                                 TAG_DONE);
+      #if defined(__amigaos4__)
+      smsg = AllocSysObjectTags(ASOT_MESSAGE, ASOMSG_Size, sizeof(*smsg),
+                                              ASOMSG_ReplyPort, port,
+                                              TAG_DONE);
+      #else
+      smsg = allocArbitrateVecPooled(sizeof(*smsg));
+      #endif
+
+      if(smsg != NULL)
+      {
+        #if !defined(__amigaos4__)
+        INITMESSAGE(smsg, port, sizeof(*smsg));
         #endif
-        if(proc != NULL)
-        {
-            struct MsgPort  port;
-            struct startMsg smsg;
 
-            ObtainSemaphore(&OpenURLBase->libSem);
-            OpenURLBase->rexx_use++;
-            ReleaseSemaphore(&OpenURLBase->libSem);
+        smsg->port = rxport;
+        smsg->cmd = rxcmd;
 
-            INITPORT(&port, sig);
+        ObtainSemaphore(&OpenURLBase->libSem);
+        OpenURLBase->rexx_use++;
+        ReleaseSemaphore(&OpenURLBase->libSem);
 
-            memset(&smsg,0,sizeof(smsg));
-            INITMESSAGE(&smsg,&port,sizeof(smsg));
-            smsg.port = rxport;
-            smsg.cmd = rxcmd;
+        PutMsg(&proc->pr_MsgPort, (struct Message *)smsg);
+        WaitPort(port);
+        GetMsg(port);
 
-            PutMsg(&proc->pr_MsgPort, (struct Message *)&smsg);
-            WaitPort(&port);
-            GetMsg(&port);
+        res = smsg->res;
 
-            res = smsg.res;
-        }
+        #if defined(__amigaos4__)
+        FreeSysObject(ASOT_MESSAGE, smsg);
+        #else
+        freeArbitrateVecPooled(smsg);
+        #endif
+      }
 
-        FreeSignal(sig);
+      #if defined(__amigaos4__)
+      FreeSysObject(ASOT_PORT, port);
+      #else
+      DeleteMsgPort(port);
+      #endif
     }
+  }
 
-    RETURN(res);
-    return res;
+  RETURN(res);
+  return res;
 }
 
 /****************************************************************************/

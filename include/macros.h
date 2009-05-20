@@ -7,7 +7,7 @@
 
 #if defined(__amigaos4__)
 #define GETINTERFACE(iface, base)	(iface = (APTR)GetInterface((struct Library *)(base), "main", 1L, NULL))
-#define DROPINTERFACE(iface)			(DropInterface((struct Interface *)iface), iface = NULL)
+#define DROPINTERFACE(iface)		(DropInterface((struct Interface *)iface), iface = NULL)
 #else
 #define GETINTERFACE(iface, base)	TRUE
 #define DROPINTERFACE(iface)
@@ -24,11 +24,6 @@
 // transforms a define into a string
 #define STR(x)  STR2(x)
 #define STR2(x) #x
-
-#define INITPORT(p,s) (((struct MsgPort *)(p))->mp_Flags = PA_SIGNAL, \
-                       ((struct MsgPort *)(p))->mp_SigBit = (UBYTE)(s), \
-                       ((struct MsgPort *)(p))->mp_SigTask = FindTask(NULL), \
-                       NewList(&(((struct MsgPort *)(p))->mp_MsgList)))
 
 #define INITMESSAGE(m,p,l) (((struct Message *)(m))->mn_Node.ln_Type = NT_MESSAGE, \
                             ((struct Message *)(m))->mn_ReplyPort = ((struct MsgPort *)(p)), \
