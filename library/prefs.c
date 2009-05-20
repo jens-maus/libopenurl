@@ -243,98 +243,124 @@ void setDefaultPrefs(struct URL_Prefs *p)
 
 /**************************************************************************/
 
-BOOL savePrefs(CONST_STRPTR filename,struct URL_Prefs *p)
+BOOL savePrefs(CONST_STRPTR filename, struct URL_Prefs *p)
 {
-    struct IFFHandle *iffh;
-    BOOL res = FALSE;
+  struct IFFHandle *iffh;
+  BOOL res = FALSE;
 
-    ENTER();
+  ENTER();
 
-    if((iffh = AllocIFF()) != NULL)
+  if((iffh = AllocIFF()) != NULL)
+  {
+    if((iffh->iff_Stream = Open(filename, MODE_NEWFILE)))
     {
-        if((iffh->iff_Stream = Open(filename,MODE_NEWFILE)))
+      InitIFFasDOS(iffh);
+
+      if(OpenIFF(iffh, IFFF_WRITE) == 0)
+      {
+        struct PrefHeader prhd;
+        struct URL_BrowserNode *bn;
+        struct URL_MailerNode *mn;
+        struct URL_FTPNode *fn;
+
+        D(DBF_ALWAYS, "saving prefs to '%s'", filename);
+
+        if(PushChunk(iffh, ID_PREF, ID_FORM, IFFSIZE_UNKNOWN) != 0)
+          goto fail;
+        if(PushChunk(iffh, ID_PREF, ID_PRHD, sizeof(struct PrefHeader)) != 0)
+          goto fail;
+
+        prhd.ph_Version = p->up_Version;
+        prhd.ph_Type    = 0;
+        prhd.ph_Flags   = 0;
+
+        if(WriteChunkBytes(iffh, &prhd, sizeof(struct PrefHeader)) != sizeof(struct PrefHeader))
+          goto fail;
+
+        if(PopChunk(iffh) != 0)
+          goto fail;
+
+        /* write browser nodes */
+        D(DBF_ALWAYS, "saving browsers");
+        for(bn = (struct URL_BrowserNode *)p->up_BrowserList.mlh_Head;
+            bn->ubn_Node.mln_Succ;
+            bn = (struct URL_BrowserNode *)bn->ubn_Node.mln_Succ)
         {
-            InitIFFasDOS(iffh);
-
-            if(!OpenIFF(iffh,IFFF_WRITE))
-            {
-                struct PrefHeader      prhd;
-                struct URL_BrowserNode *bn;
-                struct URL_MailerNode  *mn;
-                struct URL_FTPNode     *fn;
-
-                if (PushChunk(iffh,ID_PREF,ID_FORM,IFFSIZE_UNKNOWN)) goto fail;
-                if (PushChunk(iffh,ID_PREF,ID_PRHD,sizeof(struct PrefHeader))) goto fail;
-
-                prhd.ph_Version = p->up_Version;
-                prhd.ph_Type    = 0;
-                prhd.ph_Flags   = 0;
-
-                if (WriteChunkBytes(iffh,&prhd,sizeof(struct PrefHeader))!=sizeof(struct PrefHeader))
-                    goto fail;
-
-                if (PopChunk(iffh)) goto fail;
-
-                /* write browser nodes */
-                for (bn = (struct URL_BrowserNode *)p->up_BrowserList.mlh_Head;
-                     bn->ubn_Node.mln_Succ;
-                     bn = (struct URL_BrowserNode *)bn->ubn_Node.mln_Succ)
-                {
-                    if (PushChunk(iffh,ID_PREF,ID_BRWS,BRWS_SIZE)) goto fail;
-                    if (WriteChunkBytes(iffh,&bn->ubn_Flags,BRWS_SIZE)!=BRWS_SIZE) goto fail;
-                    if (PopChunk(iffh)) goto fail;
-                }
-
-                /* write mailer nodes */
-                for (mn = (struct URL_MailerNode *)p->up_MailerList.mlh_Head;
-                     mn->umn_Node.mln_Succ;
-                     mn = (struct URL_MailerNode *)mn->umn_Node.mln_Succ)
-                {
-                    if (PushChunk(iffh,ID_PREF,ID_MLRS,MLRS_SIZE)) goto fail;
-                    if (WriteChunkBytes(iffh,&mn->umn_Flags,MLRS_SIZE)!=MLRS_SIZE) goto fail;
-                    if (PopChunk(iffh)) goto fail;
-                }
-
-                /* write ftp nodes */
-                for (fn = (struct URL_FTPNode *)p->up_FTPList.mlh_Head;
-                     fn->ufn_Node.mln_Succ;
-                     fn = (struct URL_FTPNode *)fn->ufn_Node.mln_Succ)
-                {
-                    if (PushChunk(iffh,ID_PREF,ID_FTPS,FTPS_SIZE)) goto fail;
-                    if (WriteChunkBytes(iffh,&fn->ufn_Flags,FTPS_SIZE)!=FTPS_SIZE) goto fail;
-                    if (PopChunk(iffh)) goto fail;
-                }
-
-                /* write flags */
-                if (PushChunk(iffh,ID_PREF,ID_FLGS,FLGS_SIZE)) goto fail;
-                if (WriteChunkBytes(iffh,&p->up_Flags,FLGS_SIZE)!=FLGS_SIZE) goto fail;
-                if (PopChunk(iffh)) goto fail;
-
-                /* write defaults */
-                if (PushChunk(iffh,ID_PREF,ID_DEFS,DEFS_SIZE)) goto fail;
-                if (WriteChunkBytes(iffh,&p->up_DefShow,DEFS_SIZE)!=DEFS_SIZE) goto fail;
-                if (PopChunk(iffh)) goto fail;
-
-                /* pop the IFF PREF FORM chunk */
-                if (PopChunk(iffh)) goto fail;
-
-                res = TRUE;
-
-            fail:
-                CloseIFF(iffh);
-            }
-
-            Close(iffh->iff_Stream);
+            if(PushChunk(iffh, ID_PREF, ID_BRWS, BRWS_SIZE) != 0)
+              goto fail;
+            if(WriteChunkBytes(iffh, &bn->ubn_Flags, BRWS_SIZE) != BRWS_SIZE)
+              goto fail;
+            if(PopChunk(iffh) != 0)
+              goto fail;
         }
 
-        FreeIFF(iffh);
+        /* write mailer nodes */
+        D(DBF_ALWAYS, "saving mailers");
+        for(mn = (struct URL_MailerNode *)p->up_MailerList.mlh_Head;
+            mn->umn_Node.mln_Succ;
+            mn = (struct URL_MailerNode *)mn->umn_Node.mln_Succ)
+        {
+            if(PushChunk(iffh, ID_PREF, ID_MLRS, MLRS_SIZE) != 0)
+              goto fail;
+            if(WriteChunkBytes(iffh, &mn->umn_Flags, MLRS_SIZE) != MLRS_SIZE)
+              goto fail;
+            if(PopChunk(iffh) != 0)
+              goto fail;
+        }
+
+        /* write ftp nodes */
+        D(DBF_ALWAYS, "saving ftps");
+        for(fn = (struct URL_FTPNode *)p->up_FTPList.mlh_Head;
+            fn->ufn_Node.mln_Succ;
+            fn = (struct URL_FTPNode *)fn->ufn_Node.mln_Succ)
+        {
+            if(PushChunk(iffh, ID_PREF, ID_FTPS, FTPS_SIZE) != 0)
+              goto fail;
+            if(WriteChunkBytes(iffh, &fn->ufn_Flags, FTPS_SIZE) != FTPS_SIZE)
+              goto fail;
+            if(PopChunk(iffh) != 0)
+              goto fail;
+        }
+
+        /* write flags */
+        D(DBF_ALWAYS, "saving flags");
+        if(PushChunk(iffh, ID_PREF, ID_FLGS, FLGS_SIZE) != 0)
+          goto fail;
+        if(WriteChunkBytes(iffh, &p->up_Flags, FLGS_SIZE) != FLGS_SIZE)
+          goto fail;
+        if(PopChunk(iffh) != 0)
+          goto fail;
+
+        /* write defaults */
+        D(DBF_ALWAYS, "saving defaults");
+        if(PushChunk(iffh, ID_PREF, ID_DEFS, DEFS_SIZE) != 0)
+          goto fail;
+        if(WriteChunkBytes(iffh, &p->up_DefShow, DEFS_SIZE) != DEFS_SIZE)
+          goto fail;
+        if(PopChunk(iffh) != 0)
+          goto fail;
+
+        /* pop the IFF PREF FORM chunk */
+        if(PopChunk(iffh) != 0)
+          goto fail;
+
+        res = TRUE;
+
+      fail:
+        CloseIFF(iffh);
+      }
+
+      Close(iffh->iff_Stream);
     }
 
-    if (!res)
-      DeleteFile(filename);
+    FreeIFF(iffh);
+  }
 
-    RETURN(res);
-    return res;
+  if(res == FALSE)
+    DeleteFile(filename);
+
+  RETURN(res);
+  return res;
 }
 
 /**************************************************************************/
