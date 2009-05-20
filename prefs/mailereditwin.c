@@ -171,22 +171,30 @@ static ULONG mGet(struct IClass *cl, Object *obj, struct opGet *msg)
 
 static ULONG mWindow_Setup(struct IClass *cl, Object *obj, struct MUIP_Window_Setup *msg)
 {
-    struct data *data = INST_DATA(cl,obj);
+  ULONG result = FALSE;
 
-    if (!DoSuperMethodA(cl,obj,(Msg)msg)) return FALSE;
+  ENTER();
 
-    if (!(data->flags & FLG_Notifies))
+  if(DoSuperMethodA(cl, obj, (Msg)msg))
+  {
+    struct data *data = INST_DATA(cl, obj);
+
+    if(isFlagClear(data->flags, FLG_Notifies))
     {
-        DoMethod(data->use,MUIM_Notify,MUIA_Pressed,FALSE,(ULONG)obj,1,MUIM_MailerEditWin_Use);
-        DoMethod(data->cancel,MUIM_Notify,MUIA_Pressed,FALSE,(ULONG)obj,3,MUIM_Set,MUIA_Window_CloseRequest,TRUE);
+      DoMethod(data->use, MUIM_Notify, MUIA_Pressed, FALSE, (ULONG)obj, 1, MUIM_MailerEditWin_Use);
+      DoMethod(data->cancel, MUIM_Notify, MUIA_Pressed, FALSE, (ULONG)obj, 3, MUIM_Set, MUIA_Window_CloseRequest, TRUE);
 
-        DoMethod(obj,MUIM_Notify,MUIA_Window_CloseRequest,TRUE,(ULONG)_app(obj),6,MUIM_Application_PushMethod,
-            (ULONG)_app(obj),3,MUIM_App_CloseWin,MUIA_MailerEditWin_Mailer,(ULONG)data->mn);
+      DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, (ULONG)_app(obj), 6, MUIM_Application_PushMethod,
+          (ULONG)_app(obj), 3, MUIM_App_CloseWin, MUIA_MailerEditWin_Mailer, (ULONG)data->mn);
 
-        data->flags |= FLG_Notifies;
+      SET_FLAG(data->flags, FLG_Notifies);
+
+      result = TRUE;
     }
+  }
 
-    return TRUE;
+  RETURN(result);
+  return result;
 }
 
 /**************************************************************************/
@@ -197,7 +205,7 @@ static ULONG mUse(struct IClass *cl, Object *obj, UNUSED Msg msg)
     struct URL_MailerNode *mn = data->mn;
     LONG                  i, visible, first;
 
-    mn->umn_Flags &= ~UNF_NEW;
+    CLEAR_FLAG(mn->umn_Flags, UNF_NEW);
 
     strlcpy(mn->umn_Name, (STRPTR)xget(data->name,MUIA_String_Contents), sizeof(mn->umn_Name));
     strlcpy(mn->umn_Path, (STRPTR)xget(data->path,MUIA_String_Contents), sizeof(mn->umn_Path));

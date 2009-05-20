@@ -83,7 +83,7 @@ extern struct MUI_CustomClass *g_popphClass;
 
 extern struct Catalog         *g_cat;
 extern APTR                   g_pool;
-extern ULONG                  g_MUI4;
+extern BOOL                   g_MUI4;
 
 /**************************************************************************/
 /*
@@ -444,7 +444,7 @@ enum
 #define MUIM_Window_Setup 0x8042c34c
 #endif
 
-#ifndef MUIA_Application_UsedClasses 	
+#ifndef MUIA_Application_UsedClasses
 #define MUIA_Application_UsedClasses 0x8042E9A7
 #endif
 

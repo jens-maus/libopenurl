@@ -57,8 +57,7 @@ enum
 
 /***********************************************************************/
 
-static ULONG
-mLampNew(struct IClass *cl,Object *obj,struct opSet *msg)
+static ULONG mLampNew(struct IClass *cl, Object *obj, struct opSet *msg)
 {
     return (ULONG)DoSuperNew(cl,obj,
         MUIA_Font, MUIV_Font_List,
@@ -67,16 +66,17 @@ mLampNew(struct IClass *cl,Object *obj,struct opSet *msg)
 
 /**************************************************************************/
 
-static ULONG
-mLampSets(struct IClass *cl,Object *obj,struct opSet *msg)
+static ULONG mLampSets(struct IClass *cl, Object *obj, struct opSet *msg)
 {
     struct lampData *data = INST_DATA(cl,obj);
     struct TagItem  *tag;
 
     if((tag = FindTagItem(MUIA_Lamp_Disabled,msg->ops_AttrList)))
     {
-        if (tag->ti_Data) data->flags |= FLG_LampDisabled;
-        else data->flags &= ~FLG_LampDisabled;
+        if (tag->ti_Data)
+            SET_FLAG(data->flags, FLG_LampDisabled);
+        else
+            CLEAR_FLAG(data->flags, FLG_LampDisabled);
 
         /* Of course, we don't redraw here */
     }
@@ -86,8 +86,7 @@ mLampSets(struct IClass *cl,Object *obj,struct opSet *msg)
 
 /***********************************************************************/
 
-static ULONG
-mLampSetup(struct IClass *cl,Object *obj,struct MUIP_Setup *msg)
+static ULONG mLampSetup(struct IClass *cl, Object *obj, struct MUIP_Setup *msg)
 {
     struct lampData *data = INST_DATA(cl,obj);
     if (!DoSuperMethodA(cl,obj,(APTR)msg)) return FALSE;
@@ -105,24 +104,24 @@ mLampSetup(struct IClass *cl,Object *obj,struct MUIP_Setup *msg)
 		data->detail   = MUI_ObtainPen(muiRenderInfo(obj),(APTR)"r000000",0);
 	}
 
-    data->flags |= FLG_LampSetup;
+    SET_FLAG(data->flags, FLG_LampSetup);
+
     return TRUE;
 }
 
 /***********************************************************************/
 
-static ULONG
-mLampCleanup(struct IClass *cl,Object *obj,struct MUIP_Setup *msg)
+static ULONG mLampCleanup(struct IClass *cl,Object *obj,struct MUIP_Setup *msg)
 {
     struct lampData *data = INST_DATA(cl,obj);
 
-    if (data->flags & FLG_LampSetup)
+    if(isFlagSet(data->flags, FLG_LampSetup))
     {
         MUI_ReleasePen(muiRenderInfo(obj),data->enabled);
         MUI_ReleasePen(muiRenderInfo(obj),data->disabled);
         MUI_ReleasePen(muiRenderInfo(obj),data->detail);
 
-        data->flags &= ~FLG_LampSetup;
+        CLEAR_FLAG(data->flags, FLG_LampSetup);
     }
 
     return DoSuperMethodA(cl,obj,(APTR)msg);
@@ -130,8 +129,7 @@ mLampCleanup(struct IClass *cl,Object *obj,struct MUIP_Setup *msg)
 
 /***********************************************************************/
 
-static ULONG
-mLampAskMinMax(struct IClass *cl,Object *obj,struct MUIP_AskMinMax *msg)
+static ULONG mLampAskMinMax(struct IClass *cl, Object *obj, struct MUIP_AskMinMax *msg)
 {
     struct lampData          *data = INST_DATA(cl,obj);
     struct RastPort          rp;
@@ -167,15 +165,14 @@ mLampAskMinMax(struct IClass *cl,Object *obj,struct MUIP_AskMinMax *msg)
 
 /***********************************************************************/
 
-static ULONG
-mLampDraw(struct IClass *cl,Object *obj,struct MUIP_Draw *msg)
+static ULONG mLampDraw(struct IClass *cl, Object *obj, struct MUIP_Draw *msg)
 {
     struct lampData *data = INST_DATA(cl,obj);
     ULONG           res;
 
     res = DoSuperMethodA(cl,obj,(APTR)msg);
 
-    if (msg->flags & (MADF_DRAWOBJECT|MADF_DRAWUPDATE))
+    if(hasFlag(msg->flags, (MADF_DRAWOBJECT|MADF_DRAWUPDATE)))
     {
         WORD l, t, r, b;
 
@@ -198,7 +195,7 @@ mLampDraw(struct IClass *cl,Object *obj,struct MUIP_Draw *msg)
             b -= 1;
         }
 
-        SetAPen(_rp(obj),MUIPEN((data->flags & FLG_LampDisabled) ? data->disabled : data->enabled));
+        SetAPen(_rp(obj), MUIPEN(isFlagSet(data->flags, FLG_LampDisabled) ? data->disabled : data->enabled));
         RectFill(_rp(obj),l,t,r,b);
 
         SetAPen(_rp(obj),MUIPEN(data->detail));
@@ -232,18 +229,25 @@ SDISPATCHER(lampDispatcher)
 
 /***********************************************************************/
 
-static ULONG
-initLampClass(void)
+static BOOL initLampClass(void)
 {
-    return (ULONG)(lampClass = MUI_CreateCustomClass(NULL,MUIC_Rectangle,NULL,sizeof(struct lampData),ENTRY(lampDispatcher)));
+    BOOL success = FALSE;
+
+    ENTER();
+
+    if((lampClass = MUI_CreateCustomClass(NULL, MUIC_Rectangle, NULL, sizeof(struct lampData), ENTRY(lampDispatcher))) != NULL)
+       success = TRUE;
+
+    RETURN(success);
+    return success;
 }
 
 /**************************************************************************/
 
-static void
-disposeLampClass(void)
+static void disposeLampClass(void)
 {
-    if (lampClass) MUI_DeleteCustomClass(lampClass);
+    if(lampClass != NULL)
+        MUI_DeleteCustomClass(lampClass);
 }
 
 /**************************************************************************/
@@ -288,13 +292,13 @@ HOOKPROTO(conFun, struct URL_Node *, APTR pool, struct URL_Node *node)
     struct listData *data = hook->h_Data;
     struct URL_Node *new;
 
-    if (node->Flags & UNF_NTALLOC)
+    if(isFlagSet(node->Flags, UNF_NTALLOC))
     {
-        new = node;
-        node->Flags &= ~UNF_NTALLOC;
+      new = node;
+      CLEAR_FLAG(node->Flags, UNF_NTALLOC);
     }
-    else if((new = AllocPooled(pool,data->nodeSize)))
-      CopyMem(node,new,data->nodeSize);
+    else if((new = AllocPooled(pool,data->nodeSize)) != NULL)
+      CopyMem(node, new, data->nodeSize);
 
     return new;
 }
@@ -320,12 +324,12 @@ HOOKPROTO(dispFun, void, STRPTR *array, struct URL_Node *node)
     {
         if (data->lamp)
         {
-            set(data->olamp,MUIA_Lamp_Disabled,node->Flags & UNF_DISABLED);
+            set(data->olamp, MUIA_Lamp_Disabled, isFlagSet(node->Flags, UNF_DISABLED));
             sprintf(data->col0buf,"\33O[%08lx]",(ULONG)data->lamp);
             *array++ = data->col0buf;
         }
-        else 
-          *array++ = (STRPTR)((node->Flags & UNF_DISABLED) ? " " : ">");
+        else
+          *array++ = (STRPTR)(isFlagSet(node->Flags, UNF_DISABLED) ? " " : ">");
 
         *array++ = (STRPTR)node+data->nameOfs;
         *array   = (STRPTR)node+data->pathOfs;
@@ -389,37 +393,54 @@ static ULONG mListDispose(struct IClass *cl, Object *obj, Msg msg)
 
 static ULONG mListSetup(struct IClass *cl, Object *obj, struct MUIP_Setup *msg)
 {
-    struct listData *data = INST_DATA(cl,obj);
+  ULONG result = FALSE;
 
-    if (!DoSuperMethodA(cl,obj,(APTR)msg)) return FALSE;
+  ENTER();
 
-    /* After thinking about that hard, I decided to use the lamp in >=8 color screen */
-    if (data->olamp && (GetBitMapAttr(_screen(obj)->RastPort.BitMap,BMA_DEPTH)>3))
-        data->lamp = (APTR)DoSuperMethod(cl,obj,MUIM_List_CreateImage,(ULONG)data->olamp,0);
+  if(DoSuperMethodA(cl, obj, (APTR)msg))
+  {
+    struct listData *data = INST_DATA(cl, obj);
 
-    data->flags |= FLG_ListSetup;
+    if(isFlagClear(data->flags, FLG_ListSetup))
+    {
+      /* After thinking about that hard, I decided to use the lamp in >=8 color screen */
+      if(data->olamp != NULL && GetBitMapAttr(_screen(obj)->RastPort.BitMap, BMA_DEPTH) > 3)
+        data->lamp = (APTR)DoSuperMethod(cl, obj, MUIM_List_CreateImage, (ULONG)data->olamp, 0);
 
-    return TRUE;
+      SET_FLAG(data->flags, FLG_ListSetup);
+
+      result = TRUE;
+    }
+  }
+
+  RETURN(result);
+  return result;
 }
 
 /***********************************************************************/
 
 static ULONG mListCleanup(struct IClass *cl, Object *obj, struct MUIP_Setup *msg)
 {
-    struct listData *data = INST_DATA(cl,obj);
+  ULONG result;
+  struct listData *data = INST_DATA(cl, obj);
 
-    if (data->flags & FLG_ListSetup)
+  ENTER();
+
+  if(isFlagSet(data->flags, FLG_ListSetup))
+  {
+    if(data->lamp != NULL)
     {
-        if (data->lamp)
-        {
-            DoSuperMethod(cl,obj,MUIM_List_DeleteImage,(ULONG)data->lamp);
-            data->lamp = NULL;
-        }
-
-        data->flags &= ~FLG_ListSetup;
+      DoSuperMethod(cl, obj, MUIM_List_DeleteImage, (ULONG)data->lamp);
+      data->lamp = NULL;
     }
 
-    return DoSuperMethodA(cl,obj,(APTR)msg);
+    CLEAR_FLAG(data->flags, FLG_ListSetup);
+  }
+
+  result = DoSuperMethodA(cl, obj, (APTR)msg);
+
+  RETURN(result);
+  return(result);
 }
 
 /***********************************************************************/
@@ -754,13 +775,16 @@ static ULONG mEdit(struct IClass *cl, Object *obj, struct MUIP_AppList_Edit *msg
         {
             set(data->appList,MUIA_Listview_ClickColumn,1);
 
-            if (node->Flags & UNF_DISABLED) node->Flags &= ~UNF_DISABLED;
-            else node->Flags |= UNF_DISABLED;
+            if(isFlagSet(node->Flags, UNF_DISABLED))
+              CLEAR_FLAG(node->Flags, UNF_DISABLED);
+            else
+              SET_FLAG(node->Flags, UNF_DISABLED);
 
-            DoMethod(data->appList,MUIM_List_Redraw,xget(data->appList,MUIA_List_Active));
-            set(data->disable,MUIA_Selected,node->Flags & UNF_DISABLED);
+            DoMethod(data->appList, MUIM_List_Redraw, xget(data->appList, MUIA_List_Active));
+            set(data->disable, MUIA_Selected, isFlagSet(node->Flags, UNF_DISABLED));
         }
-        else DoMethod(_app(obj),MUIM_App_OpenWin,(ULONG)data->editClass,data->editAttr,(ULONG)node,data->listAttr,(ULONG)data->appList,TAG_END);
+        else
+            DoMethod(_app(obj),MUIM_App_OpenWin,(ULONG)data->editClass,data->editAttr,(ULONG)node,data->listAttr,(ULONG)data->appList,TAG_END);
     }
 
     return TRUE;
@@ -770,27 +794,32 @@ static ULONG mEdit(struct IClass *cl, Object *obj, struct MUIP_AppList_Edit *msg
 
 static ULONG mClone(struct IClass *cl, Object *obj, UNUSED Msg msg)
 {
+    ULONG success = FALSE;
     struct data     *data = INST_DATA(cl,obj);
     struct URL_Node *node;
     ULONG           active;
 
-    get(data->appList,MUIA_List_Active,&active);
-    DoMethod(data->appList,MUIM_List_GetEntry,active,(ULONG)&node);
-    if (node)
+    get(data->appList, MUIA_List_Active, &active);
+    DoMethod(data->appList, MUIM_List_GetEntry, active, (ULONG)&node);
+    if(node != NULL)
     {
         struct URL_Node *new;
 
-        if (!(new = AllocPooled(g_pool,data->nodeSize))) return FALSE;
-        CopyMem(node,new,data->nodeSize);
-        new->Flags |= UNF_NEW|UNF_NTALLOC;
+        if((new = AllocPooled(g_pool, data->nodeSize)) != NULL)
+        {
+            CopyMem(node, new, data->nodeSize);
+            new->Flags = UNF_NEW|UNF_NTALLOC;
 
-        DoMethod(data->appList,MUIM_List_InsertSingle,(ULONG)new,MUIV_List_Insert_Bottom);
-        set(data->appList,MUIA_List_Active,MUIV_List_Active_Bottom);
+            DoMethod(data->appList, MUIM_List_InsertSingle, (ULONG)new, MUIV_List_Insert_Bottom);
+            set(data->appList, MUIA_List_Active, MUIV_List_Active_Bottom);
 
-        DoMethod(obj,MUIM_AppList_Edit,FALSE);
+            DoMethod(obj, MUIM_AppList_Edit, FALSE);
+
+            success = TRUE;
+        }
     }
 
-    return TRUE;
+    return success;
 }
 
 /**************************************************************************/
@@ -833,7 +862,7 @@ static ULONG mActiveChanged(struct IClass *cl, Object *obj, UNUSED Msg msg)
             NULL);
 
         DoMethod(data->appList,MUIM_List_GetEntry,a,(ULONG)&node);
-        set(data->disable,MUIA_Selected,node->Flags & UNF_DISABLED);
+        set(data->disable, MUIA_Selected, isFlagSet(node->Flags, UNF_DISABLED));
 
         if (a==0) SetAttrs(data->up,MUIA_Selected,FALSE,MUIA_Disabled,TRUE,TAG_DONE);
         else set(data->up,MUIA_Disabled,FALSE);
@@ -869,10 +898,12 @@ static ULONG mDisable(struct IClass *cl, Object *obj, struct MUIP_AppList_Disabl
     DoMethod(data->appList,MUIM_List_GetEntry,MUIV_List_GetEntry_Active,(ULONG)&node);
     if (node)
     {
-        if (!BOOLSAME(msg->disable,node->Flags & UNF_DISABLED))
+        if (!BOOLSAME(msg->disable, isFlagSet(node->Flags, UNF_DISABLED)))
         {
-            if (msg->disable) node->Flags |= UNF_DISABLED;
-            else node->Flags &= ~UNF_DISABLED;
+            if(msg->disable)
+                SET_FLAG(node->Flags, UNF_DISABLED);
+            else
+                CLEAR_FLAG(node->Flags, UNF_DISABLED);
 
             DoMethod(data->appList,MUIM_List_Redraw,xget(data->appList,MUIA_List_Active));
         }

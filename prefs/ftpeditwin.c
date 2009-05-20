@@ -144,14 +144,14 @@ static ULONG mNew(struct IClass *cl, Object *obj, struct opSet *msg)
 
         CopyMem(&temp,data,sizeof(*data));
 
-        set(data->name,MUIA_String_Contents,fn->ufn_Name);
-        set(data->path,MUIA_String_Contents,fn->ufn_Path);
-        set(data->port,MUIA_String_Contents,fn->ufn_Port);
-        set(data->removeScheme,MUIA_Selected,fn->ufn_Flags & UFNF_REMOVEFTP);
-        set(data->show,MUIA_String_Contents,fn->ufn_ShowCmd);
-        set(data->toFront,MUIA_String_Contents,fn->ufn_ToFrontCmd);
-        set(data->openURL,MUIA_String_Contents,fn->ufn_OpenURLCmd);
-        set(data->openURLNW,MUIA_String_Contents,fn->ufn_OpenURLWCmd);
+        set(data->name, MUIA_String_Contents, fn->ufn_Name);
+        set(data->path, MUIA_String_Contents, fn->ufn_Path);
+        set(data->port, MUIA_String_Contents, fn->ufn_Port);
+        set(data->removeScheme, MUIA_Selected, isFlagSet(fn->ufn_Flags, UFNF_REMOVEFTP));
+        set(data->show, MUIA_String_Contents, fn->ufn_ShowCmd);
+        set(data->toFront, MUIA_String_Contents, fn->ufn_ToFrontCmd);
+        set(data->openURL, MUIA_String_Contents, fn->ufn_OpenURLCmd);
+        set(data->openURLNW, MUIA_String_Contents, fn->ufn_OpenURLWCmd);
     }
 
     return (ULONG)obj;
@@ -175,22 +175,30 @@ static ULONG mGet(struct IClass *cl, Object *obj, struct opGet *msg)
 
 static ULONG mWindow_Setup(struct IClass *cl, Object *obj, struct MUIP_Window_Setup *msg)
 {
-    struct data *data = INST_DATA(cl,obj);
+  ULONG result = FALSE;
 
-    if (!DoSuperMethodA(cl,obj,(Msg)msg)) return FALSE;
+  ENTER();
 
-    if (!(data->flags & FLG_Notifies))
+  if(DoSuperMethodA(cl, obj, (Msg)msg))
+  {
+    struct data *data = INST_DATA(cl, obj);
+
+    if(isFlagClear(data->flags, FLG_Notifies))
     {
-        DoMethod(data->use,MUIM_Notify,MUIA_Pressed,FALSE,(ULONG)obj,1,MUIM_FTPEditWin_Use);
-        DoMethod(data->cancel,MUIM_Notify,MUIA_Pressed,FALSE,(ULONG)obj,3,MUIM_Set,MUIA_Window_CloseRequest,TRUE);
+      DoMethod(data->use, MUIM_Notify, MUIA_Pressed, FALSE, (ULONG)obj, 1, MUIM_FTPEditWin_Use);
+      DoMethod(data->cancel, MUIM_Notify, MUIA_Pressed, FALSE,(ULONG)obj, 3, MUIM_Set, MUIA_Window_CloseRequest, TRUE);
 
-        DoMethod(obj,MUIM_Notify,MUIA_Window_CloseRequest,TRUE,(ULONG)_app(obj),6,MUIM_Application_PushMethod,
-            (ULONG)_app(obj),3,MUIM_App_CloseWin,MUIA_FTPEditWin_FTP,(ULONG)data->fn);
+      DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest,TRUE, (ULONG)_app(obj), 6, MUIM_Application_PushMethod,
+          (ULONG)_app(obj), 3, MUIM_App_CloseWin, MUIA_FTPEditWin_FTP, (ULONG)data->fn);
 
-        data->flags |= FLG_Notifies;
+      SET_FLAG(data->flags, FLG_Notifies);
+
+      result = TRUE;
     }
+  }
 
-    return TRUE;
+  RETURN(result);
+  return result;
 }
 
 /**************************************************************************/
@@ -201,15 +209,15 @@ static ULONG mUse(struct IClass *cl, Object *obj, UNUSED Msg msg)
     struct URL_FTPNode *fn = data->fn;
     LONG               i, visible, first;
 
-    fn->ufn_Flags &= ~UNF_NEW;
+    CLEAR_FLAG(fn->ufn_Flags, UNF_NEW);
 
     strlcpy(fn->ufn_Name, (STRPTR)xget(data->name,MUIA_String_Contents), sizeof(fn->ufn_Name));
     strlcpy(fn->ufn_Path, (STRPTR)xget(data->path,MUIA_String_Contents), sizeof(fn->ufn_Path));
     strlcpy(fn->ufn_Port, (STRPTR)xget(data->port,MUIA_String_Contents), sizeof(fn->ufn_Port));
     if (xget(data->removeScheme,MUIA_Selected))
-      fn->ufn_Flags |= UFNF_REMOVEFTP;
+      SET_FLAG(fn->ufn_Flags, UFNF_REMOVEFTP);
     else
-      fn->ufn_Flags &= ~UFNF_REMOVEFTP;
+      CLEAR_FLAG(fn->ufn_Flags, UFNF_REMOVEFTP);
 
     strlcpy(fn->ufn_ShowCmd, (STRPTR)xget(data->show,MUIA_String_Contents), sizeof(fn->ufn_ShowCmd));
     strlcpy(fn->ufn_ToFrontCmd, (STRPTR)xget(data->toFront,MUIA_String_Contents), sizeof(fn->ufn_ToFrontCmd));

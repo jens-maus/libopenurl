@@ -280,14 +280,14 @@ static ULONG mGetPrefs(struct IClass *cl,Object *obj, struct MUIP_Win_GetPrefs *
     set(data->FTPList,MUIA_List_Quiet,FALSE);
 
     /* Miscellaneous */
-    set(data->prepend,MUIA_Selected,p->up_Flags & UPF_PREPENDHTTP);
-    set(data->mailto,MUIA_Selected,p->up_Flags & UPF_DOMAILTO);
-    set(data->useFTP,MUIA_Selected,p->up_Flags & UPF_DOFTP);
+    set(data->prepend, MUIA_Selected, isFlagSet(p->up_Flags, UPF_PREPENDHTTP));
+    set(data->mailto, MUIA_Selected, isFlagSet(p->up_Flags, UPF_DOMAILTO));
+    set(data->useFTP, MUIA_Selected, isFlagSet(p->up_Flags, UPF_DOFTP));
 
-    set(data->show,MUIA_Selected,p->up_DefShow);
-    set(data->toFront,MUIA_Selected,p->up_DefBringToFront);
-    set(data->newWin,MUIA_Selected,p->up_DefNewWindow);
-    set(data->launch,MUIA_Selected,p->up_DefLaunch);
+    set(data->show, MUIA_Selected, p->up_DefShow);
+    set(data->toFront, MUIA_Selected, p->up_DefBringToFront);
+    set(data->newWin, MUIA_Selected, p->up_DefNewWindow);
+    set(data->launch, MUIA_Selected, p->up_DefLaunch);
 
     /* Activate the first entry */
     DoSuperMethod(cl,obj,MUIM_MultiSet,MUIA_List_Active,MUIV_List_Active_Top,
@@ -325,7 +325,7 @@ static ULONG mStorePrefs(struct IClass *cl, Object *obj, struct MUIP_Win_StorePr
         DoMethod(data->browserList,MUIM_List_GetEntry,i,(ULONG)&bn);
         if (!bn) break;
 
-        if (!(bn->ubn_Flags & UNF_NEW))
+        if(isFlagClear(bn->ubn_Flags, UNF_NEW))
             AddTail((struct List *)&up.up_BrowserList,(struct Node *)bn);
     }
 
@@ -336,7 +336,7 @@ static ULONG mStorePrefs(struct IClass *cl, Object *obj, struct MUIP_Win_StorePr
         DoMethod(data->mailerList,MUIM_List_GetEntry,i,(ULONG)&mn);
         if (!mn) break;
 
-        if (!(mn->umn_Flags & UNF_NEW))
+        if(isFlagClear(mn->umn_Flags, UNF_NEW))
             AddTail((struct List *)&up.up_MailerList,(struct Node *)mn);
     }
 
@@ -348,19 +348,25 @@ static ULONG mStorePrefs(struct IClass *cl, Object *obj, struct MUIP_Win_StorePr
         DoMethod(data->FTPList,MUIM_List_GetEntry,i,(ULONG)&fn);
         if (!fn) break;
 
-        if (!(fn->ufn_Flags & UNF_NEW))
+        if(isFlagClear(fn->ufn_Flags, UNF_NEW))
             AddTail((struct List *)&up.up_FTPList,(struct Node *)fn);
     }
 
     /* Miscellaneous */
-    if (xget(data->prepend,MUIA_Selected)) up.up_Flags |= UPF_PREPENDHTTP;
-    else up.up_Flags &= ~UPF_PREPENDHTTP;
+    if (xget(data->prepend,MUIA_Selected))
+        SET_FLAG(up.up_Flags, UPF_PREPENDHTTP);
+    else
+        CLEAR_FLAG(up.up_Flags, UPF_PREPENDHTTP);
 
-    if (xget(data->mailto,MUIA_Selected)) up.up_Flags |= UPF_DOMAILTO;
-    else up.up_Flags &= ~UPF_DOMAILTO;
+    if (xget(data->mailto,MUIA_Selected))
+        SET_FLAG(up.up_Flags, UPF_DOMAILTO);
+    else
+        CLEAR_FLAG(up.up_Flags, UPF_DOMAILTO);
 
-    if (xget(data->useFTP,MUIA_Selected)) up.up_Flags |= UPF_DOFTP;
-    else up.up_Flags &= ~UPF_DOFTP;
+    if (xget(data->useFTP,MUIA_Selected))
+        SET_FLAG(up.up_Flags, UPF_DOFTP);
+    else
+        CLEAR_FLAG(up.up_Flags, UPF_DOFTP);
 
     up.up_DefShow         = (ULONG)xget(data->show,MUIA_Selected);
     up.up_DefBringToFront = (ULONG)xget(data->toFront,MUIA_Selected);

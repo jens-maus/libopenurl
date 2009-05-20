@@ -231,7 +231,7 @@ static ULONG mCloseWin(struct IClass *cl, Object *obj, struct MUIP_App_CloseWin 
         DoMethod(obj,OM_REMMEMBER,(ULONG)win);
         MUI_DisposeObject(win);
 
-        if (((struct URL_Node *)msg->IDVal)->Flags & UNF_NEW)
+        if (isFlagSet(((struct URL_Node *)msg->IDVal)->Flags, UNF_NEW))
             DoMethod(data->win,MUIM_Win_Delete,msg->IDVal);
     }
 
@@ -329,36 +329,39 @@ static ULONG mAbout(struct IClass *cl, Object *obj, UNUSED Msg msg)
 
 static void closeAllWindows(Object *app)
 {
-    ULONG loop;
+  BOOL loop;
 
-    do
+  ENTER();
+
+  do
+  {
+    struct List *list;
+    Object *mstate;
+    Object *win;
+
+    loop = FALSE;
+
+    get(app, MUIA_Application_WindowList, &list);
+    mstate = (Object *)list->lh_Head;
+
+    while((win = NextObject(&mstate)) != NULL)
     {
-        struct List *list;
-        Object      *mstate;
-        Object      *win;
+      ULONG ok = FALSE;
 
-        loop = FALSE;
-
-        get(app,MUIA_Application_WindowList,&list);
-        mstate = (Object *)list->lh_Head;
-
-        while((win = NextObject(&mstate)) != NULL)
-        {
-            ULONG ok = FALSE;
-
-            get(win,MUIA_App_IsSubWin,&ok);
-            if (ok)
-            {
-                set(win,MUIA_Window_Open,FALSE);
-                DoMethod(app,OM_REMMEMBER,(ULONG)win);
-                MUI_DisposeObject(win);
-                loop = TRUE;
-                break;
-            }
-        }
-
+      get(win, MUIA_App_IsSubWin, &ok);
+      if(ok)
+      {
+        set(win, MUIA_Window_Open, FALSE);
+        DoMethod(app, OM_REMMEMBER, (ULONG)win);
+        MUI_DisposeObject(win);
+        loop = TRUE;
+        break;
+      }
     }
-    while (loop);
+  }
+  while(loop == TRUE);
+
+  LEAVE();
 }
 
 /***********************************************************************/

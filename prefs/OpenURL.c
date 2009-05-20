@@ -71,7 +71,7 @@ struct MUI_CustomClass *g_popphClass = NULL;
 
 APTR                   g_pool = NULL;
 struct Catalog         *g_cat = NULL;
-ULONG                  g_MUI4 = FALSE;
+BOOL                   g_MUI4 = FALSE;
 
 /**************************************************************************/
 
@@ -90,7 +90,8 @@ static ULONG openStuff(ULONG *arg0, ULONG *arg1)
       g_MUI4 = FALSE;
     else if (MUIMasterBase->lib_Version==20)
       g_MUI4 = MUIMasterBase->lib_Revision>5341;
-		else g_MUI4 = TRUE;
+	else
+	  g_MUI4 = TRUE;
 
     if(!(g_pool = CreatePool(MEMF_PUBLIC|MEMF_CLEAR,8192,4196)))
       return MSG_Err_NoMem;
