@@ -69,7 +69,7 @@ MakeStaticHook(dispHook, dispFun);
 /**************************************************************************/
 
 static ULONG
-mListNew(struct IClass *cl,Object *obj,struct opSet *msg)
+mListNew(struct IClass *cl, Object *obj, struct opSet *msg)
 {
     struct TagItem *attrs = msg->ops_AttrList;
     STRPTR *phs, *names;
@@ -118,18 +118,25 @@ SDISPATCHER(listDispatcher)
 
 /**************************************************************************/
 
-static ULONG
-initListClass(void)
+static BOOL initListClass(void)
 {
-    return (ULONG)(listClass = MUI_CreateCustomClass(NULL,MUIC_List,NULL,sizeof(struct listData),ENTRY(listDispatcher)));
+    BOOL success = FALSE;
+
+    ENTER();
+
+    if((listClass = MUI_CreateCustomClass(NULL, MUIC_List, NULL, sizeof(struct listData), ENTRY(listDispatcher))) != NULL)
+        success = TRUE;
+
+    RETURN(success);
+    return success;
 }
 
 /**************************************************************************/
 
-static void
-disposeListClass(void)
+static void disposeListClass(void)
 {
-    if (listClass) MUI_DeleteCustomClass(listClass);
+    if(listClass != NULL)
+        MUI_DeleteCustomClass(listClass);
 }
 
 /**************************************************************************/
