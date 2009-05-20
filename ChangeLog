@@ -7,6 +7,8 @@ $URL$
 
 2009-05-20  Thore Böckelmann <tboeckel@gmx.de>
 
+  * library/api.c: using/applying the prefs always failed due to a missing
+    assignment.
   * prefs/*.c: replaced all handcrafted flag checks by macro calls.
   * prefs/popport.c: replaced the clumsy port scanning by a hopefully bullet
     proof version. This new version does not break any Forbid() while scanning

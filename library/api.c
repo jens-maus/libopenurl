@@ -252,6 +252,8 @@ ULONG LIBFUNC URL_SetPrefsA(REG(a0,struct URL_Prefs *p),REG(a1,struct TagItem *a
           if(savePrefs((STRPTR)DEF_ENVARC, OpenURLBase->prefs) == TRUE)
             res = TRUE;
         }
+        else
+          res = TRUE;
       }
     }
 
