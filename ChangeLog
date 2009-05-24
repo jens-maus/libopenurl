@@ -5,6 +5,10 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2009-05-24  Alexandre Balaban <alexandre@balaban.fr>
+
+  * locale/french.ct: updated to latest catalog changes
+
 2009-05-24  Jens Langner <Jens.Langner@light-speed.de>
 
   * prefs: slightly updated the About window to match the latest changes and
