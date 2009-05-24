@@ -162,7 +162,7 @@ static struct NewMenu menu[] =
         MyItem(MSG_Menu_Save),
         MyItem(MSG_Menu_Use),
         ItemBar,
-        MyItem(MSG_Menu_LastSaveds),
+        MyItem(MSG_Menu_LastSaved),
         MyItem(MSG_Menu_Restore),
         MyItem(MSG_Menu_Defaults),
     EndMenu

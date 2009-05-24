@@ -98,14 +98,14 @@ S\0Save
 MSG_Menu_Use (//)
 U\0Use
 ;
-MSG_Menu_LastSaveds (//)
-L\0Last saveds
+MSG_Menu_LastSaved (//)
+L\0Last saved
 ;
 MSG_Menu_Restore (//)
 R\0Restore
 ;
 MSG_Menu_Defaults (210//)
-D\0Defaults settings
+D\0Default settings
 ;
 MSG_Menu_MUI (212//)
 M\0MUI Setting...
@@ -383,9 +383,6 @@ _OK
 MSG_About_Descr (1112//)
 \33bOpenURL\33n is a shared library for easily sending\n\
 URLs from applications to browsers, mailers\n\
-and FTP clients. Originally written by \33bTroels\n\
-Walsted Hansen\33n, it is developed by Alfonso\n\
-Ranieri and Stefan Kost and it is hosted as a\n\
-SourceForge project.\n\n\
+and FTP clients.\n\n\
 \33cOpenURL is a Public Domain Software.
 ;

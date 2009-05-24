@@ -68,19 +68,10 @@ static Object *ourltext(CONST_STRPTR url, CONST_STRPTR text)
 
 static ULONG mNew(struct IClass *cl,Object *obj,struct opSet *msg)
 {
-    TEXT  buf[64];
-    STRPTR lver;
+    TEXT  buf[256];
     Object *ok;
 
-    if((STRPTR)URL_GetAttr(URL_GetAttr_VerString,(ULONG *)((void *)&lver)) != NULL)
-    {
-      if(strncmp(lver, "$VER: ", 6) == 0)
-        snprintf(buf, sizeof(buf), "OpenURL\n%s", lver+6);
-      else
-        snprintf(buf, sizeof(buf), "OpenURL\n%s", lver);
-    }
-    else
-      strlcpy(buf, "OpenURL", sizeof(buf));
+    strlcpy(buf, "OpenURL-Prefs " LIB_REV_STRING " [" SYSTEMSHORT "/" CPU "] (" LIB_DATE ")\n" LIB_COPYRIGHT, sizeof(buf));
 
     if ((obj = (Object *)DoSuperNew(cl,obj,
             MUIA_Window_Title,          getString(MSG_About_WinTitle),

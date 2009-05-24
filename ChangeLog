@@ -5,6 +5,14 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2009-05-24  Jens Langner <Jens.Langner@light-speed.de>
+
+  * prefs: slightly updated the About window to match the latest changes and
+    to output the correct version string of the preference application.
+  * library/prefs.c: added some default settings for OWB, NetSurf, AmiFTP,
+    AmiTradeCenter and pftp. If users reset to the default settings of OpenURL
+    they should receive a more complete and working set of settings now.
+
 2009-05-20  Thore Böckelmann <tboeckel@gmx.de>
 
   * library/api.c: using/applying the prefs always failed due to a missing

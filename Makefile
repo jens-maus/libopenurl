@@ -18,24 +18,34 @@
 #
 #***************************************************************************/
 
-#
-# OpenURL global makefile
-#
+.PHONY: all
+all: library prefs cmd raPrefs
 
-all: os4 mos os3
+.PHONY: library
+library:
+	@$(MAKE) -C library
 
-os4:
-	@$(MAKE) -C library OS=os4
-	@$(MAKE) -C prefs OS=os4
-	@$(MAKE) -C raPrefs OS=os4
-	@$(MAKE) -C cmd OS=os4
+.PHONY: prefs
+prefs:
+	@$(MAKE) -C prefs
 
-mos:
-	@$(MAKE) -C library OS=mos
-	@$(MAKE) -C prefs OS=mos
-	@$(MAKE) -C cmd OS=mos
+.PHONY: cmd
+cmd:
+	@$(MAKE) -C cmd
 
-os3:
-	@$(MAKE) -C library OS=os3
-	@$(MAKE) -C prefs OS=os3
-	@$(MAKE) -C cmd OS=os3
+.PHONY: raPrefs
+raPrefs:
+	@$(MAKE) -C raPrefs
+
+.PHONY: clean
+clean:
+	@$(MAKE) -C library clean
+	@$(MAKE) -C prefs clean
+	@$(MAKE) -C cmd clean
+	@$(MAKE) -C raPrefs clean
+
+.PHONY: cleanall
+cleanall:
+	@$(MAKE) -C library cleanall
+	@$(MAKE) -C prefs cleanall
+	@$(MAKE) -C cmd cleanall

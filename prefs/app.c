@@ -60,7 +60,7 @@ static struct NewMenu menu[] =
         MITEM(MSG_Menu_Save),
         MITEM(MSG_Menu_Use),
         MBAR,
-        MITEM(MSG_Menu_LastSaveds),
+        MITEM(MSG_Menu_LastSaved),
         MITEM(MSG_Menu_Restore),
         MITEM(MSG_Menu_Defaults),
         MBAR,
@@ -119,7 +119,7 @@ static ULONG mNew(struct IClass *cl, Object *obj, struct opSet *msg)
 
         DoMethod((Object *)DoMethod(strip,MUIM_FindUData,MSG_Menu_Save),MUIM_Notify,MUIA_Menuitem_Trigger,MUIV_EveryTime,(ULONG)win,2,MUIM_Win_StorePrefs,MUIV_Win_StorePrefs_Save);
         DoMethod((Object *)DoMethod(strip,MUIM_FindUData,MSG_Menu_Use),MUIM_Notify,MUIA_Menuitem_Trigger,MUIV_EveryTime,(ULONG)win,2,MUIM_Win_StorePrefs,MUIV_Win_StorePrefs_Use);
-        DoMethod((Object *)DoMethod(strip,MUIM_FindUData,MSG_Menu_LastSaveds),MUIM_Notify,MUIA_Menuitem_Trigger,MUIV_EveryTime,(ULONG)obj,2,MUIM_App_GetPrefs,MUIV_App_GetPrefs_LastSaveds);
+        DoMethod((Object *)DoMethod(strip,MUIM_FindUData,MSG_Menu_LastSaved),MUIM_Notify,MUIA_Menuitem_Trigger,MUIV_EveryTime,(ULONG)obj,2,MUIM_App_GetPrefs,MUIV_App_GetPrefs_LastSaveds);
         DoMethod((Object *)DoMethod(strip,MUIM_FindUData,MSG_Menu_Restore),MUIM_Notify,MUIA_Menuitem_Trigger,MUIV_EveryTime,(ULONG)obj,2,MUIM_App_GetPrefs,MUIV_App_GetPrefs_Restore);
         DoMethod((Object *)DoMethod(strip,MUIM_FindUData,MSG_Menu_Defaults),MUIM_Notify,MUIA_Menuitem_Trigger,MUIV_EveryTime,(ULONG)obj,2,MUIM_App_GetPrefs,MUIV_App_GetPrefs_Defaults);
         DoMethod((Object *)DoMethod(strip,MUIM_FindUData,MSG_Menu_MUI),MUIM_Notify,MUIA_Menuitem_Trigger,MUIV_EveryTime,(ULONG)obj,2,MUIM_Application_OpenConfigWindow,0);
