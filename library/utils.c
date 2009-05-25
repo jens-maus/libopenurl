@@ -685,7 +685,7 @@ BOOL sendToMailer(STRPTR URL, struct List *portlist, ULONG flags, STRPTR pubScre
     }
 
     if(body)
-      snprintf(fileName, sizeof(fileName), "T:OpenURL-MailBody.%08lx",(ULONG)FindTask(NULL));
+      snprintf(fileName, sizeof(fileName), "T:OpenURL-MailBody.%08lx", (ULONG)FindTask(NULL));
     else
     {
       written = TRUE;

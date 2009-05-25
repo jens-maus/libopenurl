@@ -183,14 +183,15 @@ static Object *findWinObjByAttr(Object *app, ULONG attr, ULONG val)
     /* return the window object which supports OM_GET on attr, and
        whose value of attr == val */
 
-    get(app,MUIA_Application_WindowList,&winlist);
+    winlist = (struct List *)xget(app,MUIA_Application_WindowList);
     state = (Object *)winlist->lh_Head;
 
     while((obj = NextObject(&state)) != NULL)
     {
         ULONG value;
 
-        if (get(obj,attr,&value) && (value==val)) break;
+        if((value = xget(obj,attr)) != 0 && (value == val))
+          break;
     }
 
     return obj;
@@ -341,14 +342,14 @@ static void closeAllWindows(Object *app)
 
     loop = FALSE;
 
-    get(app, MUIA_Application_WindowList, &list);
+    list = (struct List *)xget(app, MUIA_Application_WindowList);
     mstate = (Object *)list->lh_Head;
 
     while((win = NextObject(&mstate)) != NULL)
     {
       ULONG ok = FALSE;
 
-      get(win, MUIA_App_IsSubWin, &ok);
+      ok = xget(win, MUIA_App_IsSubWin);
       if(ok)
       {
         set(win, MUIA_Window_Open, FALSE);

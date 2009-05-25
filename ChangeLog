@@ -5,6 +5,10 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2009-05-25  Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: fixed all remaining compiler warnings when compiling for AROS.
+
 2009-05-24  Alexandre Balaban <alexandre@balaban.fr>
 
   * locale/french.ct: updated to latest catalog changes

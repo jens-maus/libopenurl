@@ -24,6 +24,7 @@
 #include <libraries/asl.h>
 
 #include "SDI_hook.h"
+#include "macros.h"
 
 #include "debug.h"
 
@@ -167,14 +168,14 @@ HOOKPROTO(closeFun, void, Object *list, Object *str)
     struct data *data = hook->h_Data;
     LONG       a;
 
-    get(list,MUIA_List_Active,&a);
+    a = xget(list,MUIA_List_Active);
     if (a>=0)
     {
         STRPTR buf, x;
         ULONG pos, lx, l;
 
-        get(str,MUIA_String_BufferPos,&pos);
-        get(str,MUIA_String_Contents,&x);
+        pos = xget(str, MUIA_String_BufferPos);
+        x = (STRPTR)xget(str, MUIA_String_Contents);
 
         lx = strlen(x);
         l  = strlen(data->phs[a]);
@@ -288,7 +289,7 @@ static ULONG mRequestFile(struct IClass *cl, Object *obj, UNUSED Msg msg)
 
     InitHook(&intuiHook, reqIntuiHook, _app(obj));
 
-    get(data->str,MUIA_String_Contents,&x);
+    x = (STRPTR)xget(data->str, MUIA_String_Contents);
     file = FilePart(x);
     if((p = PathPart(x)) != NULL)
     {

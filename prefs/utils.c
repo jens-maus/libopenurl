@@ -21,6 +21,7 @@
 #include "openurl.h"
 
 #include "SDI_stdarg.h"
+#include "macros.h"
 
 #include "debug.h"
 
@@ -36,7 +37,7 @@
 #ifdef __MORPHOS__
 
 #elif defined(__AROS__)
-Object * DoSuperNew(struct IClass *cl, Object *obj, IPTR tag1, ...)
+IPTR DoSuperNew(struct IClass *cl, Object *obj, IPTR tag1, ...)
 {
   AROS_SLOWSTACKTAGS_PRE(tag1)
   retval = DoSuperMethod(cl, obj, OM_NEW, AROS_SLOWSTACKTAGS_ARG(tag1));
@@ -273,8 +274,9 @@ ULONG openWindow(Object *app, Object *win)
     if (win)
     {
         set(win,MUIA_Window_Open,TRUE);
-        get(win,MUIA_Window_Open,&v);
-        if (!v) get(app,MUIA_Application_Iconified,&v);
+        v = xget(win, MUIA_Window_Open);
+        if (!v)
+          v = xget(app, MUIA_Application_Iconified);
     }
     else v = FALSE;
 

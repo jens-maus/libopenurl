@@ -224,10 +224,10 @@ static ULONG mUse(struct IClass *cl, Object *obj, UNUSED Msg msg)
     strlcpy(fn->ufn_OpenURLCmd, (STRPTR)xget(data->openURL,MUIA_String_Contents), sizeof(fn->ufn_OpenURLCmd));
     strlcpy(fn->ufn_OpenURLWCmd, (STRPTR)xget(data->openURLNW,MUIA_String_Contents), sizeof(fn->ufn_OpenURLWCmd));
 
-    get(data->FTPList,MUIA_List_Visible,&visible);
+    visible = xget(data->FTPList, MUIA_List_Visible);
     if (visible!=-1)
     {
-        get(data->FTPList,MUIA_List_First,&first);
+        first = xget(data->FTPList, MUIA_List_First);
 
         for (i = first; i < (first + visible); i++)
         {

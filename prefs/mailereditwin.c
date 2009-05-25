@@ -215,10 +215,10 @@ static ULONG mUse(struct IClass *cl, Object *obj, UNUSED Msg msg)
     strlcpy(mn->umn_ToFrontCmd, (STRPTR)xget(data->toFront,MUIA_String_Contents), sizeof(mn->umn_ToFrontCmd));
     strlcpy(mn->umn_WriteMailCmd, (STRPTR)xget(data->write,MUIA_String_Contents), sizeof(mn->umn_WriteMailCmd));
 
-    get(data->mailerList,MUIA_List_Visible,&visible);
+    visible = xget(data->mailerList, MUIA_List_Visible);
     if (visible != -1)
     {
-        get(data->mailerList,MUIA_List_First,&first);
+        first = xget(data->mailerList, MUIA_List_First);
 
         for (i = first; i<(first + visible); i++)
         {

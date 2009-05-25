@@ -29,7 +29,6 @@
                             ((struct Message *)(m))->mn_ReplyPort = ((struct MsgPort *)(p)), \
                             ((struct Message *)(m))->mn_Length = ((UWORD)l))
 
-#define MAKE_ID(a,b,c,d) ((ULONG) (a)<<24 | (ULONG) (b)<<16 | (ULONG) (c)<<8 | (ULONG) (d))
 #define MIN(a,b) ((a<b) ? (a) : (b))
 #define MAX(a,b) ((a>b) ? (a) : (b))
 #define ABS(a) (((a)>0) ? (a) : -(a))

@@ -37,7 +37,7 @@ struct LibraryHeader
 {
   struct Library          libBase;
   struct Library          *sysBase;
-  ULONG                   segList;
+  BPTR                    segList;
   struct SignalSemaphore  libSem;
   APTR                    pool;
   struct SignalSemaphore  poolSem;

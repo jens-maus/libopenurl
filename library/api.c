@@ -379,7 +379,7 @@ ULONG LIBFUNC URL_GetAttr(REG(d0,ULONG attr),REG(a0,ULONG *storage))
 LONG LIBFUNC dispatch(REG(a0, struct RexxMsg *msg), REG(a1, STRPTR *resPtr))
 {
     ULONG result = 17;
-    STRPTR fun = msg->rm_Args[0];
+    STRPTR fun = (STRPTR)msg->rm_Args[0];
     ULONG na = msg->rm_Action & RXARGMASK;
     BOOL res = FALSE;
 
@@ -395,7 +395,7 @@ LONG LIBFUNC dispatch(REG(a0, struct RexxMsg *msg), REG(a1, STRPTR *resPtr))
 
             for(i = na, j = 0, url = NULL; i>0; i--)
             {
-                TEXT *arg = msg->rm_Args[i];
+                STRPTR arg = (STRPTR)msg->rm_Args[i];
                 Tag tag;
 
                 if(arg == NULL || *arg == '\0')
@@ -435,7 +435,7 @@ LONG LIBFUNC dispatch(REG(a0, struct RexxMsg *msg), REG(a1, STRPTR *resPtr))
             result = 1;
     }
 
-    if((*resPtr = (STRPTR)CreateArgstring(res ? "1" : "0", 1)) != NULL)
+    if((*resPtr = (STRPTR)CreateArgstring((STRPTR)(res ? "1" : "0"), 1)) != NULL)
       result = 0;
     else
       result = 3;

@@ -181,9 +181,9 @@ static ULONG mNew(struct IClass *cl, Object *obj, struct opSet *msg)
         /* init instance data */
         CopyMem(&temp,data,sizeof(*data));
 
-        get(data->browsers,MUIA_AppList_ListObj,&data->browserList);
-        get(data->mailers,MUIA_AppList_ListObj,&data->mailerList);
-        get(data->FTPs,MUIA_AppList_ListObj,&data->FTPList);
+        data->browserList = (Object *)xget(data->browsers, MUIA_AppList_ListObj);
+        data->mailerList = (Object *)xget(data->mailers, MUIA_AppList_ListObj);
+        data->FTPList = (Object *)xget(data->FTPs, MUIA_AppList_ListObj);
 
         /* buttons */
         set(obj,MUIA_Window_DefaultObject,data->browserList);

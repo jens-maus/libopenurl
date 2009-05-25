@@ -62,6 +62,7 @@
 
 #include "debug.h"
 #include "SmartReadArgs.h"
+#include "SDI_compiler.h"
 
 #include <exec/memory.h>
 #include <workbench/startup.h>
@@ -432,7 +433,7 @@ LONG SmartReadArgs(struct WBStartup * wb_startup, struct SmartArgs * args)
 
    SetIoErr(0);
 
-   args->sa_FreeArgs = ReadArgs(args->sa_Template, args->sa_Parameter, args->sa_RDArgs);
+   args->sa_FreeArgs = ReadArgs(args->sa_Template, (APTR)args->sa_Parameter, args->sa_RDArgs);
 
    if (SetSignal(0L, SIGBREAKF_CTRL_C) & SIGBREAKF_CTRL_C)
    {

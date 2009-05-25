@@ -325,7 +325,11 @@ HOOKPROTO(dispFun, void, STRPTR *array, struct URL_Node *node)
         if (data->lamp)
         {
             set(data->olamp, MUIA_Lamp_Disabled, isFlagSet(node->Flags, UNF_DISABLED));
-            sprintf(data->col0buf,"\33O[%08lx]",(ULONG)data->lamp);
+            #if defined(__LP64__)
+            sprintf(data->col0buf,"\33O[%016lx]", (IPTR)data->lamp);
+            #else
+            sprintf(data->col0buf,"\33O[%08lx]", (IPTR)data->lamp);
+            #endif
             *array++ = data->col0buf;
         }
         else
@@ -488,7 +492,7 @@ static ULONG mListExport(UNUSED struct IClass *cl, Object *obj, struct MUIP_Impo
         struct listIO io;
         STRPTR        f;
 
-        get(obj,MUIA_List_Format,&f);
+        f = (STRPTR)xget(obj, MUIA_List_Format);
         io.len = strlen(f)+1;
         strlcpy(io.format, f, sizeof(io.format));
 
@@ -506,11 +510,11 @@ static ULONG mListExport(UNUSED struct IClass *cl, Object *obj, struct MUIP_Impo
 static ULONG mListCheckSave(struct IClass *cl, Object *obj, UNUSED Msg msg)
 {
     struct listData *data = INST_DATA(cl,obj);
-    UBYTE           *f;
+    STRPTR f;
 
-    get(obj,MUIA_List_Format,&f);
+    f = (STRPTR)xget(obj, MUIA_List_Format);
 
-    return (ULONG)strcmp((STRPTR)f,(STRPTR)&data->format);
+    return (ULONG)strcmp(f,(STRPTR)&data->format);
 }
 
 /**************************************************************************/
@@ -799,7 +803,7 @@ static ULONG mClone(struct IClass *cl, Object *obj, UNUSED Msg msg)
     struct URL_Node *node;
     ULONG           active;
 
-    get(data->appList, MUIA_List_Active, &active);
+    active = xget(data->appList, MUIA_List_Active);
     DoMethod(data->appList, MUIM_List_GetEntry, active, (ULONG)&node);
     if(node != NULL)
     {
@@ -830,7 +834,7 @@ static ULONG mDelete(struct IClass *cl, Object *obj, UNUSED Msg msg)
     UBYTE       *node;
     ULONG       active;
 
-    get(data->appList,MUIA_List_Active,&active);
+    active = xget(data->appList,MUIA_List_Active);
     DoMethod(data->appList,MUIM_List_GetEntry,active,(ULONG)&node);
     if (node)
     {

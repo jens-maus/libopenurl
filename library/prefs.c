@@ -335,7 +335,7 @@ BOOL savePrefs(CONST_STRPTR filename, struct URL_Prefs *p)
 
   if((iffh = AllocIFF()) != NULL)
   {
-    if((iffh->iff_Stream = Open(filename, MODE_NEWFILE)))
+    if((iffh->iff_Stream = (IPTR)Open(filename, MODE_NEWFILE)) != 0)
     {
       InitIFFasDOS(iffh);
 
@@ -433,7 +433,7 @@ BOOL savePrefs(CONST_STRPTR filename, struct URL_Prefs *p)
         CloseIFF(iffh);
       }
 
-      Close(iffh->iff_Stream);
+      Close((BPTR)iffh->iff_Stream);
     }
 
     FreeIFF(iffh);
@@ -467,7 +467,7 @@ BOOL loadPrefs(struct URL_Prefs *p,ULONG mode)
         if (!(file = Open(fileName,MODE_OLDFILE)))
             if (mode==LOADPREFS_ENV) file = Open(DEF_ENVARC,MODE_OLDFILE);
 
-        if((iffh->iff_Stream = file))
+        if((iffh->iff_Stream = (IPTR)file) != 0)
         {
             InitIFFasDOS(iffh);
 
