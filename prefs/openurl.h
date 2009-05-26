@@ -46,7 +46,6 @@
 
 #include <mui/textinput_mcc.h>
 #include <mui/Urltext_mcc.h>
-#include <mui/MUIundoc.h>
 
 #include <string.h>
 #include <ctype.h>
@@ -410,7 +409,6 @@ enum
 #define superset(cl,obj,attr,value)    SetSuperAttrs((APTR)(cl),(Object *)(obj),(ULONG)(attr),(ULONG)(value),TAG_DONE)
 #define supernnset(cl,obj,attr,value)  SetSuperAttrs((APTR)(cl),(Object *)(obj),(ULONG)(attr),(ULONG)(value),MUIA_NoNotify,TRUE,TAG_DONE)
 #define superget(cl,obj,attr,valPtr)   DoSuperMethod((APTR)(cl),(Object *)(obj),OM_GET,(ULONG)(attr),(ULONG)(valPtr))
-#define nfset(obj,attr,value)          SetAttrs((Object *)(obj),(ULONG)(attr),(ULONG)(value),MUIA_Group_Forward,FALSE,TAG_DONE)
 
 #define wspace(w) RectangleObject, MUIA_Weight, w, End
 

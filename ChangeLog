@@ -5,6 +5,12 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2009-05-26  Jens Langner <Jens.Langner@light-speed.de>
+
+  * include: updated the mui includes to use "muiaros.h" instead of "mui.h"
+    for an AROS compile. Otherwise the binaries won't work, I am afraid.
+    In addition a little cleanup in the include directory has been performed.
+  
 2009-05-25  Jens Langner <Jens.Langner@light-speed.de>
 
   * misc: fixed all remaining compiler warnings when compiling for AROS.
