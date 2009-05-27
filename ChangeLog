@@ -5,6 +5,13 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2009-05-27  Matthias Rustler <mrustler@gmx.de>
+
+  * AROS metamakefiles added
+  * applist.c: fix for a segfault on AROS because MUIA_List_Format
+    isn't get-able in Zune.
+  * 64-bit fixes (IPTR, STACKED, UL)
+
 2009-05-26  Jens Langner <Jens.Langner@light-speed.de>
 
   * include: updated the mui includes to use "muiaros.h" instead of "mui.h"
