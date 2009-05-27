@@ -66,7 +66,7 @@ static Object *ourltext(CONST_STRPTR url, CONST_STRPTR text)
 
 /***********************************************************************/
 
-static ULONG mNew(struct IClass *cl,Object *obj,struct opSet *msg)
+static IPTR mNew(struct IClass *cl,Object *obj,struct opSet *msg)
 {
     TEXT  buf[256];
     Object *ok;
@@ -126,11 +126,11 @@ static ULONG mNew(struct IClass *cl,Object *obj,struct opSet *msg)
     {
         superset(cl,obj,MUIA_Window_ActiveObject,ok);
 
-        DoMethod(ok,MUIM_Notify,MUIA_Pressed,FALSE,(ULONG)obj,3,
+        DoMethod(ok,MUIM_Notify,MUIA_Pressed,FALSE,(IPTR)obj,3,
             MUIM_Set,MUIA_Window_CloseRequest,TRUE);
     }
 
-    return (ULONG)obj;
+    return (IPTR)obj;
 }
 
 /***********************************************************************/

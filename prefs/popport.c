@@ -36,22 +36,22 @@
 static struct MUI_CustomClass *listClass = NULL;
 #define listObject NewObject(listClass->mcc_Class,NULL
 
-static ULONG mListNew(struct IClass *cl, Object *obj, struct opSet *msg)
+static IPTR mListNew(struct IClass *cl, Object *obj, struct opSet *msg)
 {
-    return (ULONG)DoSuperNew(cl,obj,
+    return (IPTR)DoSuperNew(cl,obj,
       MUIA_Frame,              MUIV_Frame_InputList,
       MUIA_Background,         MUII_ListBack,
       MUIA_List_AutoVisible,   TRUE,
       MUIA_List_ConstructHook, MUIV_List_ConstructHook_String,
       MUIA_List_DestructHook,  MUIV_List_DestructHook_String,
-      TAG_MORE,(ULONG)msg->ops_AttrList);
+      TAG_MORE,(IPTR)msg->ops_AttrList);
 }
 
 /**************************************************************************/
 
-static ULONG mListSetup(struct IClass *cl, Object *obj, Msg msg)
+static IPTR mListSetup(struct IClass *cl, Object *obj, Msg msg)
 {
-  ULONG success = FALSE;
+  IPTR success = FALSE;
 
   ENTER();
 
@@ -189,7 +189,7 @@ HOOKPROTONH(openFun, ULONG, Object *list, Object *str)
 
     for (i = 0; ;i++)
     {
-        DoMethod(list,MUIM_List_GetEntry,i,(ULONG)&x);
+        DoMethod(list,MUIM_List_GetEntry,i,(IPTR)&x);
         if (!x)
         {
             set(list,MUIA_List_Active,MUIV_List_Active_Off);
@@ -213,7 +213,7 @@ HOOKPROTONH(closeFun, void, Object *list, Object *str)
 {
     STRPTR port;
 
-    DoMethod(list,MUIM_List_GetEntry,MUIV_List_GetEntry_Active,(ULONG)&port);
+    DoMethod(list,MUIM_List_GetEntry,MUIV_List_GetEntry_Active,(IPTR)&port);
     if (port)
     {
         TEXT buf[PORT_LEN], *dot, *digit;
@@ -245,7 +245,7 @@ MakeStaticHook(closeHook, closeFun);
 
 /***********************************************************************/
 
-static ULONG mNew(struct IClass *cl, Object *obj, struct opSet *msg)
+static IPTR mNew(struct IClass *cl, Object *obj, struct opSet *msg)
 {
     Object *lv;
 
@@ -261,12 +261,12 @@ static ULONG mNew(struct IClass *cl, Object *obj, struct opSet *msg)
             MUIA_Popobject_StrObjHook, &openHook,
             MUIA_Popobject_ObjStrHook, &closeHook,
 
-            TAG_MORE,(ULONG)msg->ops_AttrList)) != NULL)
+            TAG_MORE,(IPTR)msg->ops_AttrList)) != NULL)
     {
-        DoMethod(lv,MUIM_Notify,MUIA_Listview_DoubleClick,TRUE,(ULONG)obj,2,MUIM_Popstring_Close,TRUE);
+        DoMethod(lv,MUIM_Notify,MUIA_Listview_DoubleClick,TRUE,(IPTR)obj,2,MUIM_Popstring_Close,TRUE);
     }
 
-    return (ULONG)obj;
+    return (IPTR)obj;
 }
 
 /***********************************************************************/

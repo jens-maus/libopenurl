@@ -57,16 +57,16 @@ enum
 
 /***********************************************************************/
 
-static ULONG mLampNew(struct IClass *cl, Object *obj, struct opSet *msg)
+static IPTR mLampNew(struct IClass *cl, Object *obj, struct opSet *msg)
 {
-    return (ULONG)DoSuperNew(cl,obj,
+    return (IPTR)DoSuperNew(cl,obj,
         MUIA_Font, MUIV_Font_List,
         TAG_MORE,  msg->ops_AttrList);
 }
 
 /**************************************************************************/
 
-static ULONG mLampSets(struct IClass *cl, Object *obj, struct opSet *msg)
+static IPTR mLampSets(struct IClass *cl, Object *obj, struct opSet *msg)
 {
     struct lampData *data = INST_DATA(cl,obj);
     struct TagItem  *tag;
@@ -86,7 +86,7 @@ static ULONG mLampSets(struct IClass *cl, Object *obj, struct opSet *msg)
 
 /***********************************************************************/
 
-static ULONG mLampSetup(struct IClass *cl, Object *obj, struct MUIP_Setup *msg)
+static IPTR mLampSetup(struct IClass *cl, Object *obj, struct MUIP_Setup *msg)
 {
     struct lampData *data = INST_DATA(cl,obj);
     if (!DoSuperMethodA(cl,obj,(APTR)msg)) return FALSE;
@@ -111,7 +111,7 @@ static ULONG mLampSetup(struct IClass *cl, Object *obj, struct MUIP_Setup *msg)
 
 /***********************************************************************/
 
-static ULONG mLampCleanup(struct IClass *cl,Object *obj,struct MUIP_Setup *msg)
+static IPTR mLampCleanup(struct IClass *cl,Object *obj,struct MUIP_Setup *msg)
 {
     struct lampData *data = INST_DATA(cl,obj);
 
@@ -129,7 +129,7 @@ static ULONG mLampCleanup(struct IClass *cl,Object *obj,struct MUIP_Setup *msg)
 
 /***********************************************************************/
 
-static ULONG mLampAskMinMax(struct IClass *cl, Object *obj, struct MUIP_AskMinMax *msg)
+static IPTR mLampAskMinMax(struct IClass *cl, Object *obj, struct MUIP_AskMinMax *msg)
 {
     struct lampData          *data = INST_DATA(cl,obj);
     struct RastPort          rp;
@@ -165,10 +165,10 @@ static ULONG mLampAskMinMax(struct IClass *cl, Object *obj, struct MUIP_AskMinMa
 
 /***********************************************************************/
 
-static ULONG mLampDraw(struct IClass *cl, Object *obj, struct MUIP_Draw *msg)
+static IPTR mLampDraw(struct IClass *cl, Object *obj, struct MUIP_Draw *msg)
 {
     struct lampData *data = INST_DATA(cl,obj);
-    ULONG           res;
+    IPTR            res;
 
     res = DoSuperMethodA(cl,obj,(APTR)msg);
 
@@ -349,7 +349,7 @@ MakeStaticHook(dispHook, dispFun);
 
 /**************************************************************************/
 
-static ULONG mListNew(struct IClass *cl, Object *obj, struct opSet *msg)
+static IPTR mListNew(struct IClass *cl, Object *obj, struct opSet *msg)
 {
     if((obj = (Object *)DoSuperNew(cl,obj,
             InputListFrame,
@@ -379,12 +379,12 @@ static ULONG mListNew(struct IClass *cl, Object *obj, struct opSet *msg)
         dispHook.h_Data = data;
     }
 
-    return (ULONG)obj;
+    return (IPTR)obj;
 }
 
 /**************************************************************************/
 
-static ULONG mListDispose(struct IClass *cl, Object *obj, Msg msg)
+static IPTR mListDispose(struct IClass *cl, Object *obj, Msg msg)
 {
     struct listData *data = INST_DATA(cl,obj);
 
@@ -395,9 +395,9 @@ static ULONG mListDispose(struct IClass *cl, Object *obj, Msg msg)
 
 /**************************************************************************/
 
-static ULONG mListSetup(struct IClass *cl, Object *obj, struct MUIP_Setup *msg)
+static IPTR mListSetup(struct IClass *cl, Object *obj, struct MUIP_Setup *msg)
 {
-  ULONG result = FALSE;
+  IPTR result = FALSE;
 
   ENTER();
 
@@ -409,7 +409,7 @@ static ULONG mListSetup(struct IClass *cl, Object *obj, struct MUIP_Setup *msg)
     {
       /* After thinking about that hard, I decided to use the lamp in >=8 color screen */
       if(data->olamp != NULL && GetBitMapAttr(_screen(obj)->RastPort.BitMap, BMA_DEPTH) > 3)
-        data->lamp = (APTR)DoSuperMethod(cl, obj, MUIM_List_CreateImage, (ULONG)data->olamp, 0);
+        data->lamp = (APTR)DoSuperMethod(cl, obj, MUIM_List_CreateImage, (IPTR)data->olamp, 0);
 
       SET_FLAG(data->flags, FLG_ListSetup);
 
@@ -423,9 +423,9 @@ static ULONG mListSetup(struct IClass *cl, Object *obj, struct MUIP_Setup *msg)
 
 /***********************************************************************/
 
-static ULONG mListCleanup(struct IClass *cl, Object *obj, struct MUIP_Setup *msg)
+static IPTR mListCleanup(struct IClass *cl, Object *obj, struct MUIP_Setup *msg)
 {
-  ULONG result;
+  IPTR result;
   struct listData *data = INST_DATA(cl, obj);
 
   ENTER();
@@ -452,7 +452,7 @@ static ULONG mListCleanup(struct IClass *cl, Object *obj, struct MUIP_Setup *msg
 ** Import format
 */
 
-static ULONG mListImport(struct IClass *cl, Object *obj, struct MUIP_Import *msg)
+static IPTR mListImport(struct IClass *cl, Object *obj, struct MUIP_Import *msg)
 {
     ULONG id;
 
@@ -480,7 +480,7 @@ static ULONG mListImport(struct IClass *cl, Object *obj, struct MUIP_Import *msg
 ** Export format
 */
 
-static ULONG mListExport(UNUSED struct IClass *cl, Object *obj, struct MUIP_Import *msg)
+static IPTR mListExport(UNUSED struct IClass *cl, Object *obj, struct MUIP_Import *msg)
 {
     ULONG id;
 
@@ -496,7 +496,7 @@ static ULONG mListExport(UNUSED struct IClass *cl, Object *obj, struct MUIP_Impo
         io.len = strlen(f)+1;
         strlcpy(io.format, f, sizeof(io.format));
 
-        DoMethod(msg->dataspace,MUIM_Dataspace_Add,(ULONG)&io,sizeof(ULONG)+io.len,id);
+        DoMethod(msg->dataspace,MUIM_Dataspace_Add,(IPTR)&io,sizeof(ULONG)+io.len,id);
     }
 
     return 0;
@@ -507,14 +507,21 @@ static ULONG mListExport(UNUSED struct IClass *cl, Object *obj, struct MUIP_Impo
 ** Check if format changed
 */
 
-static ULONG mListCheckSave(struct IClass *cl, Object *obj, UNUSED Msg msg)
+static IPTR mListCheckSave(struct IClass *cl, Object *obj, UNUSED Msg msg)
 {
+#ifdef __AROS__
+    // MUIA_List_Format is only [I] in Zune which leads to
+    // a segfault in strcmp()
+    return 0;
+#else
     struct listData *data = INST_DATA(cl,obj);
+
     STRPTR f;
 
     f = (STRPTR)xget(obj, MUIA_List_Format);
 
-    return (ULONG)strcmp(f,(STRPTR)&data->format);
+    return (IPTR)strcmp(f,(STRPTR)&data->format);
+#endif
 }
 
 /**************************************************************************/
@@ -585,7 +592,7 @@ struct data
 
 /**************************************************************************/
 
-static ULONG mNew(struct IClass *cl, Object *obj, struct opSet *msg)
+static IPTR mNew(struct IClass *cl, Object *obj, struct opSet *msg)
 {
     Object        *appl, *addb, *editb, *cloneb, *deleteb, *disableb, *upb, *downb;
     struct IClass *editWinClass;
@@ -700,30 +707,30 @@ static ULONG mNew(struct IClass *cl, Object *obj, struct opSet *msg)
         data->newNodeName = nodeName;
 
         /* listview */
-        DoMethod(appl,MUIM_Notify,MUIA_List_Active,MUIV_EveryTime,(ULONG)obj,1,MUIM_AppList_ActiveChanged);
-        DoMethod(appl,MUIM_Notify,MUIA_Listview_DoubleClick,MUIV_EveryTime,(ULONG)obj,2,MUIM_AppList_Edit,TRUE);
+        DoMethod(appl,MUIM_Notify,MUIA_List_Active,MUIV_EveryTime,(IPTR)obj,1,MUIM_AppList_ActiveChanged);
+        DoMethod(appl,MUIM_Notify,MUIA_Listview_DoubleClick,MUIV_EveryTime,(IPTR)obj,2,MUIM_AppList_Edit,TRUE);
 
         /* buttons */
         DoMethod(obj,MUIM_MultiSet,MUIA_Disabled,TRUE,
-            (ULONG)editb,
-            (ULONG)cloneb,
-            (ULONG)deleteb,
-            (ULONG)disableb,
-            (ULONG)upb,
-            (ULONG)downb,
+            (IPTR)editb,
+            (IPTR)cloneb,
+            (IPTR)deleteb,
+            (IPTR)disableb,
+            (IPTR)upb,
+            (IPTR)downb,
             NULL);
 
         /* list buttons */
-        DoMethod(addb,MUIM_Notify,MUIA_Pressed,FALSE,(ULONG)obj,1,MUIM_AppList_Add);
-        DoMethod(editb,MUIM_Notify,MUIA_Pressed,FALSE,(ULONG)obj,1,MUIM_AppList_Edit,FALSE);
-        DoMethod(cloneb,MUIM_Notify,MUIA_Pressed,FALSE,(ULONG)obj,1,MUIM_AppList_Clone);
-        DoMethod(deleteb,MUIM_Notify,MUIA_Pressed,FALSE,(ULONG)obj,1,MUIM_AppList_Delete);
-        DoMethod(disableb,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,(ULONG)obj,2,MUIM_AppList_Disable,MUIV_TriggerValue);
-        DoMethod(upb,MUIM_Notify,MUIA_Timer,MUIV_EveryTime,(ULONG)obj,2,MUIM_AppList_Move,TRUE);
-        DoMethod(downb,MUIM_Notify,MUIA_Timer,MUIV_EveryTime,(ULONG)obj,2,MUIM_AppList_Move,FALSE);
+        DoMethod(addb,MUIM_Notify,MUIA_Pressed,FALSE,(IPTR)obj,1,MUIM_AppList_Add);
+        DoMethod(editb,MUIM_Notify,MUIA_Pressed,FALSE,(IPTR)obj,1,MUIM_AppList_Edit,FALSE);
+        DoMethod(cloneb,MUIM_Notify,MUIA_Pressed,FALSE,(IPTR)obj,1,MUIM_AppList_Clone);
+        DoMethod(deleteb,MUIM_Notify,MUIA_Pressed,FALSE,(IPTR)obj,1,MUIM_AppList_Delete);
+        DoMethod(disableb,MUIM_Notify,MUIA_Selected,MUIV_EveryTime,(IPTR)obj,2,MUIM_AppList_Disable,MUIV_TriggerValue);
+        DoMethod(upb,MUIM_Notify,MUIA_Timer,MUIV_EveryTime,(IPTR)obj,2,MUIM_AppList_Move,TRUE);
+        DoMethod(downb,MUIM_Notify,MUIA_Timer,MUIV_EveryTime,(IPTR)obj,2,MUIM_AppList_Move,FALSE);
     }
 
-    return (ULONG)obj;
+    return (IPTR)obj;
 }
 
 /**************************************************************************/
@@ -731,20 +738,20 @@ static ULONG mNew(struct IClass *cl, Object *obj, struct opSet *msg)
 ** I hate this: it will be removed asap!
 */
 
-static ULONG mGet(struct IClass *cl, Object *obj, struct opGet *msg)
+static IPTR mGet(struct IClass *cl, Object *obj, struct opGet *msg)
 {
     struct data *data = INST_DATA(cl,obj);
 
     switch (msg->opg_AttrID)
     {
-        case MUIA_AppList_ListObj: *msg->opg_Storage = (ULONG)data->appList; return TRUE;
+        case MUIA_AppList_ListObj: *msg->opg_Storage = (IPTR)data->appList; return TRUE;
         default: return DoSuperMethodA(cl,obj,(Msg)msg);
     }
 }
 
 /**************************************************************************/
 
-static ULONG mAdd(struct IClass *cl, Object *obj, UNUSED Msg msg)
+static IPTR mAdd(struct IClass *cl, Object *obj, UNUSED Msg msg)
 {
     struct data     *data = INST_DATA(cl,obj);
     struct URL_Node *node;
@@ -767,7 +774,7 @@ static ULONG mAdd(struct IClass *cl, Object *obj, UNUSED Msg msg)
 
 /**************************************************************************/
 
-static ULONG mEdit(struct IClass *cl, Object *obj, struct MUIP_AppList_Edit *msg)
+static IPTR mEdit(struct IClass *cl, Object *obj, struct MUIP_AppList_Edit *msg)
 {
     struct data     *data = INST_DATA(cl,obj);
     struct URL_Node *node;
@@ -796,7 +803,7 @@ static ULONG mEdit(struct IClass *cl, Object *obj, struct MUIP_AppList_Edit *msg
 
 /**************************************************************************/
 
-static ULONG mClone(struct IClass *cl, Object *obj, UNUSED Msg msg)
+static IPTR mClone(struct IClass *cl, Object *obj, UNUSED Msg msg)
 {
     ULONG success = FALSE;
     struct data     *data = INST_DATA(cl,obj);
@@ -828,7 +835,7 @@ static ULONG mClone(struct IClass *cl, Object *obj, UNUSED Msg msg)
 
 /**************************************************************************/
 
-static ULONG mDelete(struct IClass *cl, Object *obj, UNUSED Msg msg)
+static IPTR mDelete(struct IClass *cl, Object *obj, UNUSED Msg msg)
 {
     struct data *data = INST_DATA(cl,obj);
     UBYTE       *node;
@@ -847,7 +854,7 @@ static ULONG mDelete(struct IClass *cl, Object *obj, UNUSED Msg msg)
 
 /**************************************************************************/
 
-static ULONG mActiveChanged(struct IClass *cl, Object *obj, UNUSED Msg msg)
+static IPTR mActiveChanged(struct IClass *cl, Object *obj, UNUSED Msg msg)
 {
     struct data *data = INST_DATA(cl,obj);
     LONG    a;
@@ -859,10 +866,10 @@ static ULONG mActiveChanged(struct IClass *cl, Object *obj, UNUSED Msg msg)
         LONG       n;
 
         DoMethod(obj,MUIM_MultiSet,MUIA_Disabled,FALSE,
-        (ULONG)data->edit,
-            (ULONG)data->clone,
-            (ULONG)data->delete,
-            (ULONG)data->disable,
+            (IPTR)data->edit,
+            (IPTR)data->clone,
+            (IPTR)data->delete,
+            (IPTR)data->disable,
             NULL);
 
         DoMethod(data->appList,MUIM_List_GetEntry,a,(ULONG)&node);
@@ -880,12 +887,12 @@ static ULONG mActiveChanged(struct IClass *cl, Object *obj, UNUSED Msg msg)
         set(data->disable,MUIA_Selected,FALSE);
 
         DoMethod(obj,MUIM_MultiSet,MUIA_Disabled,TRUE,
-            (ULONG)data->edit,
-            (ULONG)data->clone,
-            (ULONG)data->delete,
-            (ULONG)data->disable,
-            (ULONG)data->up,
-            (ULONG)data->down,
+            (IPTR)data->edit,
+            (IPTR)data->clone,
+            (IPTR)data->delete,
+            (IPTR)data->disable,
+            (IPTR)data->up,
+            (IPTR)data->down,
             NULL);
     }
 
@@ -894,7 +901,7 @@ static ULONG mActiveChanged(struct IClass *cl, Object *obj, UNUSED Msg msg)
 
 /**************************************************************************/
 
-static ULONG mDisable(struct IClass *cl, Object *obj, struct MUIP_AppList_Disable *msg)
+static IPTR mDisable(struct IClass *cl, Object *obj, struct MUIP_AppList_Disable *msg)
 {
     struct data     *data = INST_DATA(cl,obj);
     struct URL_Node *node;
@@ -918,7 +925,7 @@ static ULONG mDisable(struct IClass *cl, Object *obj, struct MUIP_AppList_Disabl
 
 /**************************************************************************/
 
-static ULONG mMove(struct IClass *cl, Object *obj, struct MUIP_AppList_Move *msg)
+static IPTR mMove(struct IClass *cl, Object *obj, struct MUIP_AppList_Move *msg)
 {
     struct data *data = INST_DATA(cl,obj);
 
@@ -933,7 +940,7 @@ static ULONG mMove(struct IClass *cl, Object *obj, struct MUIP_AppList_Move *msg
 ** Forward to the list
 */
 
-static ULONG mCheckSave(struct IClass *cl, Object *obj, UNUSED Msg msg)
+static IPTR mCheckSave(struct IClass *cl, Object *obj, UNUSED Msg msg)
 {
     struct data *data = INST_DATA(cl,obj);
 

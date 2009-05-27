@@ -75,7 +75,7 @@ static STRPTR names[] =
     NULL
 };
 
-static ULONG mNew(struct IClass *cl, Object *obj, struct opSet *msg)
+static IPTR mNew(struct IClass *cl, Object *obj, struct opSet *msg)
 {
     struct data        temp;
     struct URL_FTPNode *fn;
@@ -83,10 +83,10 @@ static ULONG mNew(struct IClass *cl, Object *obj, struct opSet *msg)
 
     memset(&temp,0,sizeof(temp));
 
-    temp.FTPList = (Object *)GetTagData(MUIA_FTPEditWin_ListObj,(ULONG)NULL,attrs);
+    temp.FTPList = (Object *)GetTagData(MUIA_FTPEditWin_ListObj,(IPTR)NULL,attrs);
     if (!temp.FTPList) return 0;
 
-    fn = temp.fn  = (struct URL_FTPNode *)GetTagData(MUIA_FTPEditWin_FTP,(ULONG)NULL,attrs);
+    fn = temp.fn  = (struct URL_FTPNode *)GetTagData(MUIA_FTPEditWin_FTP,(IPTR)NULL,attrs);
     if (!fn) return 0;
 
 
@@ -154,18 +154,18 @@ static ULONG mNew(struct IClass *cl, Object *obj, struct opSet *msg)
         set(data->openURLNW, MUIA_String_Contents, fn->ufn_OpenURLWCmd);
     }
 
-    return (ULONG)obj;
+    return (IPTR)obj;
 }
 
 /**************************************************************************/
 
-static ULONG mGet(struct IClass *cl, Object *obj, struct opGet *msg)
+static IPTR mGet(struct IClass *cl, Object *obj, struct opGet *msg)
 {
     struct data *data = INST_DATA(cl,obj);
 
     switch (msg->opg_AttrID)
     {
-        case MUIA_FTPEditWin_FTP: *msg->opg_Storage = (ULONG)data->fn; return TRUE;
+        case MUIA_FTPEditWin_FTP: *msg->opg_Storage = (IPTR)data->fn; return TRUE;
         case MUIA_App_IsSubWin:   *msg->opg_Storage = TRUE; return TRUE;
         default: return DoSuperMethodA(cl,obj,(Msg)msg);
     }
@@ -173,9 +173,9 @@ static ULONG mGet(struct IClass *cl, Object *obj, struct opGet *msg)
 
 /**************************************************************************/
 
-static ULONG mWindow_Setup(struct IClass *cl, Object *obj, struct MUIP_Window_Setup *msg)
+static IPTR mWindow_Setup(struct IClass *cl, Object *obj, struct MUIP_Window_Setup *msg)
 {
-  ULONG result = FALSE;
+  IPTR result = FALSE;
 
   ENTER();
 
@@ -185,11 +185,11 @@ static ULONG mWindow_Setup(struct IClass *cl, Object *obj, struct MUIP_Window_Se
 
     if(isFlagClear(data->flags, FLG_Notifies))
     {
-      DoMethod(data->use, MUIM_Notify, MUIA_Pressed, FALSE, (ULONG)obj, 1, MUIM_FTPEditWin_Use);
-      DoMethod(data->cancel, MUIM_Notify, MUIA_Pressed, FALSE,(ULONG)obj, 3, MUIM_Set, MUIA_Window_CloseRequest, TRUE);
+      DoMethod(data->use, MUIM_Notify, MUIA_Pressed, FALSE, (IPTR)obj, 1, MUIM_FTPEditWin_Use);
+      DoMethod(data->cancel, MUIM_Notify, MUIA_Pressed, FALSE,(IPTR)obj, 3, MUIM_Set, MUIA_Window_CloseRequest, TRUE);
 
-      DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest,TRUE, (ULONG)_app(obj), 6, MUIM_Application_PushMethod,
-          (ULONG)_app(obj), 3, MUIM_App_CloseWin, MUIA_FTPEditWin_FTP, (ULONG)data->fn);
+      DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest,TRUE, (IPTR)_app(obj), 6, MUIM_Application_PushMethod,
+          (IPTR)_app(obj), 3, MUIM_App_CloseWin, MUIA_FTPEditWin_FTP, (IPTR)data->fn);
 
       SET_FLAG(data->flags, FLG_Notifies);
 
@@ -203,7 +203,7 @@ static ULONG mWindow_Setup(struct IClass *cl, Object *obj, struct MUIP_Window_Se
 
 /**************************************************************************/
 
-static ULONG mUse(struct IClass *cl, Object *obj, UNUSED Msg msg)
+static IPTR mUse(struct IClass *cl, Object *obj, UNUSED Msg msg)
 {
     struct data        *data = INST_DATA(cl,obj);
     struct URL_FTPNode *fn = data->fn;
@@ -231,7 +231,7 @@ static ULONG mUse(struct IClass *cl, Object *obj, UNUSED Msg msg)
 
         for (i = first; i < (first + visible); i++)
         {
-            DoMethod(data->FTPList,MUIM_List_GetEntry,i,(ULONG)&fn);
+            DoMethod(data->FTPList,MUIM_List_GetEntry,i,(IPTR)&fn);
             if (!fn) break;
 
             if (fn==data->fn)

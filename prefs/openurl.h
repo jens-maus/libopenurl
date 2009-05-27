@@ -110,7 +110,7 @@ struct URL_Node
 ** MUI tags bases
 */
 
-#define TAG_MUI_TWH            ((int)0x81480000+100)
+#define TAG_MUI_TWH            (0x81480000UL+100)
 
 #define TAGBASE_APP            (TAG_MUI_TWH+0)
 #define TAGBASE_ABOUT          (TAG_MUI_TWH+20)
@@ -143,17 +143,17 @@ struct URL_Node
 
 struct MUIP_App_OpenWin
 {
-    ULONG         MethodID;
-    struct IClass *Class;
-    ULONG         IDAttr;
-    ULONG         IDVal;
-    ULONG         InitAttrs;
+    STACKED ULONG         MethodID;
+    STACKED struct IClass *Class;
+    STACKED ULONG         IDAttr;
+    STACKED ULONG         IDVal;
+    STACKED ULONG         InitAttrs;
 };
 
 struct MUIP_App_GetPrefs
 {
-    ULONG MethodID;
-    ULONG mode;
+    STACKED ULONG MethodID;
+    STACKED ULONG mode;
 };
 
 /* mode */
@@ -167,15 +167,15 @@ enum
 
 struct MUIP_App_DisposeWin
 {
-    ULONG  MethodID;
-    Object *win;
+    STACKED ULONG  MethodID;
+    STACKED Object *win;
 };
 
 struct MUIP_App_CloseWin
 {
-    ULONG MethodID;
-    ULONG IDAttr;
-    ULONG IDVal;
+    STACKED ULONG MethodID;
+    STACKED ULONG IDAttr;
+    STACKED ULONG IDVal;
 };
 
 /* Attributes */
@@ -205,8 +205,8 @@ struct MUIP_App_CloseWin
 
 struct MUIP_Win_GetPrefs
 {
-    ULONG MethodID;
-    ULONG mode;
+    STACKED ULONG MethodID;
+    STACKED ULONG mode;
 };
 
 /* mode */
@@ -220,8 +220,8 @@ enum
 
 struct MUIP_Win_StorePrefs
 {
-    ULONG MethodID;
-    ULONG How;
+    STACKED ULONG MethodID;
+    STACKED ULONG How;
 };
 
 /* How values*/
@@ -234,8 +234,8 @@ enum
 
 struct MUIP_Win_Delete
 {
-    ULONG MethodID;
-    APTR  entry;
+    STACKED ULONG MethodID;
+    STACKED APTR  entry;
 };
 
 /**************************************************************************/
@@ -256,20 +256,20 @@ struct MUIP_Win_Delete
 
 struct MUIP_AppList_Edit
 {
-    ULONG MethodID;
-    ULONG check;
+    STACKED ULONG MethodID;
+    STACKED ULONG check;
 };
 
 struct MUIP_AppList_Disable
 {
-    ULONG MethodID;
-    ULONG disable;
+    STACKED ULONG MethodID;
+    STACKED ULONG disable;
 };
 
 struct MUIP_AppList_Move
 {
-    ULONG MethodID;
-    ULONG up;
+    STACKED ULONG MethodID;
+    STACKED ULONG up;
 };
 
 /* Attributes */
@@ -406,44 +406,44 @@ enum
 #define MBAR      {NM_ITEM,(STRPTR)NM_BARLABEL,0,0,0,NULL}
 #define MEND      {NM_END,NULL,0,0,0,NULL}
 
-#define superset(cl,obj,attr,value)    SetSuperAttrs((APTR)(cl),(Object *)(obj),(ULONG)(attr),(ULONG)(value),TAG_DONE)
-#define supernnset(cl,obj,attr,value)  SetSuperAttrs((APTR)(cl),(Object *)(obj),(ULONG)(attr),(ULONG)(value),MUIA_NoNotify,TRUE,TAG_DONE)
-#define superget(cl,obj,attr,valPtr)   DoSuperMethod((APTR)(cl),(Object *)(obj),OM_GET,(ULONG)(attr),(ULONG)(valPtr))
+#define superset(cl,obj,attr,value)    SetSuperAttrs((APTR)(cl),(Object *)(obj),(ULONG)(attr),(IPTR)(value),TAG_DONE)
+#define supernnset(cl,obj,attr,value)  SetSuperAttrs((APTR)(cl),(Object *)(obj),(ULONG)(attr),(IPTR)(value),MUIA_NoNotify,TRUE,TAG_DONE)
+#define superget(cl,obj,attr,valPtr)   DoSuperMethod((APTR)(cl),(Object *)(obj),OM_GET,(ULONG)(attr),(IPTR)(valPtr))
 
 #define wspace(w) RectangleObject, MUIA_Weight, w, End
 
 /***********************************************************************/
 
 #ifndef MUIA_Text_HiCharIdx
-#define MUIA_Text_HiCharIdx 0x804214f5
+#define MUIA_Text_HiCharIdx 0x804214f5UL
 #endif
 
 #ifndef MUIA_Window_AllowTopMenus
-#define MUIA_Window_AllowTopMenus 0x8042fe69
+#define MUIA_Window_AllowTopMenus 0x8042fe69UL
 #endif
 
 #ifndef MUIA_Window_IconifyGadget
-#define MUIA_Window_IconifyGadget 0x8042BC26
+#define MUIA_Window_IconifyGadget 0x8042BC26UL
 #endif
 
 #ifndef MUIA_Window_MenuGadget
-#define MUIA_Window_MenuGadget 0x8042324E
+#define MUIA_Window_MenuGadget 0x8042324EUL
 #endif
 
 #ifndef MUIA_Window_SnapshotGadget
-#define MUIA_Window_SnapshotGadget 0x80423C55
+#define MUIA_Window_SnapshotGadget 0x80423C55UL
 #endif
 
 #ifndef MUIA_Window_ConfigGadget
-#define MUIA_Window_ConfigGadget 0x8042E262
+#define MUIA_Window_ConfigGadget 0x8042E262UL
 #endif
 
 #ifndef MUIM_Window_Setup
-#define MUIM_Window_Setup 0x8042c34c
+#define MUIM_Window_Setup 0x8042c34cUL
 #endif
 
 #ifndef MUIA_Application_UsedClasses
-#define MUIA_Application_UsedClasses 0x8042E9A7
+#define MUIA_Application_UsedClasses 0x8042E9A7UL
 #endif
 
 /***********************************************************************/

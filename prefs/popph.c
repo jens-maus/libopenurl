@@ -69,14 +69,14 @@ MakeStaticHook(dispHook, dispFun);
 
 /**************************************************************************/
 
-static ULONG
+static IPTR
 mListNew(struct IClass *cl, Object *obj, struct opSet *msg)
 {
     struct TagItem *attrs = msg->ops_AttrList;
     STRPTR *phs, *names;
 
-    phs   = (STRPTR *)GetTagData(MUIA_Popph_Syms,(ULONG)NULL,attrs);
-    names = (STRPTR *)GetTagData(MUIA_Popph_Names,(ULONG)NULL,attrs);
+    phs   = (STRPTR *)GetTagData(MUIA_Popph_Syms,(IPTR)NULL,attrs);
+    names = (STRPTR *)GetTagData(MUIA_Popph_Names,(IPTR)NULL,attrs);
     if (!phs || !names) return 0;
 
     if((obj = (Object *)DoSuperNew(cl,obj,
@@ -102,7 +102,7 @@ mListNew(struct IClass *cl, Object *obj, struct opSet *msg)
             DoSuperMethod(cl,obj,MUIM_List_InsertSingle,i,MUIV_List_Insert_Bottom);
     }
 
-    return (ULONG)obj;
+    return (IPTR)obj;
 }
 
 /**************************************************************************/
@@ -192,13 +192,13 @@ HOOKPROTO(closeFun, void, Object *list, Object *str)
 }
 MakeStaticHook(closeHook, closeFun);
 
-static ULONG mNew(struct IClass *cl, Object *obj, struct opSet *msg)
+static IPTR mNew(struct IClass *cl, Object *obj, struct opSet *msg)
 {
     Object         *str, *lv;
     struct TagItem *attrs = msg->ops_AttrList;
     STRPTR         *phs, *names;
 
-    phs   = (STRPTR*)GetTagData(MUIA_Popph_Syms,(ULONG)NULL,attrs);
+    phs   = (STRPTR*)GetTagData(MUIA_Popph_Syms,(IPTR)NULL,attrs);
     if (!phs) return 0;
 
     names = (STRPTR*)GetTagData(MUIA_Popph_Names,FALSE,attrs);
@@ -209,7 +209,7 @@ static ULONG mNew(struct IClass *cl, Object *obj, struct opSet *msg)
             MUIA_Group_HorizSpacing, 1,
 
             Child, PopobjectObject,
-                MUIA_Popstring_String, str = ostring(GetTagData(MUIA_Popph_MaxLen,0,attrs),GetTagData(MUIA_Popph_Key,(ULONG)NULL,attrs),0),
+                MUIA_Popstring_String, str = ostring(GetTagData(MUIA_Popph_MaxLen,0,attrs),GetTagData(MUIA_Popph_Key,(IPTR)NULL,attrs),0),
                 MUIA_Popstring_Button, opopbutton(MUII_PopUp,0),
                 MUIA_Popobject_Object, lv = ListviewObject,
                     MUIA_Listview_List, listObject,
@@ -243,25 +243,25 @@ static ULONG mNew(struct IClass *cl, Object *obj, struct opSet *msg)
 
                 if((bt = opopbutton(MUII_PopFile, 0)) != NULL)
                 {
-                    DoSuperMethod(cl,obj,OM_ADDMEMBER,(ULONG)bt);
+                    DoSuperMethod(cl,obj,OM_ADDMEMBER,(IPTR)bt);
 
                     data->req = req;
 
-                    DoMethod(bt,MUIM_Notify,MUIA_Pressed,FALSE,(ULONG)obj,1,MUIM_Popph_RequestFile);
+                    DoMethod(bt,MUIM_Notify,MUIA_Pressed,FALSE,(IPTR)obj,1,MUIM_Popph_RequestFile);
                 }
                 else MUI_FreeAslRequest(req);
             }
         }
 
-        DoMethod(lv,MUIM_Notify,MUIA_Listview_DoubleClick,TRUE,(ULONG)obj,2,MUIM_Popstring_Close,TRUE);
+        DoMethod(lv,MUIM_Notify,MUIA_Listview_DoubleClick,TRUE,(IPTR)obj,2,MUIM_Popstring_Close,TRUE);
     }
 
-    return (ULONG)obj;
+    return (IPTR)obj;
 }
 
 /***********************************************************************/
 
-static ULONG mDispose(struct IClass *cl, Object *obj, Msg msg)
+static IPTR mDispose(struct IClass *cl, Object *obj, Msg msg)
 {
     struct data *data = INST_DATA(cl,obj);
 
@@ -279,7 +279,7 @@ HOOKPROTONO(reqIntuiFun, void, struct IntuiMessage *imsg)
 }
 MakeStaticHook(reqIntuiHook, reqIntuiFun);
 
-static ULONG mRequestFile(struct IClass *cl, Object *obj, UNUSED Msg msg)
+static IPTR mRequestFile(struct IClass *cl, Object *obj, UNUSED Msg msg)
 {
     struct data *data = INST_DATA(cl,obj);
     struct Hook intuiHook;

@@ -75,7 +75,7 @@ static STRPTR names[] =
     NULL
 };
 
-static ULONG mNew(struct IClass *cl, Object *obj, struct opSet *msg)
+static IPTR mNew(struct IClass *cl, Object *obj, struct opSet *msg)
 {
     struct data            temp;
     struct URL_BrowserNode *bn;
@@ -83,10 +83,10 @@ static ULONG mNew(struct IClass *cl, Object *obj, struct opSet *msg)
 
     memset(&temp,0,sizeof(temp));
 
-    temp.browserList  = (Object *)GetTagData(MUIA_BrowserEditWin_ListObj,(ULONG)NULL,attrs);
+    temp.browserList  = (Object *)GetTagData(MUIA_BrowserEditWin_ListObj,(IPTR)NULL,attrs);
     if (!temp.browserList) return 0;
 
-    bn = temp.bn = (struct URL_BrowserNode *)GetTagData(MUIA_BrowserEditWin_Browser,(ULONG)NULL,attrs);
+    bn = temp.bn = (struct URL_BrowserNode *)GetTagData(MUIA_BrowserEditWin_Browser,(IPTR)NULL,attrs);
     if (!bn) return 0;
 
 
@@ -146,18 +146,18 @@ static ULONG mNew(struct IClass *cl, Object *obj, struct opSet *msg)
         set(data->openURLNW,MUIA_String_Contents,bn->ubn_OpenURLWCmd);
     }
 
-    return (ULONG)obj;
+    return (IPTR)obj;
 }
 
 /**************************************************************************/
 
-static ULONG mGet(struct IClass *cl, Object *obj, struct opGet *msg)
+static IPTR mGet(struct IClass *cl, Object *obj, struct opGet *msg)
 {
     struct data *data = INST_DATA(cl,obj);
 
     switch (msg->opg_AttrID)
     {
-        case MUIA_BrowserEditWin_Browser: *msg->opg_Storage = (ULONG)data->bn; return TRUE;
+        case MUIA_BrowserEditWin_Browser: *msg->opg_Storage = (IPTR)data->bn; return TRUE;
         case MUIA_App_IsSubWin:           *msg->opg_Storage = TRUE; return TRUE;
         default: return DoSuperMethodA(cl,obj,(Msg)msg);
     }
@@ -165,9 +165,9 @@ static ULONG mGet(struct IClass *cl, Object *obj, struct opGet *msg)
 
 /**************************************************************************/
 
-static ULONG mWindow_Setup(struct IClass *cl, Object *obj, struct MUIP_Window_Setup *msg)
+static IPTR mWindow_Setup(struct IClass *cl, Object *obj, struct MUIP_Window_Setup *msg)
 {
-  ULONG result = FALSE;
+  IPTR result = FALSE;
 
   ENTER();
 
@@ -177,11 +177,11 @@ static ULONG mWindow_Setup(struct IClass *cl, Object *obj, struct MUIP_Window_Se
 
     if(isFlagClear(data->flags, FLG_Notifies))
     {
-      DoMethod(data->use, MUIM_Notify, MUIA_Pressed, FALSE, (ULONG)obj, 1, MUIM_BrowserEditWin_Use);
-      DoMethod(data->cancel, MUIM_Notify, MUIA_Pressed, FALSE, (ULONG)obj, 3, MUIM_Set, MUIA_Window_CloseRequest, TRUE);
+      DoMethod(data->use, MUIM_Notify, MUIA_Pressed, FALSE, (IPTR)obj, 1, MUIM_BrowserEditWin_Use);
+      DoMethod(data->cancel, MUIM_Notify, MUIA_Pressed, FALSE, (IPTR)obj, 3, MUIM_Set, MUIA_Window_CloseRequest, TRUE);
 
-      DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, (ULONG)_app(obj), 6, MUIM_Application_PushMethod,
-          (ULONG)_app(obj), 3, MUIM_App_CloseWin, MUIA_BrowserEditWin_Browser, (ULONG)data->bn);
+      DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, (IPTR)_app(obj), 6, MUIM_Application_PushMethod,
+          (IPTR)_app(obj), 3, MUIM_App_CloseWin, MUIA_BrowserEditWin_Browser, (IPTR)data->bn);
 
       SET_FLAG(data->flags, FLG_Notifies);
 
@@ -195,7 +195,7 @@ static ULONG mWindow_Setup(struct IClass *cl, Object *obj, struct MUIP_Window_Se
 
 /**************************************************************************/
 
-static ULONG mUse(struct IClass *cl, Object *obj, UNUSED Msg msg)
+static IPTR mUse(struct IClass *cl, Object *obj, UNUSED Msg msg)
 {
     struct data            *data = INST_DATA(cl,obj);
     struct URL_BrowserNode *bn = data->bn;
@@ -219,7 +219,7 @@ static ULONG mUse(struct IClass *cl, Object *obj, UNUSED Msg msg)
 
         for (i = first; i < (first + visible); i++)
         {
-            DoMethod(data->browserList,MUIM_List_GetEntry,i,(ULONG)&bn);
+            DoMethod(data->browserList,MUIM_List_GetEntry,i,(IPTR)&bn);
             if (!bn) break;
 
             if (bn==data->bn)

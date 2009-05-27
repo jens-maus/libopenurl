@@ -1,0 +1,69 @@
+#   $Id$
+#
+#   Makefile for the OpenURL Pref. editor of openurl.library
+
+include $(TOP)/config/make.cfg
+
+#MM- workbench-libs-openurl : workbench-libs-openurl-prefs
+
+#MM workbench-libs-openurl-prefs : includes linklibs \
+#MM   workbench-libs-openurl-lib
+
+EXE := OpenURL
+EXEDIR := $(AROS_PREFS)
+
+USER_INCLUDES := -I$(SRCDIR)/$(CURDIR)/../include
+
+USER_CFLAGS := -DNO_INLINE_STDARG
+
+FILES := \
+        OpenURL \
+        locale \
+        utils \
+        popport \
+        popph \
+        ftpeditwin \
+        mailereditwin \
+        browsereditwin \
+        applist \
+        win \
+        about \
+        app \
+        vastubs \
+        debug
+
+%build_prog mmake=workbench-libs-openurl-prefs \
+    progname=$(EXE) files=$(FILES) \
+    targetdir=$(EXEDIR) uselibs="amiga mui"
+
+TARGETDIR := $(AROS_LOCALE)/Catalogs
+
+# Catalogs which aren't uptodate:
+#$(TARGETDIR)/deutsch/OpenURL.catalog
+#$(TARGETDIR)/svenska/OpenURL.catalog
+#$(TARGETDIR)/italiano/OpenURL.catalog
+
+#MM
+workbench-libs-openurl-catalogs : locale.h locale.c \
+    $(TARGETDIR)/français/OpenURL.catalog
+
+locale.h: ../locale/OpenURL.cd locale_h.sd
+	@$(FLEXCAT) $(SRCDIR)/$(CURDIR)/../locale/OpenURL.cd locale.h=$(SRCDIR)/$(CURDIR)/locale_h.sd
+
+$(TARGETDIR)/deutsch/OpenURL.catalog: ../locale/german.ct
+	@$(MKDIR) $(TARGETDIR)/deutsch
+	@$(FLEXCAT) $(SRCDIR)/$(CURDIR)/../locale/OpenURL.cd $< CATALOG $@
+
+$(TARGETDIR)/français/OpenURL.catalog: ../locale/french.ct
+	@$(MKDIR) $(TARGETDIR)/français
+	@$(FLEXCAT) $(SRCDIR)/$(CURDIR)/../locale/OpenURL.cd $< CATALOG $@
+
+$(TARGETDIR)/svenska/OpenURL.catalog: ../locale/swedish.ct
+	@$(MKDIR) $(TARGETDIR)/svenska
+	@$(FLEXCAT) $(SRCDIR)/$(CURDIR)/../locale/OpenURL.cd $< CATALOG $@
+
+$(TARGETDIR)/italiano/OpenURL.catalog: ../locale/italian.ct
+	@$(MKDIR) $(TARGETDIR)/italiano
+	@$(FLEXCAT) $(SRCDIR)/$(CURDIR)/../locale/OpenURL.cd $< CATALOG $@
+
+%common

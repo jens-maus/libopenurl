@@ -82,7 +82,7 @@ static STRPTR names[] =
 };
 
 
-static ULONG mNew(struct IClass *cl, Object *obj, struct opSet *msg)
+static IPTR mNew(struct IClass *cl, Object *obj, struct opSet *msg)
 {
     struct data            temp;
     struct URL_MailerNode  *mn;
@@ -90,10 +90,10 @@ static ULONG mNew(struct IClass *cl, Object *obj, struct opSet *msg)
 
     memset(&temp,0,sizeof(temp));
 
-    temp.mailerList = (Object *)GetTagData(MUIA_MailerEditWin_ListObj,(ULONG)NULL,attrs);
+    temp.mailerList = (Object *)GetTagData(MUIA_MailerEditWin_ListObj,(IPTR)NULL,attrs);
     if (!temp.mailerList) return 0;
 
-    mn = temp.mn  = (struct URL_MailerNode *)GetTagData(MUIA_MailerEditWin_Mailer,(ULONG)NULL,attrs);
+    mn = temp.mn  = (struct URL_MailerNode *)GetTagData(MUIA_MailerEditWin_Mailer,(IPTR)NULL,attrs);
     if (!mn) return 0;
 
     if((obj = (Object *)DoSuperNew(cl,obj,
@@ -150,18 +150,18 @@ static ULONG mNew(struct IClass *cl, Object *obj, struct opSet *msg)
         set(data->write,MUIA_String_Contents,mn->umn_WriteMailCmd);
     }
 
-    return (ULONG)obj;
+    return (IPTR)obj;
 }
 
 /**************************************************************************/
 
-static ULONG mGet(struct IClass *cl, Object *obj, struct opGet *msg)
+static IPTR mGet(struct IClass *cl, Object *obj, struct opGet *msg)
 {
     struct data *data = INST_DATA(cl,obj);
 
     switch (msg->opg_AttrID)
     {
-        case MUIA_MailerEditWin_Mailer: *msg->opg_Storage = (ULONG)data->mn; return TRUE;
+        case MUIA_MailerEditWin_Mailer: *msg->opg_Storage = (IPTR)data->mn; return TRUE;
         case MUIA_App_IsSubWin:         *msg->opg_Storage = TRUE; return TRUE;
         default: return DoSuperMethodA(cl,obj,(Msg)msg);
     }
@@ -169,9 +169,9 @@ static ULONG mGet(struct IClass *cl, Object *obj, struct opGet *msg)
 
 /**************************************************************************/
 
-static ULONG mWindow_Setup(struct IClass *cl, Object *obj, struct MUIP_Window_Setup *msg)
+static IPTR mWindow_Setup(struct IClass *cl, Object *obj, struct MUIP_Window_Setup *msg)
 {
-  ULONG result = FALSE;
+  IPTR result = FALSE;
 
   ENTER();
 
@@ -181,11 +181,11 @@ static ULONG mWindow_Setup(struct IClass *cl, Object *obj, struct MUIP_Window_Se
 
     if(isFlagClear(data->flags, FLG_Notifies))
     {
-      DoMethod(data->use, MUIM_Notify, MUIA_Pressed, FALSE, (ULONG)obj, 1, MUIM_MailerEditWin_Use);
-      DoMethod(data->cancel, MUIM_Notify, MUIA_Pressed, FALSE, (ULONG)obj, 3, MUIM_Set, MUIA_Window_CloseRequest, TRUE);
+      DoMethod(data->use, MUIM_Notify, MUIA_Pressed, FALSE, (IPTR)obj, 1, MUIM_MailerEditWin_Use);
+      DoMethod(data->cancel, MUIM_Notify, MUIA_Pressed, FALSE, (IPTR)obj, 3, MUIM_Set, MUIA_Window_CloseRequest, TRUE);
 
-      DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, (ULONG)_app(obj), 6, MUIM_Application_PushMethod,
-          (ULONG)_app(obj), 3, MUIM_App_CloseWin, MUIA_MailerEditWin_Mailer, (ULONG)data->mn);
+      DoMethod(obj, MUIM_Notify, MUIA_Window_CloseRequest, TRUE, (IPTR)_app(obj), 6, MUIM_Application_PushMethod,
+          (IPTR)_app(obj), 3, MUIM_App_CloseWin, MUIA_MailerEditWin_Mailer, (IPTR)data->mn);
 
       SET_FLAG(data->flags, FLG_Notifies);
 
@@ -199,7 +199,7 @@ static ULONG mWindow_Setup(struct IClass *cl, Object *obj, struct MUIP_Window_Se
 
 /**************************************************************************/
 
-static ULONG mUse(struct IClass *cl, Object *obj, UNUSED Msg msg)
+static IPTR mUse(struct IClass *cl, Object *obj, UNUSED Msg msg)
 {
     struct data           *data = INST_DATA(cl,obj);
     struct URL_MailerNode *mn = data->mn;
@@ -222,7 +222,7 @@ static ULONG mUse(struct IClass *cl, Object *obj, UNUSED Msg msg)
 
         for (i = first; i<(first + visible); i++)
         {
-            DoMethod(data->mailerList,MUIM_List_GetEntry,i,(ULONG)&mn);
+            DoMethod(data->mailerList,MUIM_List_GetEntry,i,(IPTR)&mn);
             if (!mn) break;
 
             if (mn==data->mn)

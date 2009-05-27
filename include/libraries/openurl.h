@@ -37,7 +37,7 @@
 #include <utility/tagitem.h>
 #endif
 
-#if defined(__PPC__)
+#if !defined(__AROS__) && defined(__PPC__)
   #if defined(__GNUC__)
     #pragma pack(2)
   #elif defined(__VBCC__)
@@ -219,7 +219,7 @@ enum
 
 /**************************************************************************/
 
-#if defined(__PPC__)
+#if !defined(__AROS__) && defined(__PPC__)
   #if defined(__GNUC__)
     #pragma pack()
   #elif defined(__VBCC__)

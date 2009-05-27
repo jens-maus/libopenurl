@@ -88,7 +88,7 @@ static STRPTR tabs[] =
     NULL
 };
 
-static ULONG mNew(struct IClass *cl, Object *obj, struct opSet *msg)
+static IPTR mNew(struct IClass *cl, Object *obj, struct opSet *msg)
 {
     struct data temp;
 
@@ -193,18 +193,18 @@ static ULONG mNew(struct IClass *cl, Object *obj, struct opSet *msg)
             MUIM_Application_ReturnID,MUIV_Application_ReturnID_Quit);
 
         /* buttons notifies */
-        DoMethod(data->save,MUIM_Notify,MUIA_Pressed,FALSE,(ULONG)obj,2,MUIM_Win_StorePrefs,MUIV_Win_StorePrefs_Save);
-        DoMethod(data->use,MUIM_Notify,MUIA_Pressed,FALSE,(ULONG)obj,2,MUIM_Win_StorePrefs,MUIV_Win_StorePrefs_Use);
-        DoMethod(data->apply,MUIM_Notify,MUIA_Pressed,FALSE,(ULONG)obj,2,MUIM_Win_StorePrefs,MUIV_Win_StorePrefs_Apply);
+        DoMethod(data->save,MUIM_Notify,MUIA_Pressed,FALSE,(IPTR)obj,2,MUIM_Win_StorePrefs,MUIV_Win_StorePrefs_Save);
+        DoMethod(data->use,MUIM_Notify,MUIA_Pressed,FALSE,(IPTR)obj,2,MUIM_Win_StorePrefs,MUIV_Win_StorePrefs_Use);
+        DoMethod(data->apply,MUIM_Notify,MUIA_Pressed,FALSE,(IPTR)obj,2,MUIM_Win_StorePrefs,MUIV_Win_StorePrefs_Apply);
         DoMethod(data->cancel,MUIM_Notify,MUIA_Pressed,FALSE,MUIV_Notify_Application,2,MUIM_Application_ReturnID,MUIV_Application_ReturnID_Quit);
     }
 
-    return (ULONG)obj;
+    return (IPTR)obj;
 }
 
 /**************************************************************************/
 
-static ULONG mGetPrefs(struct IClass *cl,Object *obj, struct MUIP_Win_GetPrefs *msg)
+static IPTR mGetPrefs(struct IClass *cl,Object *obj, struct MUIP_Win_GetPrefs *msg)
 {
     struct data            *data = INST_DATA(cl,obj);
     struct URL_Prefs       *p;
@@ -248,7 +248,7 @@ static ULONG mGetPrefs(struct IClass *cl,Object *obj, struct MUIP_Win_GetPrefs *
          bn->ubn_Node.mln_Succ;
          bn = (struct URL_BrowserNode *)bn->ubn_Node.mln_Succ)
     {
-        DoMethod(data->browserList,MUIM_List_InsertSingle,(ULONG)bn,MUIV_List_Insert_Bottom);
+        DoMethod(data->browserList,MUIM_List_InsertSingle,(IPTR)bn,MUIV_List_Insert_Bottom);
     }
 
     set(data->browserList,MUIA_List_Quiet,FALSE);
@@ -261,7 +261,7 @@ static ULONG mGetPrefs(struct IClass *cl,Object *obj, struct MUIP_Win_GetPrefs *
          mn->umn_Node.mln_Succ;
          mn = (struct URL_MailerNode *)mn->umn_Node.mln_Succ)
     {
-        DoMethod(data->mailerList,MUIM_List_InsertSingle,(ULONG)mn,MUIV_List_Insert_Bottom);
+        DoMethod(data->mailerList,MUIM_List_InsertSingle,(IPTR)mn,MUIV_List_Insert_Bottom);
     }
 
     set(data->mailerList,MUIA_List_Quiet,FALSE);
@@ -274,7 +274,7 @@ static ULONG mGetPrefs(struct IClass *cl,Object *obj, struct MUIP_Win_GetPrefs *
          fn->ufn_Node.mln_Succ;
          fn = (struct URL_FTPNode *)fn->ufn_Node.mln_Succ)
     {
-        DoMethod(data->FTPList,MUIM_List_InsertSingle,(ULONG)fn,MUIV_List_Insert_Bottom);
+        DoMethod(data->FTPList,MUIM_List_InsertSingle,(IPTR)fn,MUIV_List_Insert_Bottom);
     }
 
     set(data->FTPList,MUIA_List_Quiet,FALSE);
@@ -291,9 +291,9 @@ static ULONG mGetPrefs(struct IClass *cl,Object *obj, struct MUIP_Win_GetPrefs *
 
     /* Activate the first entry */
     DoSuperMethod(cl,obj,MUIM_MultiSet,MUIA_List_Active,MUIV_List_Active_Top,
-        (ULONG)data->browserList,
-        (ULONG)data->mailerList,
-        (ULONG)data->FTPList,
+        (IPTR)data->browserList,
+        (IPTR)data->mailerList,
+        (IPTR)data->FTPList,
         NULL);
 
     URL_FreePrefsA(p,NULL);
@@ -303,7 +303,7 @@ static ULONG mGetPrefs(struct IClass *cl,Object *obj, struct MUIP_Win_GetPrefs *
 
 /**************************************************************************/
 
-static ULONG mStorePrefs(struct IClass *cl, Object *obj, struct MUIP_Win_StorePrefs *msg)
+static IPTR mStorePrefs(struct IClass *cl, Object *obj, struct MUIP_Win_StorePrefs *msg)
 {
     struct data *data = INST_DATA(cl,obj);
     struct URL_Prefs     up;
@@ -322,7 +322,7 @@ static ULONG mStorePrefs(struct IClass *cl, Object *obj, struct MUIP_Win_StorePr
     {
         struct URL_BrowserNode *bn;
 
-        DoMethod(data->browserList,MUIM_List_GetEntry,i,(ULONG)&bn);
+        DoMethod(data->browserList,MUIM_List_GetEntry,i,(IPTR)&bn);
         if (!bn) break;
 
         if(isFlagClear(bn->ubn_Flags, UNF_NEW))
@@ -333,7 +333,7 @@ static ULONG mStorePrefs(struct IClass *cl, Object *obj, struct MUIP_Win_StorePr
     {
         struct URL_MailerNode *mn;
 
-        DoMethod(data->mailerList,MUIM_List_GetEntry,i,(ULONG)&mn);
+        DoMethod(data->mailerList,MUIM_List_GetEntry,i,(IPTR)&mn);
         if (!mn) break;
 
         if(isFlagClear(mn->umn_Flags, UNF_NEW))
@@ -345,7 +345,7 @@ static ULONG mStorePrefs(struct IClass *cl, Object *obj, struct MUIP_Win_StorePr
     {
         struct URL_FTPNode *fn;
 
-        DoMethod(data->FTPList,MUIM_List_GetEntry,i,(ULONG)&fn);
+        DoMethod(data->FTPList,MUIM_List_GetEntry,i,(IPTR)&fn);
         if (!fn) break;
 
         if(isFlagClear(fn->ufn_Flags, UNF_NEW))
@@ -388,7 +388,7 @@ static ULONG mStorePrefs(struct IClass *cl, Object *obj, struct MUIP_Win_StorePr
 
 /**************************************************************************/
 
-static ULONG mDelete(struct IClass *cl, Object *obj, struct MUIP_Win_Delete *msg)
+static IPTR mDelete(struct IClass *cl, Object *obj, struct MUIP_Win_Delete *msg)
 {
     struct data *data = INST_DATA(cl,obj);
 
@@ -401,11 +401,11 @@ static ULONG mDelete(struct IClass *cl, Object *obj, struct MUIP_Win_Delete *msg
 
 /**************************************************************************/
 
-static ULONG mCheckSave(struct IClass *cl, Object *obj, UNUSED Msg msg)
+static IPTR mCheckSave(struct IClass *cl, Object *obj, UNUSED Msg msg)
 {
     struct data *data = INST_DATA(cl,obj);
 
-    return (ULONG)(DoMethod(data->browsers,MUIM_App_CheckSave) ||
+    return (IPTR)(DoMethod(data->browsers,MUIM_App_CheckSave) ||
                    DoMethod(data->mailers,MUIM_App_CheckSave)  ||
                    DoMethod(data->FTPs,MUIM_App_CheckSave));
 }
