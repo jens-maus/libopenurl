@@ -34,11 +34,10 @@
 
 struct data
 {
-    Object            *win;
-    Object            *about;
-    Object            *aboutMUI;
+  Object            *win;
+  Object            *about;
 
-    struct DiskObject *icon;
+  struct DiskObject *icon;
 };
 
 /**************************************************************************/
@@ -113,7 +112,7 @@ static IPTR mNew(struct IClass *cl, Object *obj, struct opSet *msg)
         /* Menus */
 
         DoMethod((Object *)DoMethod(strip,MUIM_FindUData,MSG_Menu_About),MUIM_Notify,MUIA_Menuitem_Trigger,MUIV_EveryTime,(IPTR)obj,1,MUIM_App_About);
-        DoMethod((Object *)DoMethod(strip,MUIM_FindUData,MSG_Menu_AboutMUI),MUIM_Notify,MUIA_Menuitem_Trigger,MUIV_EveryTime,(IPTR)obj,2,MUIM_Application_AboutMUI,(IPTR)win);
+        DoMethod((Object *)DoMethod(strip,MUIM_FindUData,MSG_Menu_AboutMUI),MUIM_Notify,MUIA_Menuitem_Trigger,MUIV_EveryTime,(IPTR)MUIV_Notify_Application,2,MUIM_Application_AboutMUI,(IPTR)win);
         DoMethod((Object *)DoMethod(strip,MUIM_FindUData,MSG_Menu_Hide),MUIM_Notify,MUIA_Menuitem_Trigger,MUIV_EveryTime,(IPTR)obj,3,MUIM_Set,MUIA_Application_Iconified,TRUE);
         DoMethod((Object *)DoMethod(strip,MUIM_FindUData,MSG_Menu_Quit),MUIM_Notify,MUIA_Menuitem_Trigger,MUIV_EveryTime,(IPTR)obj,2,MUIM_Application_ReturnID,MUIV_Application_ReturnID_Quit);
 
@@ -263,34 +262,8 @@ static IPTR mDisposeWin(struct IClass *cl, Object *obj, struct MUIP_App_DisposeW
     DoSuperMethod(cl,obj,OM_REMMEMBER,(IPTR)win);
     MUI_DisposeObject(win);
 
-    if (win==data->about) data->about = NULL;
-    else if (win==data->aboutMUI) data->aboutMUI = NULL;
-
-    return 0;
-}
-
-/***********************************************************************/
-
-static IPTR mAboutMUI(struct IClass *cl, Object *obj, UNUSED Msg msg)
-{
-    struct data *data = INST_DATA(cl,obj);
-
-    superset(cl,obj,MUIA_Application_Sleep,TRUE);
-
-    if(data->aboutMUI == NULL)
-    {
-        if((data->aboutMUI = AboutmuiObject,
-                MUIA_HelpNode,             "MUI",
-                MUIA_Aboutmui_Application, obj,
-                MUIA_Window_RefWindow,     data->win,
-            End) != NULL)
-            DoMethod(data->aboutMUI,MUIM_Notify,MUIA_Window_CloseRequest,TRUE,(IPTR)obj,5,
-                MUIM_Application_PushMethod,(IPTR)obj,2,MUIM_App_DisposeWin,(IPTR)data->aboutMUI);
-    }
-
-    openWindow(obj,data->aboutMUI);
-
-    superset(cl,obj,MUIA_Application_Sleep,FALSE);
+    if(win==data->about)
+      data->about = NULL;
 
     return 0;
 }
@@ -390,10 +363,6 @@ SDISPATCHER(dispatcher)
         case OM_NEW:                            return mNew(cl,obj,(APTR)msg);
         case OM_DISPOSE:                        return mDispose(cl,obj,(APTR)msg);
 
-#ifndef __AROS__
-// Disabled because it crashes on AROS.
-        case MUIM_Application_AboutMUI:         return mAboutMUI(cl,obj,(APTR)msg);
-#endif
         case MUIM_Application_OpenConfigWindow: return mOpenConfigWindow(cl,obj,(APTR)msg);
 
         case MUIM_App_OpenWin:                  return mOpenWin(cl,obj,(APTR)msg);

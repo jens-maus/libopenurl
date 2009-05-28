@@ -7,6 +7,9 @@ $URL$
 
 2009-05-28  Jens Langner <Jens.Langner@light-speed.de>
 
+  * prefs/app.c: removed the not required AboutMUI method as calling
+    MUIM_Application_AboutMUI should really be enough. This should also solve
+    the previously existing problems with the AROS compiles.
   * library/applist.c: instead of always returning 0 in mListCheckSave() for
     AROS we now check if the returned pointer of xget(MUIA_List_Format) is
     NULL or not and thus perform the string compare operation or not. This
