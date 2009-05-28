@@ -21,6 +21,7 @@ $URL$
   * Metamakefiles cleaned up
   * Overloading of MUIM_Application_AboutMUI disabled on AROS
     because it crashes when closing the about window.
+  * Remaining warnings under AROS removed
 
 2009-05-27  Matthias Rustler <mrustler@gmx.de>
 

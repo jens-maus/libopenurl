@@ -34,7 +34,7 @@ static BOOL localSendRexxMsg(struct MsgPort *reply, STRPTR rxport, STRPTR rxcmd)
   {
     rxmsg->rm_Action = RXCOMM|RXFF_STRING|RXFF_NOIO;
 
-     if((rxmsg->rm_Args[0] = CreateArgstring(rxcmd,strlen(rxcmd))) != NULL)
+     if((rxmsg->rm_Args[0] = (IPTR)CreateArgstring(rxcmd,strlen(rxcmd))) != 0)
      {
        struct MsgPort *port;
 
@@ -50,7 +50,7 @@ static BOOL localSendRexxMsg(struct MsgPort *reply, STRPTR rxport, STRPTR rxcmd)
        Permit();
 
        if(success == FALSE)
-         DeleteArgstring(rxmsg->rm_Args[0]);
+         DeleteArgstring((UBYTE *)rxmsg->rm_Args[0]);
      }
 
      if(success == FALSE)
@@ -94,7 +94,7 @@ void SAVEDS handler(void)
     WaitPort(port);
     rxmsg = (struct RexxMsg *)GetMsg(port);
 
-    DeleteArgstring(rxmsg->rm_Args[0]);
+    DeleteArgstring((UBYTE *)rxmsg->rm_Args[0]);
     DeleteRexxMsg(rxmsg);
   }
 
