@@ -26,6 +26,8 @@
 #include <workbench/startup.h>
 #endif
 
+#include "SDI_compiler.h"
+
 struct SmartArgs
 {
    /* Readargs template */

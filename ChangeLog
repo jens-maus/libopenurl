@@ -5,6 +5,14 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2009-05-28  Jens Langner <Jens.Langner@light-speed.de>
+
+  * library/applist.c: instead of always returning 0 in mListCheckSave() for
+    AROS we now check if the returned pointer of xget(MUIA_List_Format) is
+    NULL or not and thus perform the string compare operation or not. This
+    should also catch the case where AROS is failing for the MUIA_List_Format
+    get operation.
+
 2009-05-28  Matthias Rustler <mrustler@gmx.de>
 
   * German catalog sync'd with "FlexCat .. newctfile ..." and updated.

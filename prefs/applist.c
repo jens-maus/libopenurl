@@ -492,11 +492,13 @@ static IPTR mListExport(UNUSED struct IClass *cl, Object *obj, struct MUIP_Impor
         struct listIO io;
         STRPTR        f;
 
-        f = (STRPTR)xget(obj, MUIA_List_Format);
-        io.len = strlen(f)+1;
-        strlcpy(io.format, f, sizeof(io.format));
+        if((f = (STRPTR)xget(obj, MUIA_List_Format)) != NULL)
+        {
+          io.len = strlen(f)+1;
+          strlcpy(io.format, f, sizeof(io.format));
 
-        DoMethod(msg->dataspace,MUIM_Dataspace_Add,(IPTR)&io,sizeof(ULONG)+io.len,id);
+          DoMethod(msg->dataspace,MUIM_Dataspace_Add,(IPTR)&io,sizeof(ULONG)+io.len,id);
+        }
     }
 
     return 0;
@@ -509,19 +511,13 @@ static IPTR mListExport(UNUSED struct IClass *cl, Object *obj, struct MUIP_Impor
 
 static IPTR mListCheckSave(struct IClass *cl, Object *obj, UNUSED Msg msg)
 {
-#ifdef __AROS__
-    // MUIA_List_Format is only [I] in Zune which leads to
-    // a segfault in strcmp()
-    return 0;
-#else
-    struct listData *data = INST_DATA(cl,obj);
+  struct listData *data = INST_DATA(cl,obj);
+  STRPTR f;
 
-    STRPTR f;
-
-    f = (STRPTR)xget(obj, MUIA_List_Format);
-
+  if((f = (STRPTR)xget(obj, MUIA_List_Format)) != NULL)
     return (IPTR)strcmp(f,(STRPTR)&data->format);
-#endif
+  else
+    return 0;
 }
 
 /**************************************************************************/

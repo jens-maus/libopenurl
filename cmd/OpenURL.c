@@ -119,7 +119,7 @@ int main(int argc,char **argv)
             memset(&args, 0, sizeof(args));
             memset(&smart_args, 0, sizeof(smart_args));
             smart_args.sa_Template = TEMPLATE;
-            smart_args.sa_Parameter = args;
+            smart_args.sa_Parameter = (IPTR*)args;
             smart_args.sa_FileParameter = A_URL;
             smart_args.sa_Window = (STRPTR)"CON:////OpenURL/AUTO/CLOSE/WAIT";
 
