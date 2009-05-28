@@ -1,6 +1,10 @@
-## version $VER: openurl.catalog 7.00 (31.10.2006)
-## codeset 0
+## version $VER: openurl.catalog 7.1 (28.05.2009)
 ## language deutsch
+## codeset 0
+;
+;
+; catcomp OpenURL.cd CTFILE OpenURL.ct
+;
 MSG_ErrReqTitle
 OpenURL Fehler
 ; OpenURL Error
@@ -45,10 +49,6 @@ MSG_Err_NoWinClass
 Kann WinClass nicht erzeugen
 ; Can't create WinClass
 ;
-MSG_Err_NoPensClass
-Kann PensClass nicht erzeugen
-; Can't create PensClass
-;
 MSG_Err_NoAppListClass
 Kann AppListClass nicht erzeugen
 ; Can't create AppListClass
@@ -83,7 +83,8 @@ Kann Einstellungen der\nopenurl.library nicht übernehmen
 ;
 MSG_Err_BadPrefs
 Diese Version des Programms kann openurl.library\nEinstellungen der Version %ld nicht verarbeiten
-; This version of this program doesn't know how\nto handle openurl.library prefs version %ld
+; This version of this program doesn't know how\n\
+; to handle openurl.library prefs version %ld
 ;
 MSG_Err_FailedSave
 Kann Einstellungen nicht speichern
@@ -133,9 +134,9 @@ MSG_Menu_Use
 U\0Benutzen
 ; U\0Use
 ;
-MSG_Menu_LastSaveds
-L\0Letztes gesichertes
-; L\0Last saveds
+MSG_Menu_LastSaved
+Zuletzt gespeichert
+; L\0Last saved
 ;
 MSG_Menu_Restore
 R\0Restaurieren
@@ -143,11 +144,7 @@ R\0Restaurieren
 ;
 MSG_Menu_Defaults
 D\0Grundeinstellungen
-; D\0Defaults settings
-;
-MSG_Menu_Pens
-P\0Farbeinsteller...
-; P\0Adjust pens...
+; D\0Default settings
 ;
 MSG_Menu_MUI
 M\0MUI Einstellungen...
@@ -317,7 +314,8 @@ ARe_xx Port
 ;
 MSG_Edit_Port_Help
 Name der Anwendung zu der ein ARexx\nKommando gesendet wird.
-; Name of the application ARexx port\nto send commands to.
+; Name of the application ARexx port\n\
+; to send commands to.
 ;
 MSG_Edit_Show
 _Zeige
@@ -333,7 +331,8 @@ Nach _vorne
 ;
 MSG_Edit_Screen_Help
 ARexx Kommando um die Anwendung nach vorne zu bringen.
-; ARexx command to move the application\nscreen to front.
+; ARexx command to move the application\n\
+; screen to front.
 ;
 MSG_Edit_OpenURL
 _Öffne Url
@@ -349,7 +348,8 @@ N_eues Fenster
 ;
 MSG_Edit_NewWin_Help
 ARexx Kommando um eine URL in\neinem neuen Fenster zu erhalten.
-; ARexx command to reach an URL\nin a new window (or tab).
+; ARexx command to reach an URL\n\
+; in a new window (or tab).
 ;
 MSG_Browser_List_Help
 Liste der Browser.
@@ -382,7 +382,8 @@ _Schreibe Mail
 ;
 MSG_Mailer_Write_Help
 ARexx Kommando um eine neue E-Mail in\neinem neuen Fenster schreiben zu können.
-; ARexx command to open a\n"write a new EMail window".
+; ARexx command to open a\n\
+; \"write a new EMail window\".
 ;
 MSG_Mailer_PopAddress
 Adresse
@@ -419,7 +420,8 @@ Entferne 'ftp://'
 ;
 MSG_FTP_RemoveURLQualifier_Help
 Wenn gewählt, wird "ftp://" aus der URL entfernt.
-; If selected, "ftp://" is removed\nfrom the URL.
+; If selected, \"ftp://\" is removed\n\
+; from the URL.
 ;
 MSG_Misc_Options
 Optionen
@@ -431,27 +433,33 @@ Grundeinstellungen
 ;
 MSG_Misc_Prepend
 Führendes "http://", an URLs ohne ein Muster
-; _Prepend "http://" to URLs without a scheme
+; _Prepend \"http://\" to URLs without a scheme
 ;
 MSG_Misc_Prepend_Help
-Wenn gewählt, wird "http://",\nohne ein Muster zu der URL gefügt,\nso das es im Browser geöffnet wird.
-; If selected, "http://" is added to any URL\nwithout a scheme, so that it is opened in the\nbrowser.
+Wenn gewählt, wird "http://"\nohne ein Muster zu der URL gefügt,\nso das es im Browser geöffnet wird.
+; If selected, \"http://\" is added to any URL\n\
+; without a scheme, so that it is opened in the\n\
+; browser.
 ;
 MSG_Misc_UseMailer
 S_endet mailto: URLs, zur E-Mail Anwendung
 ; S_end mailto: URLs to email application
 ;
 MSG_Misc_UseMailer_Help
-Wenn gewählt, werden "mailto:"\nURLs, zum Mailprogramm\ngesendet, ansonsten werden\nsie zum Browser geschickt.
-; If selected, "mailto:" URLs are sent to\nthe mailer, otherwise they are sent to the\nbrowser.
+Wenn gewählt, werden "mailto:"\nURLs zum Mailprogramm\ngesendet, ansonsten werden\nsie zum Browser geschickt.
+; If selected, \"mailto:\" URLs are sent to\n\
+; the mailer, otherwise they are sent to the\n\
+; browser.
 ;
 MSG_Misc_UseFTP
 Se_ndet "ftp://" URLs, zur FTP Anwendung
-; Se_nd "ftp://" URLs to FTP application
+; Se_nd \"ftp://\" URLs to FTP application
 ;
 MSG_Misc_UseFTP_Help
-Wenn gewählt, werden "ftp://" URLs, zum\nFTP Programm gesendet, ansonsten werden\nsie zum Browser geschickt.
-; If selected, "fpt://" URLs are sent to\nthe FTP client, otherwise they are sent to\nthe browser.
+Wenn gewählt, werden "ftp://" URLs zum\nFTP Programm gesendet, ansonsten werden\nsie zum Browser geschickt.
+; If selected, \"fpt://\" URLs are sent to\n\
+; the FTP client, otherwise they are sent to\n\
+; the browser.
 ;
 MSG_Misc_Show
 De-Ikonifi_ziere die Anwendung
@@ -459,7 +467,8 @@ De-Ikonifi_ziere die Anwendung
 ;
 MSG_Misc_Show_Help
 Wenn gewählt, wird die Anwendung unikonifiziert,\nbevor die URL gesendet wird.
-; If selected, the application is uniconified,\nbefore sending the URL to it.
+; If selected, the application is uniconified,\n\
+; before sending the URL to it.
 ;
 MSG_Misc_Bring
 _Bringt den Browserbildschirm nach vorne
@@ -467,7 +476,8 @@ _Bringt den Browserbildschirm nach vorne
 ;
 MSG_Misc_Bring_Help
 Wenn gewählt, wird der Schirm nach vorne gebracht, bevor die URL gesendet wird.
-; If selected, the application screen is moved\nto front, before sending the URL.
+; If selected, the application screen is moved\n\
+; to front, before sending the URL.
 ;
 MSG_Misc_Open
 _Öffnet URL in neuem Anwendungsfenster
@@ -475,7 +485,8 @@ _Öffnet URL in neuem Anwendungsfenster
 ;
 MSG_Misc_Open_Help
 Wenn gewählt, wird ein neues Anwendungsfenster geöffnet, bevor die URL gesendet wird.
-; If selected, a new application window (or tab)\nis opened, before sending the URL.
+; If selected, a new application window (or tab)\n\
+; is opened, before sending the URL.
 ;
 MSG_Misc_Launch
 Starte einen Browser, falls keiner _läuft
@@ -485,90 +496,19 @@ MSG_Misc_Launch_Help
 Wenn gewählt, wird die Anwendung gestartet, wenn keine gefunden wurde.
 ; If selected, a new application is run, if none is found.
 ;
-MSG_Pens_WinTitle
-Farbeinsteller
-; Adjust pens
-;
-MSG_Pens_EnabledPen
-Eingeschaltet
-; _Enabled
-;
-MSG_Pens_EnabledPen_Help
-Farbe wird für eingeschaltete Einträge verwendet.
-; Pen used for enabled entries lamp.
-;
-MSG_Pens_EnabledPen_WinTitle
-Aktiv Farbe
-; Enabled pen
-;
-MSG_Pens_DisabledPen
-Abgeschaltet
-; _Disabled
-;
-MSG_Pens_DisabledPen_Help
-Farbe wird für abgeschaltete Einträge verwendet.
-; Pen used for disabled entries lamp.
-;
-MSG_Pens_DisabledPen_WinTitle
-Abgeschaltete Farbe
-; Disabled pen
-;
-MSG_Pens_DetailPen
-Deta_il
-; Deta_il
-;
-MSG_Pens_DetailPen_Help
-Farbe wird für Detail Einträge verwendet.
-; Pen used for lamp details.
-;
-MSG_Pens_DetailPen_WinTitle
-Detail Farbe
-; Detail pen
-;
 MSG_About_WinTitle
 Über OpenURL
 ; About OpenURL
 ;
-MSG_About_Descr
-OpenURL ist eine shared Library, mit der man\nURLs einfach von einem Programm zu einem Browser\nbzw. E-Mail-Programm übermitteln kann.\nOpenURL wird nach den Regeln der Public Domain vertrieben .
-; OpenURL is a shared library for easily sending\nURLs from applications to browsers, mailers and\nFTP clients. OpenURL is destributed in the Public Domain.
-;
-MSG_About_Info
-Information
-; Information
-;
-MSG_About_Version
-Version :
-; Version:
-;
-MSG_About_Authors
-Autor :
-; Authors:
-;
-MSG_About_Support
-Unterstützung :
-; Support:
-;
-MSG_About_ThirdParts
-Dritte
-; Third parts
-;
-MSG_About_OfCourse
-, na klar !
-; , of course!
-;
-MSG_About_Translation
-Deutsch:
-; 
-MSG_About_Translator
- Hans-Jörg (Otti) Ottinger
-; 
-;
-MSG_About_TranslatorURL
-http://www.chimachine1000.de/Pegasos/Pegasos.htm
-; 
-;
 MSG_About_OK
 _OK
 ; _OK
+;
+MSG_About_Descr
+OpenURL ist eine shared Library, mit der man\nURLs einfach von einem Programm zu einem Browser\n\
+bzw. E-Mail-Programm übermitteln kann.\nOpenURL wird nach den Regeln der Public Domain vertrieben.
+; \33bOpenURL\33n is a shared library for easily sending\n\
+; URLs from applications to browsers, mailers\n\
+; and FTP clients.\n\n\
+; \33cOpenURL is a Public Domain Software.
 ;

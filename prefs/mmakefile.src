@@ -7,7 +7,7 @@ include $(TOP)/config/make.cfg
 #MM- workbench-libs-openurl : workbench-libs-openurl-prefs
 
 #MM workbench-libs-openurl-prefs : includes linklibs \
-#MM   workbench-libs-openurl-lib
+#MM workbench-libs-openurl-lib workbench-libs-openurl-catalogs
 
 EXE := OpenURL
 EXEDIR := $(AROS_PREFS)
@@ -39,12 +39,12 @@ FILES := \
 TARGETDIR := $(AROS_LOCALE)/Catalogs
 
 # Catalogs which aren't uptodate:
-#$(TARGETDIR)/deutsch/OpenURL.catalog
 #$(TARGETDIR)/svenska/OpenURL.catalog
 #$(TARGETDIR)/italiano/OpenURL.catalog
 
 #MM
 workbench-libs-openurl-catalogs : locale.h locale.c \
+    $(TARGETDIR)/deutsch/OpenURL.catalog \
     $(TARGETDIR)/français/OpenURL.catalog
 
 locale.h: ../locale/OpenURL.cd locale_h.sd

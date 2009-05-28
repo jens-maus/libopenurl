@@ -5,6 +5,11 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2009-05-28  Matthias Rustler <mrustler@gmx.de>
+
+  * German catalog sync'd with "FlexCat .. newctfile ..." and updated.
+  * Build German catalog with AROS metamakefile.
+
 2009-05-27  Matthias Rustler <mrustler@gmx.de>
 
   * AROS metamakefiles added
