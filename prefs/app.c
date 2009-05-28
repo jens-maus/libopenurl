@@ -353,7 +353,7 @@ static void closeAllWindows(Object *app)
       if(ok)
       {
         set(win, MUIA_Window_Open, FALSE);
-        DoMethod(app, OM_REMMEMBER, (ULONG)win);
+        DoMethod(app, OM_REMMEMBER, (IPTR)win);
         MUI_DisposeObject(win);
         loop = TRUE;
         break;
@@ -390,7 +390,10 @@ SDISPATCHER(dispatcher)
         case OM_NEW:                            return mNew(cl,obj,(APTR)msg);
         case OM_DISPOSE:                        return mDispose(cl,obj,(APTR)msg);
 
+#ifndef __AROS__
+// Disabled because it crashes on AROS.
         case MUIM_Application_AboutMUI:         return mAboutMUI(cl,obj,(APTR)msg);
+#endif
         case MUIM_Application_OpenConfigWindow: return mOpenConfigWindow(cl,obj,(APTR)msg);
 
         case MUIM_App_OpenWin:                  return mOpenWin(cl,obj,(APTR)msg);

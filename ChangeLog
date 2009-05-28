@@ -17,6 +17,10 @@ $URL$
 
   * German catalog sync'd with "FlexCat .. newctfile ..." and updated.
   * Build German catalog with AROS metamakefile.
+  * Copying of icon with AROS metamakefiles
+  * Metamakefiles cleaned up
+  * Overloading of MUIM_Application_AboutMUI disabled on AROS
+    because it crashes when closing the about window.
 
 2009-05-27  Matthias Rustler <mrustler@gmx.de>
 
