@@ -45,6 +45,7 @@
 #include <proto/string.h>
 #include <proto/getfile.h>
 #include <proto/intuition.h>
+#include <proto/utility.h>
 #include <proto/listbrowser.h>
 
 Object *edit_brow_win;
@@ -245,6 +246,7 @@ void updateBrowserWindow( struct URL_BrowserNode  * pBrowser )
 {
     if( pBrowser )
     {
+        IIntuition->SetAttrs(edit_brow_win,  WINDOW_UserData, pBrowser, TAG_DONE );
         IIntuition->SetGadgetAttrs(GAD(OBJ_BROW_NAME_STR), edit_brow_window, NULL, STRINGA_TextVal, pBrowser->ubn_Name, TAG_DONE );
         IIntuition->SetGadgetAttrs(GAD(OBJ_BROW_PATH_GET), edit_brow_window, NULL, GETFILE_File, pBrowser->ubn_Path, TAG_DONE );
         IIntuition->SetGadgetAttrs(GAD(OBJ_BROW_AREXX_STR), edit_brow_window, NULL, STRINGA_TextVal, pBrowser->ubn_Port, TAG_DONE );
@@ -256,4 +258,35 @@ void updateBrowserWindow( struct URL_BrowserNode  * pBrowser )
     	IDOS->Printf("No browser node\n");
 }
 
+void updateBrowserNode()
+{
+    struct URL_BrowserNode * pBrowser = NULL;
+
+    IIntuition->GetAttr( WINDOW_UserData, edit_brow_win, (ULONG*)&pBrowser );
+    if( pBrowser )
+    {
+        STRPTR strValue = NULL;
+        IIntuition->GetAttr(STRINGA_TextVal, GAD(OBJ_BROW_NAME_STR), (ULONG*)&strValue );
+        IUtility->Strlcpy( pBrowser->ubn_Name, strValue, NAME_LEN );
+        IIntuition->GetAttr(GETFILE_File, GAD(OBJ_BROW_PATH_GET), (ULONG*)&strValue );
+        IUtility->Strlcpy( pBrowser->ubn_Path, strValue, PATH_LEN );
+        IIntuition->GetAttr(STRINGA_TextVal, GAD(OBJ_BROW_AREXX_STR), (ULONG*)&strValue );
+        IUtility->Strlcpy( pBrowser->ubn_Port, strValue, PORT_LEN );
+        IIntuition->GetAttr(STRINGA_TextVal, GAD(OBJ_BROW_SHOW_STR), (ULONG*)&strValue );
+        IUtility->Strlcpy( pBrowser->ubn_ShowCmd, strValue, SHOWCMD_LEN );
+        IIntuition->GetAttr(STRINGA_TextVal, GAD(OBJ_BROW_FRONT_STR), (ULONG*)&strValue );
+        IUtility->Strlcpy( pBrowser->ubn_ToFrontCmd, strValue, TOFRONTCMD_LEN );
+        IIntuition->GetAttr(STRINGA_TextVal, GAD(OBJ_BROW_OPEN_STR), (ULONG*)&strValue );
+        IUtility->Strlcpy( pBrowser->ubn_OpenURLCmd, strValue, OPENURLCMD_LEN );
+        IIntuition->GetAttr(STRINGA_TextVal, GAD(OBJ_BROW_NEW_STR), (ULONG*)&strValue );
+        IUtility->Strlcpy( pBrowser->ubn_OpenURLWCmd, strValue, OPENURLWCMD_LEN );
+
+        // now update the ListBrowser attributes
+        IListBrowser->SetListBrowserNodeAttrs( (struct Node*)pBrowser,  LBNA_Column,    1,
+                                                LBNCA_Text,             pBrowser->ubn_Name,
+                                                LBNA_Column,            2,
+                                                LBNCA_Text,             pBrowser->ubn_Path,
+                                                TAG_END );
+    }
+}
 

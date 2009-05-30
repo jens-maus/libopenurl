@@ -31,6 +31,7 @@ Object * make_edit_mail_win(void);
 BOOL updateMailerList( struct List * list, struct MinList PrefsMailerList );
 
 void updateMailerWindow( struct URL_MailerNode  * pMailer );
+void updateMailerNode( void );
 
 #endif // MAILERS_H
 

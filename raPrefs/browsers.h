@@ -32,5 +32,6 @@ BOOL updateBrowserList( struct List * list, struct MinList PrefsBrowserList );
 
 void updateBrowserWindow( struct URL_BrowserNode  * pBrowser );
 
+void updateBrowserNode();
 #endif // BROWSERS_H
 

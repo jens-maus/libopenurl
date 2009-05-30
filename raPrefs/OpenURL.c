@@ -556,7 +556,7 @@ int main()
 
         IIntuition->DisposeObject(OBJ(OBJ_HIDDEN_CHOOSER));
 
-  //      IListBrowser->FreeListBrowserList(&list_FTPs);
+        IListBrowser->FreeListBrowserList(&list_FTPs);
         IListBrowser->FreeListBrowserList(&list_Mail);
         IListBrowser->FreeListBrowserList(&list_Brow);
         IExec->DeleteMsgPort(AppPort);
@@ -661,13 +661,13 @@ ULONG storePrefs( BOOL bStorePrefs )
     up.up_Version = PREFS_VERSION;
 
     /* Browsers */
-    IExec->CopyMem( &list_Brow, &up.up_BrowserList, sizeof(struct List) );
+    IExec->CopyMem( &list_Brow, &up.up_BrowserList, sizeof(struct MinList) );
 
     /* Mailers */
-    IExec->CopyMem( &list_Mail, &up.up_MailerList, sizeof(struct List) );
+    IExec->CopyMem( &list_Mail, &up.up_MailerList, sizeof(struct MinList) );
 
     /* FTPs */
-    IExec->CopyMem( &list_FTPs, &up.up_FTPList, sizeof(struct List) );
+    IExec->CopyMem( &list_FTPs, &up.up_FTPList, sizeof(struct MinList) );
 
     /* Miscellaneous */
     if(IIntuition->GetAttr( GA_Selected, OBJ(OBJ_PREPEND), &lLong ))

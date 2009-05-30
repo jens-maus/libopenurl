@@ -41,8 +41,11 @@
 #include <proto/window.h>
 #include <proto/string.h>
 #include <proto/getfile.h>
+#include <proto/utility.h>
 #include <proto/intuition.h>
 #include <proto/listbrowser.h>
+
+extern struct Window *window;
 
 Object *edit_mail_win;
 struct Window *edit_mail_window;
@@ -223,6 +226,7 @@ void updateMailerWindow( struct URL_MailerNode  * pMailer )
 {
     if( pMailer )
     {
+        IIntuition->SetAttrs(edit_mail_win,  WINDOW_UserData, pMailer, TAG_DONE );
         IIntuition->SetGadgetAttrs(GAD(OBJ_MAIL_NAME_STR), edit_mail_window, NULL, STRINGA_TextVal, pMailer->umn_Name, TAG_DONE );
         IIntuition->SetGadgetAttrs(GAD(OBJ_MAIL_PATH_GET), edit_mail_window, NULL, GETFILE_File, pMailer->umn_Path, TAG_DONE );
         IIntuition->SetGadgetAttrs(GAD(OBJ_MAIL_AREXX_STR), edit_mail_window, NULL, STRINGA_TextVal, pMailer->umn_Port, TAG_DONE );
@@ -232,4 +236,32 @@ void updateMailerWindow( struct URL_MailerNode  * pMailer )
     }
 }
 
+void updateMailerNode()
+{
+    struct URL_MailerNode * pMailer = NULL;
 
+    IIntuition->GetAttr( WINDOW_UserData, edit_mail_win, (ULONG*)&pMailer );
+    if( pMailer )
+    {
+        STRPTR strValue = NULL;
+        IIntuition->GetAttr(STRINGA_TextVal, GAD(OBJ_MAIL_NAME_STR), (ULONG*)&strValue );
+        IUtility->Strlcpy( pMailer->umn_Name, strValue, NAME_LEN );
+        IIntuition->GetAttr(GETFILE_File, GAD(OBJ_MAIL_PATH_GET), (ULONG*)&strValue );
+        IUtility->Strlcpy( pMailer->umn_Path, strValue, PATH_LEN );
+        IIntuition->GetAttr(STRINGA_TextVal, GAD(OBJ_MAIL_AREXX_STR), (ULONG*)&strValue );
+        IUtility->Strlcpy( pMailer->umn_Port, strValue, PORT_LEN );
+        IIntuition->GetAttr(STRINGA_TextVal, GAD(OBJ_MAIL_SHOW_STR), (ULONG*)&strValue );
+        IUtility->Strlcpy( pMailer->umn_ShowCmd, strValue, SHOWCMD_LEN );
+        IIntuition->GetAttr(STRINGA_TextVal, GAD(OBJ_MAIL_FRONT_STR), (ULONG*)&strValue );
+        IUtility->Strlcpy( pMailer->umn_ToFrontCmd, strValue, TOFRONTCMD_LEN );
+        IIntuition->GetAttr(STRINGA_TextVal, GAD(OBJ_MAIL_WRITE_STR), (ULONG*)&strValue );
+        IUtility->Strlcpy( pMailer->umn_WriteMailCmd, strValue, WRITEMAILCMD_LEN );
+
+        // now update the ListBrowser attributes
+        IListBrowser->SetListBrowserNodeAttrs( (struct Node*)pMailer,   LBNA_Column,    1,
+                                                LBNCA_Text,             pMailer->umn_Name,
+                                                LBNA_Column,            2,
+                                                LBNCA_Text,             pMailer->umn_Path,
+                                                TAG_END );
+    }
+}

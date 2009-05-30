@@ -5,6 +5,10 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2009-05-24  Alexandre Balaban <alexandre@balaban.fr>
+
+  * raPrefs/misc: made node edition and save/use/apply of prefs functionnal
+
 #### v7.5 RELEASE ##############################################################
 
 2009-05-30  Jens Langner <Jens.Langner@light-speed.de>

@@ -32,5 +32,7 @@ BOOL updateFTPList( struct List * list, struct MinList PrefsFTPList );
 
 void updateFTPWindow( struct URL_FTPNode  * pFTP );
 
+void updateFTPNode( void );
+
 #endif // FTPS_H
 
