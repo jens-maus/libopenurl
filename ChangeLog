@@ -5,6 +5,12 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+#### v7.5 RELEASE ##############################################################
+
+2009-05-30  Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: final 7.5 release preparations
+
 2009-05-28  Jens Langner <Jens.Langner@light-speed.de>
 
   * prefs/app.c: removed the not required AboutMUI method as calling

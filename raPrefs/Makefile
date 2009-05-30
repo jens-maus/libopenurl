@@ -206,6 +206,10 @@ ifeq ($(OS), os3)
   LDFLAGS += -noixemul
   LDLIBS  += -ldebug -lmui
 
+  # we empty the TARGET because we don't support
+  # this platform yet
+  TARGET=
+
 else
 ifeq ($(OS), mos)
 
@@ -225,6 +229,10 @@ ifeq ($(OS), mos)
   LDFLAGS += -noixemul
   LDLIBS  += -ldebug -mui
 
+  # we empty the TARGET because we don't support
+  # this platform yet
+  TARGET=
+
 else
 ifeq ($(OS), aros-i386)
 
@@ -240,6 +248,10 @@ ifeq ($(OS), aros-i386)
   # Compiler/Linker flags
   CFLAGS += -Wno-pointer-sign -DNO_INLINE_STDARG
   LDLIBS += -larossupport -lrom -lmui
+
+  # we empty the TARGET because we don't support
+  # this platform yet
+  TARGET=
 
 else
 ifeq ($(OS), aros-ppc)
@@ -257,6 +269,10 @@ ifeq ($(OS), aros-ppc)
   CFLAGS += -Wno-pointer-sign -DNO_INLINE_STDARG
   LDLIBS += -larossupport -lrom -lmui
 
+  # we empty the TARGET because we don't support
+  # this platform yet
+  TARGET=
+
 else
 ifeq ($(OS), aros-x86_64)
 
@@ -272,6 +288,10 @@ ifeq ($(OS), aros-x86_64)
   # Compiler/Linker flags
   CFLAGS += -Wno-pointer-sign -DNO_INLINE_STDARG
   LDLIBS += -larossupport -lrom -lmui
+
+  # we empty the TARGET because we don't support
+  # this platform yet
+  TARGET=
 
 endif
 endif

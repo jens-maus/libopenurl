@@ -26,7 +26,7 @@
 // for setting all necessary version information
 #define LIB_VERSION    7
 #define LIB_REVISION   5
-#define LIB_DATE       "16.05.2009"
+#define LIB_DATE       "30.05.2009"
 #define LIB_COPYRIGHT  "Copyright (c) 2005-2009 openurl.library Open Source Team"
 
 // set the LIB_REV_STRING
@@ -52,7 +52,7 @@
 #endif
 
 // identify the CPU model
-#if defined(__PPC__)
+#if defined(__PPC__) || defined(__powerpc__)
   #define CPU "PPC"
 #elif defined(_M68060) || defined(__M68060) || defined(__mc68060)
   #define CPU "m68060"
