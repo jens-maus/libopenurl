@@ -24,9 +24,9 @@
 #include <intuition/classusr.h>
 
 int VARARGS68K RA_Request( Object * pWin, const char * strTitle, const char * strGadgets, const char * strFormat, ... );
-
 void freeList( struct List * list );
 
+#define iget(obj, attr) ({uint32 b=0; IIntuition->GetAttr(attr, (Object *)obj, &b); b;})
 
 #endif // UTILITY_H
 

@@ -530,12 +530,14 @@ int main()
 
         if((window = RA_OpenWindow(win)) != NULL)
         {
-            uint32 sigmask = 0, siggot = 0;
+            uint32 sigmask;
             BOOL done = FALSE;
 
-            IIntuition->GetAttr(WINDOW_SigMask, win, &sigmask);
+            sigmask = iget(win, WINDOW_SigMask);
             while (!done)
             {
+                uint32 siggot;
+
                 siggot = IExec->Wait(sigmask);
                 if (siggot & sigmask)
                 {
@@ -654,8 +656,7 @@ ULONG loadPrefs( ULONG mode )
 
 ULONG storePrefs( BOOL bStorePrefs )
 {
-    ULONG lLong = 0;
-    struct URL_Prefs     up;
+    struct URL_Prefs up;
 
     /* Copy settings from gadgets into structure */
     up.up_Version = PREFS_VERSION;
@@ -670,36 +671,25 @@ ULONG storePrefs( BOOL bStorePrefs )
     IExec->CopyMem( &list_FTPs, &up.up_FTPList, sizeof(struct MinList) );
 
     /* Miscellaneous */
-    if(IIntuition->GetAttr( GA_Selected, OBJ(OBJ_PREPEND), &lLong ))
-    {
-        if(lLong)
-            up.up_Flags |= UPF_PREPENDHTTP;
-        else
-            up.up_Flags &= ~UPF_PREPENDHTTP;
-    }
-    if(IIntuition->GetAttr( GA_Selected, OBJ(OBJ_SEND_MAILTO), &lLong ))
-    {
-        if(lLong)
-            up.up_Flags |= UPF_DOMAILTO;
-        else
-            up.up_Flags &= ~UPF_DOMAILTO;
-    }
-    if(IIntuition->GetAttr( GA_Selected, OBJ(OBJ_SEND_FTP), &lLong ))
-    {
-        if(lLong)
-            up.up_Flags |= UPF_DOFTP;
-        else
-            up.up_Flags &= ~UPF_DOFTP;
-    }
+    if(iget(OBJ(OBJ_PREPEND), GA_Selected))
+        SET_FLAG(up.up_Flags, UPF_PREPENDHTTP);
+    else
+        CLEAR_FLAG(up.up_Flags, UPF_PREPENDHTTP);
 
-    if(IIntuition->GetAttr( GA_Selected, OBJ(OBJ_UNICONIFY), &lLong ))
-        up.up_DefShow         = lLong;
-    if(IIntuition->GetAttr( GA_Selected, OBJ(OBJ_BRING), &lLong ))
-        up.up_DefBringToFront = lLong;
-    if(IIntuition->GetAttr( GA_Selected, OBJ(OBJ_OPEN), &lLong ))
-        up.up_DefNewWindow    = lLong;
-    if(IIntuition->GetAttr( GA_Selected, OBJ(OBJ_LAUNCH), &lLong ))
-        up.up_DefLaunch       = lLong;
+    if(iget(OBJ(OBJ_SEND_MAILTO), GA_Selected))
+        SET_FLAG(up.up_Flags, UPF_DOMAILTO);
+    else
+        CLEAR_FLAG(up.up_Flags, UPF_DOMAILTO);
+
+    if(iget(OBJ(OBJ_SEND_FTP), GA_Selected))
+        SET_FLAG(up.up_Flags, UPF_DOFTP);
+    else
+        CLEAR_FLAG(up.up_Flags, UPF_DOFTP);
+
+    up.up_DefShow = iget(OBJ(OBJ_UNICONIFY), GA_Selected);
+    up.up_DefBringToFront = iget(OBJ(OBJ_BRING), GA_Selected);
+    up.up_DefNewWindow = iget(OBJ(OBJ_OPEN), GA_Selected);
+    up.up_DefLaunch = iget(OBJ(OBJ_LAUNCH), GA_Selected);
 
     /* Save to disk */
     if (!IOpenURL->URL_SetPrefs(&up,URL_SetPrefs_Save,bStorePrefs,TAG_DONE))

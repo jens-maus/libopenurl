@@ -25,6 +25,7 @@
 #include "gui_global.h"
 #include "OpenURL.h"
 #include "macros.h"
+#include "utility.h"
 
 #include <libraries/openurl.h>
 
@@ -77,15 +78,16 @@ BOOL HandleInput_Main_Win(void)
                 {
                     case OBJ_LBROWSER_BROW:
                     {
-                        uint32 retval = 0;
-                        IIntuition->GetAttr( LISTBROWSER_RelEvent, OBJ(OBJ_LBROWSER_BROW), &retval );
+                        uint32 retval = iget(OBJ(OBJ_LBROWSER_BROW), LISTBROWSER_RelEvent);
+
                         switch(retval)
                         {
                             case LBRE_CHECKED:
                             case LBRE_UNCHECKED:
                             {
-                                struct URL_BrowserNode * bn = NULL;
-                                IIntuition->GetAttr( LISTBROWSER_SelectedNode, OBJ(OBJ_LBROWSER_BROW), (ULONG*) &bn );
+                                struct URL_BrowserNode *bn;
+
+                                bn = (struct URL_BrowserNode *)iget(OBJ(OBJ_LBROWSER_BROW), LISTBROWSER_SelectedNode);
                                 if (retval == LBRE_UNCHECKED)
                                     SET_FLAG(bn->ubn_Flags,UNF_DISABLED);
                                 else
@@ -98,23 +100,25 @@ BOOL HandleInput_Main_Win(void)
                     }
                     case OBJ_EDIT_BROW:
                     {
-                        struct URL_BrowserNode * bn = NULL;
-                        IIntuition->GetAttr( LISTBROWSER_SelectedNode, OBJ(OBJ_LBROWSER_BROW), (ULONG*) &bn );
-                        updateBrowserWindow( bn );
+                        struct URL_BrowserNode *bn;
+
+                        bn = (struct URL_BrowserNode *)iget(OBJ(OBJ_LBROWSER_BROW), LISTBROWSER_SelectedNode);
+                        updateBrowserWindow(bn);
                         edit_brow_window = RA_OpenWindow(edit_brow_win);
                         break;
                     }
                     case OBJ_LBROWSER_MAIL:
                     {
-                        uint32 retval = 0;
-                        IIntuition->GetAttr( LISTBROWSER_RelEvent, OBJ(OBJ_LBROWSER_MAIL), &retval );
+                        uint32 retval = iget(OBJ(OBJ_LBROWSER_MAIL), LISTBROWSER_RelEvent);
+
                         switch(retval)
                         {
                             case LBRE_CHECKED:
                             case LBRE_UNCHECKED:
                             {
-                                struct URL_MailerNode * mn = NULL;
-                                IIntuition->GetAttr( LISTBROWSER_SelectedNode, OBJ(OBJ_LBROWSER_MAIL), (ULONG*) &mn );
+                                struct URL_MailerNode *mn;
+
+                                mn = (struct URL_MailerNode *)iget(OBJ(OBJ_LBROWSER_MAIL), LISTBROWSER_SelectedNode);
                                 if (retval == LBRE_UNCHECKED)
                                     SET_FLAG(mn->umn_Flags,UNF_DISABLED);
                                 else
@@ -127,23 +131,25 @@ BOOL HandleInput_Main_Win(void)
                     }
                     case OBJ_EDIT_MAIL:
                     {
-                        struct URL_MailerNode * mn = NULL;
-                        IIntuition->GetAttr( LISTBROWSER_SelectedNode, OBJ(OBJ_LBROWSER_MAIL), (ULONG*) &mn );
-                        updateMailerWindow( mn );
+                        struct URL_MailerNode *mn;
+
+                        mn = (struct URL_MailerNode *)iget(OBJ(OBJ_LBROWSER_MAIL), LISTBROWSER_SelectedNode);
+                        updateMailerWindow(mn);
                         edit_mail_window = RA_OpenWindow(edit_mail_win);
                         break;
                     }
                     case OBJ_LBROWSER_FTP:
                     {
-                        uint32 retval = 0;
-                        IIntuition->GetAttr( LISTBROWSER_RelEvent, OBJ(OBJ_LBROWSER_FTP), &retval );
+                        uint32 retval = iget(OBJ(OBJ_LBROWSER_FTP), LISTBROWSER_RelEvent);
+
                         switch(retval)
                         {
                             case LBRE_CHECKED:
                             case LBRE_UNCHECKED:
                             {
-                                struct URL_FTPNode * fn = NULL;
-                                IIntuition->GetAttr( LISTBROWSER_SelectedNode, OBJ(OBJ_LBROWSER_FTP), (ULONG*) &fn );
+                                struct URL_FTPNode *fn;
+
+                                fn = (struct URL_FTPNode *)iget(OBJ(OBJ_LBROWSER_FTP), LISTBROWSER_SelectedNode);
                                 if (retval == LBRE_UNCHECKED)
                                     SET_FLAG(fn->ufn_Flags,UNF_DISABLED);
                                 else
@@ -156,9 +162,10 @@ BOOL HandleInput_Main_Win(void)
                     }
                     case OBJ_EDIT_FTP:
                     {
-                        struct URL_FTPNode * fn = NULL;
-                        IIntuition->GetAttr( LISTBROWSER_SelectedNode, OBJ(OBJ_LBROWSER_FTP), (ULONG*) &fn );
-                        updateFTPWindow( fn );
+                        struct URL_FTPNode *fn;
+
+                        fn = (struct URL_FTPNode *)iget(OBJ(OBJ_LBROWSER_FTP), LISTBROWSER_SelectedNode);
+                        updateFTPWindow(fn);
                         edit_ftp_window = RA_OpenWindow(edit_ftp_win);
                         break;
                     }

@@ -238,24 +238,24 @@ void updateMailerWindow( struct URL_MailerNode  * pMailer )
 
 void updateMailerNode()
 {
-    struct URL_MailerNode * pMailer = NULL;
+    struct URL_MailerNode *pMailer;
 
-    IIntuition->GetAttr( WINDOW_UserData, edit_mail_win, (ULONG*)&pMailer );
-    if( pMailer )
+    if((pMailer = (struct URL_MailerNode *)iget(edit_mail_win, WINDOW_UserData)) != NULL)
     {
-        STRPTR strValue = NULL;
-        IIntuition->GetAttr(STRINGA_TextVal, GAD(OBJ_MAIL_NAME_STR), (ULONG*)&strValue );
-        IUtility->Strlcpy( pMailer->umn_Name, strValue, NAME_LEN );
-        IIntuition->GetAttr(GETFILE_File, GAD(OBJ_MAIL_PATH_GET), (ULONG*)&strValue );
-        IUtility->Strlcpy( pMailer->umn_Path, strValue, PATH_LEN );
-        IIntuition->GetAttr(STRINGA_TextVal, GAD(OBJ_MAIL_AREXX_STR), (ULONG*)&strValue );
-        IUtility->Strlcpy( pMailer->umn_Port, strValue, PORT_LEN );
-        IIntuition->GetAttr(STRINGA_TextVal, GAD(OBJ_MAIL_SHOW_STR), (ULONG*)&strValue );
-        IUtility->Strlcpy( pMailer->umn_ShowCmd, strValue, SHOWCMD_LEN );
-        IIntuition->GetAttr(STRINGA_TextVal, GAD(OBJ_MAIL_FRONT_STR), (ULONG*)&strValue );
-        IUtility->Strlcpy( pMailer->umn_ToFrontCmd, strValue, TOFRONTCMD_LEN );
-        IIntuition->GetAttr(STRINGA_TextVal, GAD(OBJ_MAIL_WRITE_STR), (ULONG*)&strValue );
-        IUtility->Strlcpy( pMailer->umn_WriteMailCmd, strValue, WRITEMAILCMD_LEN );
+        STRPTR strValue;
+
+        strValue = (STRPTR)iget(GAD(OBJ_MAIL_NAME_STR), STRINGA_TextVal);
+        IUtility->Strlcpy(pMailer->umn_Name, strValue, sizeof(pMailer->umn_Name));
+        strValue = (STRPTR)iget(GAD(OBJ_MAIL_PATH_GET), STRINGA_TextVal);
+        IUtility->Strlcpy(pMailer->umn_Path, strValue, sizeof(pMailer->umn_Path));
+        strValue = (STRPTR)iget(GAD(OBJ_MAIL_AREXX_STR), STRINGA_TextVal);
+        IUtility->Strlcpy(pMailer->umn_Port, strValue, sizeof(pMailer->umn_Port));
+        strValue = (STRPTR)iget(GAD(OBJ_MAIL_SHOW_STR), STRINGA_TextVal);
+        IUtility->Strlcpy(pMailer->umn_ShowCmd, strValue, sizeof(pMailer->umn_ShowCmd));
+        strValue = (STRPTR)iget(GAD(OBJ_MAIL_FRONT_STR), STRINGA_TextVal);
+        IUtility->Strlcpy(pMailer->umn_ToFrontCmd, strValue, sizeof(pMailer->umn_ToFrontCmd));
+        strValue = (STRPTR)iget(GAD(OBJ_MAIL_WRITE_STR), STRINGA_TextVal);
+        IUtility->Strlcpy(pMailer->umn_WriteMailCmd, strValue, sizeof(pMailer->umn_WriteMailCmd));
 
         // now update the ListBrowser attributes
         IListBrowser->SetListBrowserNodeAttrs( (struct Node*)pMailer,   LBNA_Column,    1,

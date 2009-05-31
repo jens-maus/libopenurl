@@ -264,26 +264,26 @@ void updateFTPWindow( struct URL_FTPNode  * pFTP )
 
 void updateFTPNode()
 {
-    struct URL_FTPNode * pFTP = NULL;
+    struct URL_FTPNode *pFTP;
 
-    IIntuition->GetAttr( WINDOW_UserData, edit_ftp_win, (ULONG*)&pFTP );
-    if( pFTP )
+    if((pFTP = (struct URL_FTPNode *)iget(edit_ftp_win, WINDOW_UserData)) != NULL)
     {
-        STRPTR strValue = NULL;
-        IIntuition->GetAttr(STRINGA_TextVal, GAD(OBJ_FTP_NAME_STR), (ULONG*)&strValue );
-        IUtility->Strlcpy( pFTP->ufn_Name, strValue, NAME_LEN );
-        IIntuition->GetAttr(GETFILE_File, GAD(OBJ_FTP_PATH_GET), (ULONG*)&strValue );
-        IUtility->Strlcpy( pFTP->ufn_Path, strValue, PATH_LEN );
-        IIntuition->GetAttr(STRINGA_TextVal, GAD(OBJ_FTP_AREXX_STR), (ULONG*)&strValue );
-        IUtility->Strlcpy( pFTP->ufn_Port, strValue, PORT_LEN );
-        IIntuition->GetAttr(STRINGA_TextVal, GAD(OBJ_FTP_SHOW_STR), (ULONG*)&strValue );
-        IUtility->Strlcpy( pFTP->ufn_ShowCmd, strValue, SHOWCMD_LEN );
-        IIntuition->GetAttr(STRINGA_TextVal, GAD(OBJ_FTP_FRONT_STR), (ULONG*)&strValue );
-        IUtility->Strlcpy( pFTP->ufn_ToFrontCmd, strValue, TOFRONTCMD_LEN );
-        IIntuition->GetAttr(STRINGA_TextVal, GAD(OBJ_FTP_OPEN_STR), (ULONG*)&strValue );
-        IUtility->Strlcpy( pFTP->ufn_OpenURLCmd, strValue, OPENURLCMD_LEN );
-        IIntuition->GetAttr(STRINGA_TextVal, GAD(OBJ_FTP_NEW_STR), (ULONG*)&strValue );
-        IUtility->Strlcpy( pFTP->ufn_OpenURLWCmd, strValue, OPENURLWCMD_LEN );
+        STRPTR strValue;
+
+        strValue = (STRPTR)iget(GAD(OBJ_FTP_NAME_STR), STRINGA_TextVal);
+        IUtility->Strlcpy(pFTP->ufn_Name, strValue, sizeof(pFTP->ufn_Name));
+        strValue = (STRPTR)iget(GAD(OBJ_FTP_PATH_GET), STRINGA_TextVal);
+        IUtility->Strlcpy(pFTP->ufn_Path, strValue, sizeof(pFTP->ufn_Path));
+        strValue = (STRPTR)iget(GAD(OBJ_FTP_AREXX_STR), STRINGA_TextVal);
+        IUtility->Strlcpy(pFTP->ufn_Port, strValue, sizeof(pFTP->ufn_Port));
+        strValue = (STRPTR)iget(GAD(OBJ_FTP_SHOW_STR), STRINGA_TextVal);
+        IUtility->Strlcpy(pFTP->ufn_ShowCmd, strValue, sizeof(pFTP->ufn_ShowCmd));
+        strValue = (STRPTR)iget(GAD(OBJ_FTP_FRONT_STR), STRINGA_TextVal);
+        IUtility->Strlcpy(pFTP->ufn_ToFrontCmd, strValue, sizeof(pFTP->ufn_ToFrontCmd));
+        strValue = (STRPTR)iget(GAD(OBJ_FTP_OPEN_STR), STRINGA_TextVal);
+        IUtility->Strlcpy(pFTP->ufn_OpenURLCmd, strValue, sizeof(pFTP->ufn_OpenURLCmd));
+        strValue = (STRPTR)iget(GAD(OBJ_FTP_NEW_STR), STRINGA_TextVal);
+        IUtility->Strlcpy(pFTP->ufn_OpenURLWCmd, strValue, sizeof(pFTP->ufn_OpenURLWCmd));
 
         // now update the ListBrowser attributes
         IListBrowser->SetListBrowserNodeAttrs( (struct Node*)pFTP,  LBNA_Column,    1,

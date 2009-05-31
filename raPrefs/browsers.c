@@ -260,26 +260,26 @@ void updateBrowserWindow( struct URL_BrowserNode  * pBrowser )
 
 void updateBrowserNode()
 {
-    struct URL_BrowserNode * pBrowser = NULL;
+    struct URL_BrowserNode *pBrowser;
 
-    IIntuition->GetAttr( WINDOW_UserData, edit_brow_win, (ULONG*)&pBrowser );
-    if( pBrowser )
+    if((pBrowser = (struct URL_BrowserNode *)iget(edit_brow_win, WINDOW_UserData)) != NULL)
     {
-        STRPTR strValue = NULL;
-        IIntuition->GetAttr(STRINGA_TextVal, GAD(OBJ_BROW_NAME_STR), (ULONG*)&strValue );
-        IUtility->Strlcpy( pBrowser->ubn_Name, strValue, NAME_LEN );
-        IIntuition->GetAttr(GETFILE_File, GAD(OBJ_BROW_PATH_GET), (ULONG*)&strValue );
-        IUtility->Strlcpy( pBrowser->ubn_Path, strValue, PATH_LEN );
-        IIntuition->GetAttr(STRINGA_TextVal, GAD(OBJ_BROW_AREXX_STR), (ULONG*)&strValue );
-        IUtility->Strlcpy( pBrowser->ubn_Port, strValue, PORT_LEN );
-        IIntuition->GetAttr(STRINGA_TextVal, GAD(OBJ_BROW_SHOW_STR), (ULONG*)&strValue );
-        IUtility->Strlcpy( pBrowser->ubn_ShowCmd, strValue, SHOWCMD_LEN );
-        IIntuition->GetAttr(STRINGA_TextVal, GAD(OBJ_BROW_FRONT_STR), (ULONG*)&strValue );
-        IUtility->Strlcpy( pBrowser->ubn_ToFrontCmd, strValue, TOFRONTCMD_LEN );
-        IIntuition->GetAttr(STRINGA_TextVal, GAD(OBJ_BROW_OPEN_STR), (ULONG*)&strValue );
-        IUtility->Strlcpy( pBrowser->ubn_OpenURLCmd, strValue, OPENURLCMD_LEN );
-        IIntuition->GetAttr(STRINGA_TextVal, GAD(OBJ_BROW_NEW_STR), (ULONG*)&strValue );
-        IUtility->Strlcpy( pBrowser->ubn_OpenURLWCmd, strValue, OPENURLWCMD_LEN );
+        STRPTR strValue;
+
+        strValue = (STRPTR)iget(GAD(OBJ_BROW_NAME_STR), STRINGA_TextVal);
+        IUtility->Strlcpy(pBrowser->ubn_Name, strValue, sizeof(pBrowser->ubn_Name));
+        strValue = (STRPTR)iget(GAD(OBJ_BROW_PATH_GET), STRINGA_TextVal);
+        IUtility->Strlcpy(pBrowser->ubn_Path, strValue, sizeof(pBrowser->ubn_Path));
+        strValue = (STRPTR)iget(GAD(OBJ_BROW_AREXX_STR), STRINGA_TextVal);
+        IUtility->Strlcpy(pBrowser->ubn_Port, strValue, sizeof(pBrowser->ubn_Port));
+        strValue = (STRPTR)iget(GAD(OBJ_BROW_SHOW_STR), STRINGA_TextVal);
+        IUtility->Strlcpy(pBrowser->ubn_ShowCmd, strValue, sizeof(pBrowser->ubn_ShowCmd));
+        strValue = (STRPTR)iget(GAD(OBJ_BROW_FRONT_STR), STRINGA_TextVal);
+        IUtility->Strlcpy(pBrowser->ubn_ToFrontCmd, strValue, sizeof(pBrowser->ubn_ToFrontCmd));
+        strValue = (STRPTR)iget(GAD(OBJ_BROW_OPEN_STR), STRINGA_TextVal);
+        IUtility->Strlcpy(pBrowser->ubn_OpenURLCmd, strValue, sizeof(pBrowser->ubn_OpenURLCmd));
+        strValue = (STRPTR)iget(GAD(OBJ_BROW_NEW_STR), STRINGA_TextVal);
+        IUtility->Strlcpy(pBrowser->ubn_OpenURLWCmd, strValue, sizeof(pBrowser->ubn_OpenURLWCmd));
 
         // now update the ListBrowser attributes
         IListBrowser->SetListBrowserNodeAttrs( (struct Node*)pBrowser,  LBNA_Column,    1,

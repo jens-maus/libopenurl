@@ -5,6 +5,11 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2009-05-31  Thore Böckelmann <tboeckel@gmx.de>
+
+  * raPrefs/#?.c: fixed all warnings and replaced GetAttr() call by the iget()
+    macro.
+
 2009-05-24  Alexandre Balaban <alexandre@balaban.fr>
 
   * raPrefs/misc: made node edition and save/use/apply of prefs functionnal
