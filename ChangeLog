@@ -5,6 +5,11 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2009-06-01  Thore Böckelmann <tboeckel@gmx.de>
+
+  * raPrefs/#?.c: added the two new macros iset() and gadset() to replace the
+    quite long SetAttrs() and SetGadgetAttrs() calls.
+
 2009-05-31  Thore Böckelmann <tboeckel@gmx.de>
 
   * raPrefs/#?.c: fixed all warnings and replaced GetAttr() call by the iget()

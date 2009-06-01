@@ -229,9 +229,10 @@ void HandleInput_Edit_Brow_Win()
                 switch (result & WMHI_GADGETMASK)
                 {
                     case OBJ_BROW_USE:
-                        IIntuition->SetGadgetAttrs(GAD(OBJ_LBROWSER_BROW), window, NULL, LISTBROWSER_Labels, ~0, TAG_DONE);
+                        gadset(GAD(OBJ_LBROWSER_BROW), window, LISTBROWSER_Labels, ~0);
                         updateBrowserNode();
-                        IIntuition->SetGadgetAttrs(GAD(OBJ_LBROWSER_BROW), window, NULL, LISTBROWSER_Labels, &list_Brow, LISTBROWSER_AutoFit, TRUE, TAG_DONE);
+                        gadset(GAD(OBJ_LBROWSER_BROW), window,  LISTBROWSER_Labels, &list_Brow,
+                                                                LISTBROWSER_AutoFit, TRUE);
                     case OBJ_BROW_CANCEL:
                         RA_CloseWindow(edit_brow_win);
                         edit_brow_window = NULL;
@@ -244,27 +245,12 @@ void HandleInput_Edit_Brow_Win()
                     case OBJ_BROW_PATH_CHOOSE:  // set Attrs according to the button clicked on.
                     case OBJ_BROW_OPEN_CHOOSE:
                     case OBJ_BROW_NEW_CHOOSE:
-
-                        IIntuition->SetAttrs( OBJ(OBJ_HIDDEN_CHOOSER),
-
-                    //  NULL-terminated array of strings
-                            CHOOSER_LabelArray, hidden_strings, TAG_DONE);
-
-                    //  or an Exec List of labels (built from open ARexx ports ?)
-                    //        CHOOSER_Labels, &chooserlist, TAG_DONE);
-
+                        iset(OBJ(OBJ_HIDDEN_CHOOSER), CHOOSER_LabelArray, hidden_strings);
                         IIntuition->ActivateGadget(GAD(OBJ_HIDDEN_CHOOSER),
                                                    edit_brow_window, NULL);
                         break;
                     case OBJ_BROW_AREXX_CHOOSE:
-                        IIntuition->SetAttrs( OBJ(OBJ_HIDDEN_CHOOSER),
-
-                    //  NULL-terminated array of strings
-                            CHOOSER_LabelArray, hidden_strings, TAG_DONE);
-
-                    //  or an Exec List of labels (built from open ARexx ports ?)
-                    //        CHOOSER_Labels, &chooserlist, TAG_DONE);
-
+                        iset(OBJ(OBJ_HIDDEN_CHOOSER), CHOOSER_LabelArray, hidden_strings);
                         IIntuition->ActivateGadget(GAD(OBJ_HIDDEN_CHOOSER),
                                                    edit_brow_window, NULL);
                         break;
@@ -292,9 +278,10 @@ void HandleInput_Edit_Mail_Win()
                 switch (result & WMHI_GADGETMASK)
                 {
                     case OBJ_MAIL_USE:
-                        IIntuition->SetGadgetAttrs(GAD(OBJ_LBROWSER_MAIL), window, NULL, LISTBROWSER_Labels, ~0, TAG_DONE);
+                        gadset(GAD(OBJ_LBROWSER_MAIL), window, LISTBROWSER_Labels, ~0);
                         updateMailerNode();
-                        IIntuition->SetGadgetAttrs(GAD(OBJ_LBROWSER_MAIL), window, NULL, LISTBROWSER_Labels, &list_Mail, LISTBROWSER_AutoFit, TRUE, TAG_DONE);
+                        gadset(GAD(OBJ_LBROWSER_MAIL), window, LISTBROWSER_Labels, &list_Mail,
+                                                               LISTBROWSER_AutoFit, TRUE);
                     case OBJ_MAIL_CANCEL:
                         RA_CloseWindow(edit_mail_win);
                         edit_mail_window = NULL;
@@ -306,27 +293,12 @@ void HandleInput_Edit_Mail_Win()
                         break;
                     case OBJ_MAIL_PATH_CHOOSE:  // set Attrs according to the button clicked on.
                     case OBJ_MAIL_WRITE_CHOOSE:
-
-                        IIntuition->SetAttrs( OBJ(OBJ_HIDDEN_CHOOSER),
-
-                    //  NULL-terminated array of strings
-                            CHOOSER_LabelArray, hidden_strings, TAG_DONE);
-
-                    //  or an Exec List of labels (built from open ARexx ports ?)
-                    //        CHOOSER_Labels, &chooserlist, TAG_DONE);
-
+                        iset(OBJ(OBJ_HIDDEN_CHOOSER), CHOOSER_LabelArray, hidden_strings);
                         IIntuition->ActivateGadget(GAD(OBJ_HIDDEN_CHOOSER),
                                                    edit_mail_window, NULL);
                         break;
                     case OBJ_MAIL_AREXX_CHOOSE:
-                        IIntuition->SetAttrs( OBJ(OBJ_HIDDEN_CHOOSER),
-
-                    //  NULL-terminated array of strings
-                            CHOOSER_LabelArray, hidden_strings, TAG_DONE);
-
-                    //  or an Exec List of labels (built from open ARexx ports ?)
-                    //        CHOOSER_Labels, &chooserlist, TAG_DONE);
-
+                        iset(OBJ(OBJ_HIDDEN_CHOOSER), CHOOSER_LabelArray, hidden_strings);
                         IIntuition->ActivateGadget(GAD(OBJ_HIDDEN_CHOOSER),
                                                    edit_mail_window, NULL);
                         break;
@@ -354,9 +326,10 @@ void HandleInput_Edit_FTP_Win()
                 switch (result & WMHI_GADGETMASK)
                 {
                     case OBJ_FTP_USE:
-                        IIntuition->SetGadgetAttrs(GAD(OBJ_LBROWSER_BROW), window, NULL, LISTBROWSER_Labels, ~0, TAG_DONE);
+                        gadset(GAD(OBJ_LBROWSER_BROW), window, LISTBROWSER_Labels, ~0);
                         updateFTPNode();
-                        IIntuition->SetGadgetAttrs(GAD(OBJ_LBROWSER_BROW), window, NULL, LISTBROWSER_Labels, &list_FTPs, LISTBROWSER_AutoFit, TRUE, TAG_DONE);
+                        gadset(GAD(OBJ_LBROWSER_BROW), window, LISTBROWSER_Labels, &list_FTPs,
+                                                               LISTBROWSER_AutoFit, TRUE);
                     case OBJ_FTP_CANCEL:
                         RA_CloseWindow(edit_ftp_win);
                         edit_brow_window = NULL;
@@ -369,27 +342,12 @@ void HandleInput_Edit_FTP_Win()
                     case OBJ_FTP_PATH_CHOOSE:  // set Attrs according to the button clicked on.
                     case OBJ_FTP_OPEN_CHOOSE:
                     case OBJ_FTP_NEW_CHOOSE:
-
-                        IIntuition->SetAttrs( OBJ(OBJ_HIDDEN_CHOOSER),
-
-                    //  NULL-terminated array of strings
-                            CHOOSER_LabelArray, hidden_strings, TAG_DONE);
-
-                    //  or an Exec List of labels (built from open ARexx ports ?)
-                    //        CHOOSER_Labels, &chooserlist, TAG_DONE);
-
+                        iset( OBJ(OBJ_HIDDEN_CHOOSER), CHOOSER_LabelArray, hidden_strings);
                         IIntuition->ActivateGadget(GAD(OBJ_HIDDEN_CHOOSER),
                                                    edit_ftp_window, NULL);
                         break;
                     case OBJ_FTP_AREXX_CHOOSE:
-                        IIntuition->SetAttrs( OBJ(OBJ_HIDDEN_CHOOSER),
-
-                    //  NULL-terminated array of strings
-                            CHOOSER_LabelArray, hidden_strings, TAG_DONE);
-
-                    //  or an Exec List of labels (built from open ARexx ports ?)
-                    //        CHOOSER_Labels, &chooserlist, TAG_DONE);
-
+                        iset( OBJ(OBJ_HIDDEN_CHOOSER), CHOOSER_LabelArray, hidden_strings);
                         IIntuition->ActivateGadget(GAD(OBJ_HIDDEN_CHOOSER),
                                                    edit_ftp_window, NULL);
                         break;

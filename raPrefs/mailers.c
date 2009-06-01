@@ -22,6 +22,7 @@
 
 #include "gui_global.h"
 #include "utility.h"
+#include "macros.h"
 
 #include <classes/window.h>
 #include <libraries/openurl.h>
@@ -180,13 +181,13 @@ Object * make_edit_mail_win(void)
     WindowEnd;
 }
 
-BOOL updateMailerList( struct List * list, struct MinList PrefsMailerList )
+BOOL updateMailerList(struct List * list, struct MinList PrefsMailerList)
 {
     struct URL_MailerNode   *   mn      = NULL,
                             *   newNode = NULL;
 
     // libération de la liste
-    freeList( list );
+    freeList(list);
 
     // ajout des nouvelles données
     for (mn = (struct URL_MailerNode *)PrefsMailerList.mlh_Head;
@@ -196,19 +197,19 @@ BOOL updateMailerList( struct List * list, struct MinList PrefsMailerList )
         if((newNode = (struct URL_MailerNode*)IListBrowser->AllocListBrowserNode(3,
             LBNA_NodeSize,  sizeof(struct URL_MailerNode),
             LBNA_CheckBox,  TRUE,
-            LBNA_Checked,   (mn->umn_Flags&UNF_DISABLED)?FALSE:TRUE,
+            LBNA_Checked,   isFlagClear(mn->umn_Flags, UNF_DISABLED),
             LBNA_Column,    1,
             LBNCA_Text, "",
             LBNA_Column, 2,
             LBNCA_Text, "",
             TAG_DONE)) != NULL)
         {
-            IExec->CopyMem( mn, newNode, sizeof(struct URL_MailerNode ) );
-            IListBrowser->SetListBrowserNodeAttrs( (struct Node*)newNode, LBNA_Column,    1,
+            IExec->CopyMem(mn, newNode, sizeof(struct URL_MailerNode));
+            IListBrowser->SetListBrowserNodeAttrs((struct Node*)newNode, LBNA_Column,    1,
                                                             LBNCA_Text,     newNode->umn_Name,
                                                             LBNA_Column,    2,
                                                             LBNCA_Text,     newNode->umn_Path,
-                                                            TAG_END );
+                                                            TAG_END);
 
             IExec->AddTail(list, (struct Node*)newNode);
         }
@@ -222,17 +223,17 @@ BOOL updateMailerList( struct List * list, struct MinList PrefsMailerList )
     return TRUE;
 }
 
-void updateMailerWindow( struct URL_MailerNode  * pMailer )
+void updateMailerWindow(struct URL_MailerNode  * pMailer)
 {
-    if( pMailer )
+    if(pMailer != NULL)
     {
-        IIntuition->SetAttrs(edit_mail_win,  WINDOW_UserData, pMailer, TAG_DONE );
-        IIntuition->SetGadgetAttrs(GAD(OBJ_MAIL_NAME_STR), edit_mail_window, NULL, STRINGA_TextVal, pMailer->umn_Name, TAG_DONE );
-        IIntuition->SetGadgetAttrs(GAD(OBJ_MAIL_PATH_GET), edit_mail_window, NULL, GETFILE_File, pMailer->umn_Path, TAG_DONE );
-        IIntuition->SetGadgetAttrs(GAD(OBJ_MAIL_AREXX_STR), edit_mail_window, NULL, STRINGA_TextVal, pMailer->umn_Port, TAG_DONE );
-        IIntuition->SetGadgetAttrs(GAD(OBJ_MAIL_SHOW_STR), edit_mail_window, NULL, STRINGA_TextVal, pMailer->umn_ShowCmd, TAG_DONE );
-        IIntuition->SetGadgetAttrs(GAD(OBJ_MAIL_FRONT_STR), edit_mail_window, NULL, STRINGA_TextVal, pMailer->umn_ToFrontCmd, TAG_DONE );
-        IIntuition->SetGadgetAttrs(GAD(OBJ_MAIL_WRITE_STR), edit_mail_window, NULL, STRINGA_TextVal, pMailer->umn_WriteMailCmd, TAG_DONE );
+        iset(edit_mail_win,  WINDOW_UserData, pMailer);
+        gadset(GAD(OBJ_MAIL_NAME_STR), edit_mail_window, STRINGA_TextVal, pMailer->umn_Name);
+        gadset(GAD(OBJ_MAIL_PATH_GET), edit_mail_window, GETFILE_File, pMailer->umn_Path);
+        gadset(GAD(OBJ_MAIL_AREXX_STR), edit_mail_window, STRINGA_TextVal, pMailer->umn_Port);
+        gadset(GAD(OBJ_MAIL_SHOW_STR), edit_mail_window, STRINGA_TextVal, pMailer->umn_ShowCmd);
+        gadset(GAD(OBJ_MAIL_FRONT_STR), edit_mail_window, STRINGA_TextVal, pMailer->umn_ToFrontCmd);
+        gadset(GAD(OBJ_MAIL_WRITE_STR), edit_mail_window, STRINGA_TextVal, pMailer->umn_WriteMailCmd);
     }
 }
 
@@ -258,10 +259,10 @@ void updateMailerNode()
         IUtility->Strlcpy(pMailer->umn_WriteMailCmd, strValue, sizeof(pMailer->umn_WriteMailCmd));
 
         // now update the ListBrowser attributes
-        IListBrowser->SetListBrowserNodeAttrs( (struct Node*)pMailer,   LBNA_Column,    1,
-                                                LBNCA_Text,             pMailer->umn_Name,
-                                                LBNA_Column,            2,
-                                                LBNCA_Text,             pMailer->umn_Path,
-                                                TAG_END );
+        IListBrowser->SetListBrowserNodeAttrs((struct Node*)pMailer,   LBNA_Column,    1,
+                                               LBNCA_Text,             pMailer->umn_Name,
+                                               LBNA_Column,            2,
+                                               LBNCA_Text,             pMailer->umn_Path,
+                                               TAG_END);
     }
 }

@@ -22,6 +22,7 @@
 
 #include "gui_global.h"
 #include "utility.h"
+#include "macros.h"
 
 #include <classes/window.h>
 #include <libraries/openurl.h>
@@ -201,13 +202,13 @@ Object * make_edit_brow_win(void)
     WindowEnd;
 }
 
-BOOL updateBrowserList( struct List * list, struct MinList PrefsBrowserList )
+BOOL updateBrowserList(struct List * list, struct MinList PrefsBrowserList)
 {
     struct URL_BrowserNode  *   bn      = NULL,
                             *   newNode = NULL;
 
     // libération de la liste
-    freeList( list );
+    freeList(list);
 
     // ajout des nouvelles données
     for (bn = (struct URL_BrowserNode *)PrefsBrowserList.mlh_Head;
@@ -217,19 +218,19 @@ BOOL updateBrowserList( struct List * list, struct MinList PrefsBrowserList )
         if((newNode = (struct URL_BrowserNode*)IListBrowser->AllocListBrowserNode(3,
             LBNA_NodeSize,  sizeof(struct URL_BrowserNode),
             LBNA_CheckBox,  TRUE,
-            LBNA_Checked,   (bn->ubn_Flags&UNF_DISABLED)?FALSE:TRUE,
+            LBNA_Checked,   isFlagClear(bn->ubn_Flags, UNF_DISABLED),
             LBNA_Column,    1,
             LBNCA_Text, "",
             LBNA_Column, 2,
             LBNCA_Text, "",
             TAG_DONE)) != NULL)
         {
-            IExec->CopyMem( bn, newNode, sizeof(struct URL_BrowserNode ) );
-            IListBrowser->SetListBrowserNodeAttrs( (struct Node*)newNode, LBNA_Column,    1,
+            IExec->CopyMem(bn, newNode, sizeof(struct URL_BrowserNode));
+            IListBrowser->SetListBrowserNodeAttrs((struct Node*)newNode, LBNA_Column,    1,
                                                             LBNCA_Text,     newNode->ubn_Name,
                                                             LBNA_Column,    2,
                                                             LBNCA_Text,     newNode->ubn_Path,
-                                                            TAG_END );
+                                                            TAG_END);
             IExec->AddTail(list, (struct Node *)newNode);
         }
         else
@@ -242,18 +243,18 @@ BOOL updateBrowserList( struct List * list, struct MinList PrefsBrowserList )
     return TRUE;
 }
 
-void updateBrowserWindow( struct URL_BrowserNode  * pBrowser )
+void updateBrowserWindow(struct URL_BrowserNode  * pBrowser)
 {
-    if( pBrowser )
+    if(pBrowser != NULL)
     {
-        IIntuition->SetAttrs(edit_brow_win,  WINDOW_UserData, pBrowser, TAG_DONE );
-        IIntuition->SetGadgetAttrs(GAD(OBJ_BROW_NAME_STR), edit_brow_window, NULL, STRINGA_TextVal, pBrowser->ubn_Name, TAG_DONE );
-        IIntuition->SetGadgetAttrs(GAD(OBJ_BROW_PATH_GET), edit_brow_window, NULL, GETFILE_File, pBrowser->ubn_Path, TAG_DONE );
-        IIntuition->SetGadgetAttrs(GAD(OBJ_BROW_AREXX_STR), edit_brow_window, NULL, STRINGA_TextVal, pBrowser->ubn_Port, TAG_DONE );
-        IIntuition->SetGadgetAttrs(GAD(OBJ_BROW_SHOW_STR), edit_brow_window, NULL, STRINGA_TextVal, pBrowser->ubn_ShowCmd, TAG_DONE );
-        IIntuition->SetGadgetAttrs(GAD(OBJ_BROW_FRONT_STR), edit_brow_window, NULL, STRINGA_TextVal, pBrowser->ubn_ToFrontCmd, TAG_DONE );
-        IIntuition->SetGadgetAttrs(GAD(OBJ_BROW_OPEN_STR), edit_brow_window, NULL, STRINGA_TextVal, pBrowser->ubn_OpenURLCmd, TAG_DONE );
-        IIntuition->SetGadgetAttrs(GAD(OBJ_BROW_NEW_STR), edit_brow_window, NULL, STRINGA_TextVal, pBrowser->ubn_OpenURLWCmd, TAG_DONE );
+        iset(edit_brow_win,  WINDOW_UserData, pBrowser);
+        gadset(GAD(OBJ_BROW_NAME_STR), edit_brow_window, STRINGA_TextVal, pBrowser->ubn_Name);
+        gadset(GAD(OBJ_BROW_PATH_GET), edit_brow_window, GETFILE_File, pBrowser->ubn_Path);
+        gadset(GAD(OBJ_BROW_AREXX_STR), edit_brow_window, STRINGA_TextVal, pBrowser->ubn_Port);
+        gadset(GAD(OBJ_BROW_SHOW_STR), edit_brow_window,  STRINGA_TextVal, pBrowser->ubn_ShowCmd);
+        gadset(GAD(OBJ_BROW_FRONT_STR), edit_brow_window, STRINGA_TextVal, pBrowser->ubn_ToFrontCmd);
+        gadset(GAD(OBJ_BROW_OPEN_STR), edit_brow_window, STRINGA_TextVal, pBrowser->ubn_OpenURLCmd);
+        gadset(GAD(OBJ_BROW_NEW_STR), edit_brow_window, STRINGA_TextVal, pBrowser->ubn_OpenURLWCmd);
     } else
     	IDOS->Printf("No browser node\n");
 }
@@ -282,11 +283,11 @@ void updateBrowserNode()
         IUtility->Strlcpy(pBrowser->ubn_OpenURLWCmd, strValue, sizeof(pBrowser->ubn_OpenURLWCmd));
 
         // now update the ListBrowser attributes
-        IListBrowser->SetListBrowserNodeAttrs( (struct Node*)pBrowser,  LBNA_Column,    1,
-                                                LBNCA_Text,             pBrowser->ubn_Name,
-                                                LBNA_Column,            2,
-                                                LBNCA_Text,             pBrowser->ubn_Path,
-                                                TAG_END );
+        IListBrowser->SetListBrowserNodeAttrs((struct Node*)pBrowser,  LBNA_Column,    1,
+                                               LBNCA_Text,             pBrowser->ubn_Name,
+                                               LBNA_Column,            2,
+                                               LBNCA_Text,             pBrowser->ubn_Path,
+                                               TAG_END);
     }
 }
 

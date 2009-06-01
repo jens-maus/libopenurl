@@ -22,6 +22,7 @@
 
 #include "gui_global.h"
 #include "utility.h"
+#include "macros.h"
 
 #include <classes/window.h>
 #include <libraries/openurl.h>
@@ -204,13 +205,13 @@ Object * make_edit_ftp_win(void)
     WindowEnd;
 }
 
-BOOL updateFTPList( struct List * list, struct MinList PrefsFTPList )
+BOOL updateFTPList(struct List * list, struct MinList PrefsFTPList)
 {
     struct URL_FTPNode  *   fn      = NULL,
                         *   newNode = NULL;
 
     // libération de la liste
-    freeList( list );
+    freeList(list);
 
     // ajout des nouvelles données
     for (fn = (struct URL_FTPNode *)PrefsFTPList.mlh_Head;
@@ -220,21 +221,21 @@ BOOL updateFTPList( struct List * list, struct MinList PrefsFTPList )
         if((newNode = (struct URL_FTPNode*)IListBrowser->AllocListBrowserNode(3,
             LBNA_NodeSize,  sizeof(struct URL_FTPNode),
             LBNA_CheckBox,  TRUE,
-            LBNA_Checked,   (fn->ufn_Flags&UNF_DISABLED)?FALSE:TRUE,
+            LBNA_Checked,   isFlagClear(fn->ufn_Flags, UNF_DISABLED),
             LBNA_Column,    1,
             LBNCA_Text, "",
             LBNA_Column, 2,
             LBNCA_Text, "",
             TAG_DONE)) != NULL)
         {
-            IExec->CopyMem( fn, newNode, sizeof(struct URL_FTPNode ) );
-            IListBrowser->SetListBrowserNodeAttrs( (struct Node*)newNode, LBNA_Column,    1,
+            IExec->CopyMem(fn, newNode, sizeof(struct URL_FTPNode));
+            IListBrowser->SetListBrowserNodeAttrs((struct Node*)newNode, LBNA_Column,    1,
                                                             LBNCA_Text,     newNode->ufn_Name,
                                                             LBNA_Column,    2,
                                                             LBNCA_Text,     newNode->ufn_Path,
-                                                            TAG_END );
+                                                            TAG_END);
 
-            IIntuition->SetAttrs( edit_ftp_win,  WINDOW_UserData, fn, TAG_DONE );
+            IIntuition->SetAttrs(edit_ftp_win,  WINDOW_UserData, fn, TAG_DONE);
             IExec->AddTail(list, (struct Node*)newNode);
         }
         else
@@ -247,18 +248,18 @@ BOOL updateFTPList( struct List * list, struct MinList PrefsFTPList )
     return TRUE;
 }
 
-void updateFTPWindow( struct URL_FTPNode  * pFTP )
+void updateFTPWindow(struct URL_FTPNode  * pFTP)
 {
-    if( pFTP )
+    if(pFTP != NULL)
     {
-        IIntuition->SetGadgetAttrs(GAD(OBJ_FTP_NAME_STR), edit_ftp_window, NULL, STRINGA_TextVal, pFTP->ufn_Name, TAG_DONE );
-        IIntuition->SetGadgetAttrs(GAD(OBJ_FTP_PATH_GET), edit_ftp_window, NULL, GETFILE_File, pFTP->ufn_Path, TAG_DONE );
-        IIntuition->SetGadgetAttrs(GAD(OBJ_FTP_AREXX_STR), edit_ftp_window, NULL, STRINGA_TextVal, pFTP->ufn_Port, TAG_DONE );
-        IIntuition->SetGadgetAttrs(GAD(OBJ_FTP_REMOVE), edit_ftp_window, NULL, GA_Selected, (pFTP->ufn_Flags&UFNF_REMOVEFTP)?TRUE:FALSE, TAG_DONE );
-        IIntuition->SetGadgetAttrs(GAD(OBJ_FTP_SHOW_STR), edit_ftp_window, NULL, STRINGA_TextVal, pFTP->ufn_ShowCmd, TAG_DONE );
-        IIntuition->SetGadgetAttrs(GAD(OBJ_FTP_FRONT_STR), edit_ftp_window, NULL, STRINGA_TextVal, pFTP->ufn_ToFrontCmd, TAG_DONE );
-        IIntuition->SetGadgetAttrs(GAD(OBJ_FTP_OPEN_STR), edit_ftp_window, NULL, STRINGA_TextVal, pFTP->ufn_OpenURLCmd, TAG_DONE );
-        IIntuition->SetGadgetAttrs(GAD(OBJ_FTP_NEW_STR), edit_ftp_window, NULL, STRINGA_TextVal, pFTP->ufn_OpenURLWCmd, TAG_DONE );
+        gadset(GAD(OBJ_FTP_NAME_STR), edit_ftp_window, STRINGA_TextVal, pFTP->ufn_Name);
+        gadset(GAD(OBJ_FTP_PATH_GET), edit_ftp_window, GETFILE_File, pFTP->ufn_Path);
+        gadset(GAD(OBJ_FTP_AREXX_STR), edit_ftp_window, STRINGA_TextVal, pFTP->ufn_Port);
+        gadset(GAD(OBJ_FTP_REMOVE), edit_ftp_window, GA_Selected, isFlagSet(pFTP->ufn_Flags, UFNF_REMOVEFTP));
+        gadset(GAD(OBJ_FTP_SHOW_STR), edit_ftp_window, STRINGA_TextVal, pFTP->ufn_ShowCmd);
+        gadset(GAD(OBJ_FTP_FRONT_STR), edit_ftp_window, STRINGA_TextVal, pFTP->ufn_ToFrontCmd);
+        gadset(GAD(OBJ_FTP_OPEN_STR), edit_ftp_window, STRINGA_TextVal, pFTP->ufn_OpenURLCmd);
+        gadset(GAD(OBJ_FTP_NEW_STR), edit_ftp_window, STRINGA_TextVal, pFTP->ufn_OpenURLWCmd);
     }
 }
 
@@ -286,11 +287,11 @@ void updateFTPNode()
         IUtility->Strlcpy(pFTP->ufn_OpenURLWCmd, strValue, sizeof(pFTP->ufn_OpenURLWCmd));
 
         // now update the ListBrowser attributes
-        IListBrowser->SetListBrowserNodeAttrs( (struct Node*)pFTP,  LBNA_Column,    1,
-                                                LBNCA_Text,             pFTP->ufn_Name,
-                                                LBNA_Column,            2,
-                                                LBNCA_Text,             pFTP->ufn_Path,
-                                                TAG_END );
+        IListBrowser->SetListBrowserNodeAttrs((struct Node*)pFTP,  LBNA_Column,    1,
+                                               LBNCA_Text,             pFTP->ufn_Name,
+                                               LBNA_Column,            2,
+                                               LBNCA_Text,             pFTP->ufn_Path,
+                                               TAG_END);
     }
 }
 
