@@ -5,6 +5,11 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2009-06-02  Matthias Rustler <mrustler@gmx.de>
+
+  * Fixes for the AROS metamakefiles
+  * linkerlib for auto-opening (like it was done for codesets.library)
+
 2009-06-02  Thore Böckelmann <tboeckel@gmx.de>
 
   * raPrefs/OpenURL.c: restored accidently removed sections.
