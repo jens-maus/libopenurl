@@ -680,6 +680,16 @@ ULONG storePrefs(BOOL bStorePrefs)
     else
         CLEAR_FLAG(up.up_Flags, UPF_DOFTP);
 
+    if(iget(OBJ(OBJ_SEND_MAILTO), GA_Selected))
+        SET_FLAG(up.up_Flags, UPF_DOMAILTO);
+    else
+        CLEAR_FLAG(up.up_Flags, UPF_DOMAILTO);
+
+    if(iget(OBJ(OBJ_SEND_FTP), GA_Selected))
+        SET_FLAG(up.up_Flags, UPF_DOFTP);
+    else
+        CLEAR_FLAG(up.up_Flags, UPF_DOFTP);
+
     up.up_DefShow = iget(OBJ(OBJ_UNICONIFY), GA_Selected);
     up.up_DefBringToFront = iget(OBJ(OBJ_BRING), GA_Selected);
     up.up_DefNewWindow = iget(OBJ(OBJ_OPEN), GA_Selected);
