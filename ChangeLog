@@ -5,6 +5,10 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2009-06-07  Matthias Rustler <mrustler@gmx.de>
+
+  * Makefile fix for linker library
+
 2009-06-02  Matthias Rustler <mrustler@gmx.de>
 
   * Fixes for the AROS metamakefiles
