@@ -7,6 +7,10 @@ $URL$
 
 2009-06-07  Matthias Rustler <mrustler@gmx.de>
 
+  * libinit.c: Merged Staf's fixes from codesets.library
+
+2009-06-07  Matthias Rustler <mrustler@gmx.de>
+
   * Makefile fix for linker library
 
 2009-06-02  Matthias Rustler <mrustler@gmx.de>
