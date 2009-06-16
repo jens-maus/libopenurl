@@ -5,6 +5,12 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2009-06-16  Thore Böckelmann <tboeckel@gmx.de>
+
+  * library/prefs.c: changed OWB's port name to "OWB" instead of "OWB.1" because
+    openurl.library takes care of additional numbers itself. This fixes bug
+    #2801806.
+
 2009-06-07  Matthias Rustler <mrustler@gmx.de>
 
   * libinit.c: Merged Staf's fixes from codesets.library
