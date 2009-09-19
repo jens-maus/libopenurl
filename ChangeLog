@@ -5,6 +5,10 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2009-09-19 Thore Böckelmann <tboeckel@gmx.de>
+
+  * misc: added a name to all memory pools for OS4.
+
 2009-09-16 Thore Böckelmann <tboeckel@gmx.de>
 
   * prefs/applist.c: integrated the hook structures into the instance data and
