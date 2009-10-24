@@ -5,6 +5,12 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+#### v7.6 RELEASE ##############################################################
+
+2009-10-24  Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: final 7.6 release preparations
+
 2009-09-19 Thore Böckelmann <tboeckel@gmx.de>
 
   * misc: added a name to all memory pools for OS4.
