@@ -5,6 +5,10 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2010-04-23 Thore Böckelmann <tboeckel@gmx.de>
+
+  * library/libinit.c: replaced some #ifdef's by macros.
+
 #### v7.6 RELEASE ##############################################################
 
 2009-10-24  Jens Langner <Jens.Langner@light-speed.de>
