@@ -2,7 +2,7 @@
 
  openurl.library - universal URL display and browser launcher library
  Copyright (C) 1998-2005 by Troels Walsted Hansen, et al.
- Copyright (C) 2005-2009 by openurl.library Open Source Team
+ Copyright (C) 2005-2010 by openurl.library Open Source Team
 
  This library is free software; it has been placed in the public domain
  and you can freely redistribute it and/or modify it. Please note, however,
@@ -29,11 +29,7 @@
 
 /****************************************************************************/
 
-#if !defined(__MORPHOS__)
-#ifndef __AROS__
-#define MIN_STACKSIZE 65536
-#endif
-
+#if defined(__amigaos4__)
 // stack cookie for shell v45+
 static const char USED_VAR stack_size[] = "$STACK:" STR(MIN_STACKSIZE) "\n";
 #endif
@@ -380,22 +376,19 @@ ULONG stackswap_call(struct StackSwapStruct *stack,
 
    return NewPPCStackSwap(stack, function, &swapargs);
 }
-#else
-/* FIXME: This does not work because it can't work. 'arg' variable is also on stack.
-          On AmigaOS v4 it ocassionally works because function's parameters are placed
-          in registers on PPC */
-ULONG REGARGS stackswap_call(struct StackSwapStruct *stack,
+#elif defined(__AROS__)
+ULONG stackswap_call(struct StackSwapStruct *stack,
                              ULONG (*function)(struct LibraryHeader *),
                              struct LibraryHeader *arg)
 {
-   register ULONG result;
+   struct StackSwapArgs swapargs;
 
-   StackSwap(stack);
-   result = function(arg);
-   StackSwap(stack);
+   swapargs.Args[0] = (IPTR)arg;
 
-   return result;
+   return NewStackSwap(stack, function, &swapargs);
 }
+#else
+#error Bogus operating system
 #endif
 
 static BOOL callLibFunction(ULONG (*function)(struct LibraryHeader *), struct LibraryHeader *arg)
@@ -414,7 +407,7 @@ static BOOL callLibFunction(ULONG (*function)(struct LibraryHeader *), struct Li
   NewGetTaskAttrsA(tc, &stacksize, sizeof(ULONG), TASKINFOTYPE_STACKSIZE, NULL);
   #else
   // on all other systems we query via SPUpper-SPLower calculation
-  stacksize = (ULONG)tc->tc_SPUpper - (ULONG)tc->tc_SPLower;
+  stacksize = (UBYTE *)tc->tc_SPUpper - (UBYTE *)tc->tc_SPLower;
   #endif
 
   // Swap stacks only if current stack is insufficient
@@ -427,7 +420,7 @@ static BOOL callLibFunction(ULONG (*function)(struct LibraryHeader *), struct Li
       if((stack->stk_Lower = AllocVec(MIN_STACKSIZE, MEMF_PUBLIC)) != NULL)
       {
         // perform the StackSwap
-        stack->stk_Upper = (ULONG)stack->stk_Lower + MIN_STACKSIZE;
+        stack->stk_Upper = (UBYTE *)stack->stk_Lower + MIN_STACKSIZE;
         stack->stk_Pointer = (APTR)stack->stk_Upper;
 
         // call routine but with embedding it into a [NewPPC]StackSwap()

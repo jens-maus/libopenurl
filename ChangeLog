@@ -5,6 +5,11 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2010-04-24 Thore Böckelmann <tboeckel@gmx.de>
+
+  * library/libinit.c: use NewStackSwap() under AROS, re-enabled stack swapping
+    under MorphOS
+
 2010-04-23 Thore Böckelmann <tboeckel@gmx.de>
 
   * library/libinit.c: replaced some #ifdef's by macros.
