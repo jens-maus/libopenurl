@@ -315,6 +315,7 @@ OBJS += OpenURL.o \
 CATALOGS = $(LOCALE)/german.catalog \
            $(LOCALE)/french.catalog \
            $(LOCALE)/italian.catalog \
+           $(LOCALE)/polish.catalog \
            $(LOCALE)/swedish.catalog
 
 # main target

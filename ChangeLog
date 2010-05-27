@@ -8,6 +8,7 @@ $URL$
 2010-05-27 Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/#?.ct: set some properties.
+  * raPrefs/Makefile: added polish catalog generation.
 
 2010-05-27 Mariusz Danilewicz <mandi@interia.pl>
 
