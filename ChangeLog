@@ -12,6 +12,10 @@ $URL$
 
 2010-05-27 Mariusz Danilewicz <mandi@interia.pl>
 
+  * locale/polish.ct: fixed MSG_About_Descr
+
+2010-05-27 Mariusz Danilewicz <mandi@interia.pl>
+
   * locale/polish.ct: added Polish translation
   * prefs/makefile: added generating Polish catalog
 
