@@ -5,6 +5,10 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2010-05-27 Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/#?.ct: set some properties.
+
 2010-05-27 Mariusz Danilewicz <mandi@interia.pl>
 
   * locale/polish.ct: added Polish translation
