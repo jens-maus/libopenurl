@@ -5,6 +5,12 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2010-06-03 Matthias Rustler <mrustler@gmx.de>
+
+  * Fixes for 64-bit AROS: changes from ULONG to IPTR to get rid of
+    warnings about conversion from/to pointer to/from integer with different size.
+    Prototype of URL_GetAttr changed. I hope this doesn't cause any trouble.
+
 2010-05-27 Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/#?.ct: set some properties.
