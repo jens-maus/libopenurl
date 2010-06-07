@@ -29,6 +29,9 @@
 extern "C" {
 #endif /* __cplusplus */
 
+#if !defined(__AROS__) && !defined(IPTR)
+  #define IPTR ULONG
+#endif
 
 /* Obsolete, don't use! */
 struct URL_Prefs *URL_OldGetPrefs(void);
