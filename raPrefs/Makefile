@@ -372,7 +372,7 @@ install: all
 
 ## CATALOG GENERATION #################
 
-$(LOCALE)/%.catalog: $(LOCALE)/%.ct
+$(LOCALE)/%.catalog: $(LOCALE)/%.ct $(LOCALE)/OpenURL.cd
 	@echo "  MK $@"
 	@$(FC) $(LOCALE)/OpenURL.cd $< CATALOG $@
 

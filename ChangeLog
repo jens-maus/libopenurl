@@ -5,6 +5,11 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2010-06-30 Thore Böckelmann <tboeckel@gmx.de>
+
+  * prefs/Makefile, raPrefs/Makefile: added the .cd file to the dependency list
+    of each .catalog file.
+
 2010-06-10 Thore Böckelmann <tboeckel@gmx.de>
 
   * library/libinit.c: fixed a warning for the OS3 build.
