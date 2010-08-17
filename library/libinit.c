@@ -49,8 +49,8 @@ struct ExecBase *SysBase = NULL;
 
 struct LibraryHeader *OpenURLBase = NULL;
 
-static const char RODATA UserLibName[] = "openurl.library";
-static const char RODATA UserLibID[]   = "$VER: openurl.library " LIB_REV_STRING " [" SYSTEMSHORT "/" CPU "] (" LIB_DATE ") " LIB_COPYRIGHT;
+static const char UserLibName[] = "openurl.library";
+static const char UserLibID[]   = "$VER: openurl.library " LIB_REV_STRING " [" SYSTEMSHORT "/" CPU "] (" LIB_DATE ") " LIB_COPYRIGHT;
 
 /****************************************************************************/
 
