@@ -5,6 +5,10 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2010-08-16 Thore Böckelmann <tboeckel@gmx.de>
+
+  * include/SDI_compiler.h: updated to latest version.
+
 2010-06-30 Thore Böckelmann <tboeckel@gmx.de>
 
   * prefs/Makefile, raPrefs/Makefile: added the .cd file to the dependency list
