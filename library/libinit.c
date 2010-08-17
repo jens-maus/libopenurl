@@ -49,8 +49,8 @@ struct ExecBase *SysBase = NULL;
 
 struct LibraryHeader *OpenURLBase = NULL;
 
-static const char UserLibName[] = "openurl.library";
-static const char UserLibID[]   = "$VER: openurl.library " LIB_REV_STRING " [" SYSTEMSHORT "/" CPU "] (" LIB_DATE ") " LIB_COPYRIGHT;
+static const char RODATA UserLibName[] = "openurl.library";
+static const char RODATA UserLibID[]   = "$VER: openurl.library " LIB_REV_STRING " [" SYSTEMSHORT "/" CPU "] (" LIB_DATE ") " LIB_COPYRIGHT;
 
 /****************************************************************************/
 
@@ -139,14 +139,19 @@ static LONG                   LIBFUNC LibNull    (void);
  *
  */
 
-#if defined(__amigaos4__)
-int _start(void)
-#else
-int Main(void)
-#endif
+#if defined(__amigaos4__) || !defined(__mc68000__)
+int32 _start(void)
 {
   return RETURN_FAIL;
 }
+#else
+asm(".text                    \n\
+     .even                    \n\
+     .globl _start            \n\
+   _start:                    \n\
+     moveq #0,d0              \n\
+     rts");
+#endif
 
 #if !defined(__amigaos4__)
 static LONG LIBFUNC LibNull(VOID)
