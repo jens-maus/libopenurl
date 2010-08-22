@@ -5,6 +5,11 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2010-08-22 Thore Böckelmann <tboeckel@gmx.de>
+
+  * library/init.c: lowered the required version of rexxsys.library to V36. This
+    fixes bug #3050895.
+
 2010-08-16 Thore Böckelmann <tboeckel@gmx.de>
 
   * libinit.c: the library init code now ensures that the entry code is really
