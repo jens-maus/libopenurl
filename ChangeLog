@@ -5,6 +5,12 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+#### v7.7 RELEASE ##############################################################
+
+2009-09-01  Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: final 7.7 release preparations
+
 2010-08-22 Thore Böckelmann <tboeckel@gmx.de>
 
   * library/init.c: lowered the required version of rexxsys.library to V36. This

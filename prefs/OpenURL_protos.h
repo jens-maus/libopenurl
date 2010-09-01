@@ -21,9 +21,9 @@
 #include "SDI_compiler.h"
 
 #ifdef __MORPHOS__
-APTR DoSuperNew( struct IClass *cl, APTR obj, ... );
+APTR DoSuperNew(struct IClass *cl, APTR obj, ...);
 #elif defined(__AROS__)
-IPTR DoSuperNew(struct IClass *cl, Object *obj, IPTR tag1, ...);
+IPTR VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...);
 #else
 Object * VARARGS68K DoSuperNew(struct IClass *cl, Object *obj, ...);
 #endif
