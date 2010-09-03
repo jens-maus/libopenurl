@@ -5,6 +5,10 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2010-09-03 Thore Böckelmann <tboeckel@gmx.de>
+
+  * libinit.c: clear all semaphore structures before calling InitSemaphore().
+
 #### v7.7 RELEASE ##############################################################
 
 2009-09-01  Jens Langner <Jens.Langner@light-speed.de>
