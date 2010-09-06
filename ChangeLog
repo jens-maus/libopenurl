@@ -7,6 +7,7 @@ $URL$
 
 2010-09-06 Thore Böckelmann <tboeckel@gmx.de>
 
+  * library/prefs.c: saving the prefs will now also mask out invalid flags.
   * library/prefs.c: upon loading the prefs file all invalid flags are now
     masked out. This fixed bug #3059088 where the split off MorphOS V8 version
     incorrectly saved some internal flags which then lead to a memory block

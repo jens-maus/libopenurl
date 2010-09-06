@@ -369,6 +369,9 @@ BOOL savePrefs(CONST_STRPTR filename, struct URL_Prefs *p)
             bn->ubn_Node.mln_Succ;
             bn = (struct URL_BrowserNode *)bn->ubn_Node.mln_Succ)
         {
+            // mask out possibly invalid flags
+            bn->ubn_Flags &= UNF_VALID_MASK;
+
             if(PushChunk(iffh, ID_PREF, ID_BRWS, BRWS_SIZE) != 0)
               goto fail;
             if(WriteChunkBytes(iffh, &bn->ubn_Flags, BRWS_SIZE) != BRWS_SIZE)
@@ -383,6 +386,9 @@ BOOL savePrefs(CONST_STRPTR filename, struct URL_Prefs *p)
             mn->umn_Node.mln_Succ;
             mn = (struct URL_MailerNode *)mn->umn_Node.mln_Succ)
         {
+            // mask out possibly invalid flags
+            bn->umn_Flags &= UNF_VALID_MASK;
+
             if(PushChunk(iffh, ID_PREF, ID_MLRS, MLRS_SIZE) != 0)
               goto fail;
             if(WriteChunkBytes(iffh, &mn->umn_Flags, MLRS_SIZE) != MLRS_SIZE)
@@ -397,6 +403,9 @@ BOOL savePrefs(CONST_STRPTR filename, struct URL_Prefs *p)
             fn->ufn_Node.mln_Succ;
             fn = (struct URL_FTPNode *)fn->ufn_Node.mln_Succ)
         {
+            // mask out possibly invalid flags
+            bn->ufn_Flags &= UNF_VALID_MASK;
+
             if(PushChunk(iffh, ID_PREF, ID_FTPS, FTPS_SIZE) != 0)
               goto fail;
             if(WriteChunkBytes(iffh, &fn->ufn_Flags, FTPS_SIZE) != FTPS_SIZE)
@@ -407,6 +416,9 @@ BOOL savePrefs(CONST_STRPTR filename, struct URL_Prefs *p)
 
         /* write flags */
         D(DBF_ALWAYS, "saving flags");
+        // mask out possibly invalid flags
+        p->up_Flags &= UPF_VALID_MASK;
+
         if(PushChunk(iffh, ID_PREF, ID_FLGS, FLGS_SIZE) != 0)
           goto fail;
         if(WriteChunkBytes(iffh, &p->up_Flags, FLGS_SIZE) != FLGS_SIZE)
