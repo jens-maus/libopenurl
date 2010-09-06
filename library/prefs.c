@@ -518,6 +518,9 @@ BOOL loadPrefs(struct URL_Prefs *p,ULONG mode)
                           goto fail;
                         }
 
+                        // mask out possibly invalid flags
+                        bn->ubn_Flags &= UNF_VALID_MASK;
+
                         AddTail((struct List *)(&p->up_BrowserList),(struct Node *)(bn));
 
                         continue;
@@ -536,6 +539,9 @@ BOOL loadPrefs(struct URL_Prefs *p,ULONG mode)
                           goto fail;
                         }
 
+                        // mask out possibly invalid flags
+                        mn->umn_Flags &= UNF_VALID_MASK;
+
                         AddTail((struct List *)(&p->up_MailerList),(struct Node *)(mn));
 
                         continue;
@@ -553,6 +559,9 @@ BOOL loadPrefs(struct URL_Prefs *p,ULONG mode)
                           freeArbitrateVecPooled(fn);
                           goto fail;
                         }
+
+                        // mask out possibly invalid flags
+                        fn->ufn_Flags &= UNF_VALID_MASK;
 
                         AddTail((struct List *)(&p->up_FTPList),(struct Node *)(fn));
 
@@ -576,7 +585,11 @@ BOOL loadPrefs(struct URL_Prefs *p,ULONG mode)
                     }
                 }
 
+                // the loaded prefs are not the default ones
                 CLEAR_FLAG(p->up_Flags, UPF_ISDEFAULTS);
+
+                // mask out possibly invalid flags
+                p->up_Flags &= UPF_VALID_MASK;
 
                 res = TRUE;
 
