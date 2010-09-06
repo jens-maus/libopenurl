@@ -387,7 +387,7 @@ BOOL savePrefs(CONST_STRPTR filename, struct URL_Prefs *p)
             mn = (struct URL_MailerNode *)mn->umn_Node.mln_Succ)
         {
             // mask out possibly invalid flags
-            bn->umn_Flags &= UNF_VALID_MASK;
+            mn->umn_Flags &= UNF_VALID_MASK;
 
             if(PushChunk(iffh, ID_PREF, ID_MLRS, MLRS_SIZE) != 0)
               goto fail;
@@ -404,7 +404,7 @@ BOOL savePrefs(CONST_STRPTR filename, struct URL_Prefs *p)
             fn = (struct URL_FTPNode *)fn->ufn_Node.mln_Succ)
         {
             // mask out possibly invalid flags
-            bn->ufn_Flags &= UNF_VALID_MASK;
+            fn->ufn_Flags &= UNF_VALID_MASK;
 
             if(PushChunk(iffh, ID_PREF, ID_FTPS, FTPS_SIZE) != 0)
               goto fail;
