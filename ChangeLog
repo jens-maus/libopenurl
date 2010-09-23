@@ -5,6 +5,12 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+#### v7.8 RELEASE ##############################################################
+
+2009-09-23  Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: final 7.8 release preparations
+
 2010-09-22 Thore Böckelmann <tboeckel@gmx.de>
 
   * library/utils.c: added a missing ENTER() statement and let the debug build
