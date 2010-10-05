@@ -611,7 +611,6 @@ STATIC BPTR LibDelete(struct LibraryHeader *base)
 #if defined(__amigaos4__)
 static BPTR LibExpunge(struct LibraryManagerInterface *Self)
 {
-  struct ExecIFace *IExec = (struct ExecIFace *)(*(struct ExecBase **)4)->MainInterface;
   struct LibraryHeader *base = (struct LibraryHeader *)Self->Data.LibBase;
 #elif defined(__MORPHOS__)
 static BPTR LibExpunge(void)
