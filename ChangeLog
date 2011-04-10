@@ -5,6 +5,11 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2011-04-10 Thore Böckelmann <tboeckel@gmx.de>
+
+  * libraries/openurl.h: fixed wrong mask value to mask out invalid flags. This
+    closes #3283034.
+
 2011-01-04 Thore Böckelmann <tboeckel@gmx.de>
 
   * all/Makefile: fixed the dependency generation to respect the system specific
