@@ -5,6 +5,12 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+#### v7.9 RELEASE ##############################################################
+
+2011-04-17  Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: final 7.9 release preparations
+
 2011-04-10 Thore Böckelmann <tboeckel@gmx.de>
 
   * libraries/openurl.h: fixed wrong mask value to mask out invalid flags. This
