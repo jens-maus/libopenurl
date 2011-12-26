@@ -5,6 +5,10 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2011-12-25  Pär Boberg <pbobbenb@spray.se>
+
+  * locale/swedish.ct: updated to the latest changes.
+
 #### v7.10 RELEASE #############################################################
 
 2011-11-26  Jens Langner <Jens.Langner@light-speed.de>
