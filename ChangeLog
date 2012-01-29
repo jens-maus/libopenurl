@@ -5,6 +5,10 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2012-01-29 Matthias Rustler <mrustler@gmx.de>
+
+  * misc: backport of AROS fixes.
+
 2011-12-25  Pär Boberg <pbobbenb@spray.se>
 
   * locale/swedish.ct: updated to the latest changes.
