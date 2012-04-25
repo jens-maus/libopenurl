@@ -5,6 +5,10 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2012-04-25 Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/german.ct: replaced some "ss" by "ß". This closes bug #3364499.
+
 2012-04-07  Jens Langner <Jens.Langner@light-speed.de>
 
   * Makefile: removed -funroll-loops as this is potentially dangerous.
