@@ -5,6 +5,10 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2012-06-19 Thore Böckelmann <tboeckel@gmx.de>
+
+  * library/init.c: don't allocate locked memory.
+
 2012-04-25 Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/german.ct: replaced some "ss" by "ß". This closes bug #3364499.
