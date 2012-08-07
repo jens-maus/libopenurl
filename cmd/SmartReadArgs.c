@@ -313,7 +313,7 @@ LONG SmartReadArgs(struct WBStartup * wb_startup, struct SmartArgs * args)
          if (!args->sa_Buffer)
          {
             args->sa_BufferSize = MAX(SA_MINIMUM_BUFFER_SIZE, args->sa_BufferSize);
-            args->sa_Buffer = AllocVec(args->sa_BufferSize, MEMF_ANY);
+            args->sa_Buffer = AllocVecShared(args->sa_BufferSize, MEMF_ANY);
             args->sa_Flags |= SAF_ALLOCBUFFER;
          }
 
@@ -340,7 +340,7 @@ LONG SmartReadArgs(struct WBStartup * wb_startup, struct SmartArgs * args)
                STRPTR temp;
                STRPTR ptr;
 
-               if (num > 1 && args->sa_FileParameter >= 0 && (temp = AllocVec(TEMPSIZE, MEMF_ANY)))
+               if (num > 1 && args->sa_FileParameter >= 0 && (temp = AllocVecShared(TEMPSIZE, MEMF_ANY)))
                {
                   ULONG modes = 0;
 
