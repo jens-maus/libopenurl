@@ -502,7 +502,7 @@ int main()
 
     RA_SetUpHook(idcmphook, IDCMPFunc, NULL);
 
-    if((AppPort = AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
+    if((AppPort = IExec->AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
     {
         IExec->NewList(&list_Brow);
         IExec->NewList(&list_Mail);
