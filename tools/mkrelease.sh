@@ -15,7 +15,7 @@
 #
 # openurl.library project: http://sourceforge.net/projects/openurllib/
 #
-# $Id: AUTHORS 102 2009-05-27 22:22:46Z marust $
+# $Id$
 #
 #***************************************************************************/
 
@@ -90,3 +90,4 @@ cd release
 rm -f ../OpenURL-$releasever.$releaserev.lha
 lha -ao5q ../OpenURL-$releasever.$releaserev.lha *
 cp OpenURL/ReadMe ../OpenURL-$releasever.$releaserev.readme
+cd ..
