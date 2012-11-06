@@ -5,6 +5,11 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2012-11-06 Thore Böckelmann <tboeckel@gmx.de>
+
+  * library/api.c: changed the name of the prefs program to the currently used
+    scheme.
+
 2012-08-07 Thore Böckelmann <tboeckel@gmx.de>
 
   * misc: replaced all deprecated function call by appropriate replacements for
