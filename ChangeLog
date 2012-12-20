@@ -5,6 +5,12 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+#### v7.12 RELEASE #############################################################
+
+2012-12-20  Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: final 7.12 release preparations
+
 2012-11-06 Thore Böckelmann <tboeckel@gmx.de>
 
   * library/api.c: changed the name of the prefs program to the currently used
