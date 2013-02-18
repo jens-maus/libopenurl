@@ -7,6 +7,11 @@ $URL$
 
 2013-01-04 Thore Böckelmann <tboeckel@gmx.de>
 
+  * library/prefs.c: simplified the default configuration setup and added some
+    default settings for MUIOWB.
+
+2013-01-04 Thore Böckelmann <tboeckel@gmx.de>
+
   * library/utils.c: return immediate failure for empty ARexx port names.
 
 #### v7.12 RELEASE #############################################################
