@@ -5,6 +5,11 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2013-03-06 Thore Böckelmann <tboeckel@gmx.de>
+
+  * src/libinit.c: rearranged the code to ensure that trying to start the final
+    library from a shell does not crash.
+
 2013-01-04 Thore Böckelmann <tboeckel@gmx.de>
 
   * library/prefs.c: simplified the default configuration setup and added some
