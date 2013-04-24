@@ -76,7 +76,7 @@ cp -a developer/xml/* "release/OpenURL/Developer/xml/"
 cp -a locale/OpenURL.cd "release/OpenURL/Catalogs/"
 rm -f locale/*.catalog
 make -C prefs catalogs
-for language in french german italian polish swedish; do
+for language in french german greek italian polish swedish; do
   mkdir -p "release/OpenURL/Catalogs/$language"
   cp locale/$language.catalog "release/OpenURL/Catalogs/$language/OpenURL.catalog"
 done

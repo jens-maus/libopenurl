@@ -306,8 +306,9 @@ ifeq ($(OS), os3)
   OBJS += vastubs.o
 endif
 
-CATALOGS = $(LOCALE)/german.catalog \
-           $(LOCALE)/french.catalog \
+CATALOGS = $(LOCALE)/french.catalog \
+           $(LOCALE)/german.catalog \
+           $(LOCALE)/greek.catalog \
            $(LOCALE)/italian.catalog \
            $(LOCALE)/polish.catalog \
            $(LOCALE)/swedish.catalog

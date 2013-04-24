@@ -5,6 +5,11 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2013-04-24 Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/greek.ct: updated greek translation kindly provided by Antonis
+    Iliakis.
+
 2013-03-06 Thore Böckelmann <tboeckel@gmx.de>
 
   * src/libinit.c: rearranged the code to ensure that trying to start the final

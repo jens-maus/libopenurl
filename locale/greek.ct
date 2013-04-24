@@ -1,0 +1,532 @@
+## chunk AUTH Anthony Iliakis (amiga.phantom@yahoo.gr)
+## version $VER: OpenURL.catalog 7.1 (25.11.2012)
+## language greek
+## codeset 0
+;
+; Greek translation by Anthony Iliakis (amiga.phantom@yahoo.gr)
+;
+;
+; catcomp OpenURL.cd CTFILE OpenURL.ct
+;
+MSG_ErrReqTitle
+Σφάλμα OpenURL
+; OpenURL Error
+;
+MSG_ErrReqGadget
+_Ματαίωση
+; _Abort
+;
+MSG_Err_NoMem
+Πολύ ελάχιστη μνήμη
+; Too few memory
+;
+MSG_Err_NoMUI
+Αδυναμία ανοίγματος muimaster.library %ld.%ld ή νεότερη
+; Can't open muimaster.library %ld.%ld or higher
+;
+MSG_Err_NoIntuition
+Αδυναμία ανοίγματος intuition.library %ld.%ld ή νεότερη
+; Can't open intuition.library %ld.%ld or higher
+;
+MSG_Err_NoUtility
+Αδυναμία ανοίγματος utility.library %ld.%ld ή νεότερη
+; Can't open utility.library %ld.%ld or higher
+;
+MSG_Err_NoGfx
+Αδυναμία ανοίγματος graphics.library %ld.%ld ή νεότερη
+; Can't open graphics.library %ld.%ld or higher
+;
+MSG_Err_NoIcon
+Αδυναμία ανοίγματος icon.library %ld.%ld ή νεότερη
+; Can't open icon.library %ld.%ld or higher
+;
+MSG_Err_NoOpenURL
+Αδυναμία ανοίγματος openurl.library %ld.%ld ή νεότερη
+; Can't open openurl.library %ld.%ld or higher
+;
+MSG_Err_NoAppClass
+Αδυναμία δημιουργίας AppClass
+; Can't create AppClass
+;
+MSG_Err_NoWinClass
+Αδυναμία δημιουργίας WinClass
+; Can't create WinClass
+;
+MSG_Err_NoAppListClass
+Αδυναμία δημιουργίας AppListClass
+; Can't create AppListClass
+;
+MSG_Err_NoBrowserEditWinClass
+Αδυναμία δημιουργίας BrowserEditWinClass
+; Can't create BrowserEditWinClass
+;
+MSG_Err_NoMailerEditWinClass
+Αδυναμία δημιουργίας MailerEditWinClass
+; Can't create MailerEditWinClass
+;
+MSG_Err_NoFTPEditWinClass
+Αδυναμία δημιουργίας FTPEditWinClass
+; Can't create FTPEditWinClass
+;
+MSG_Err_PopupPortClass
+Αδυναμία δημιουργίας PopupPortClass
+; Can't create PopupPortClass
+;
+MSG_Err_PopphClass
+Αδυναμία δημιουργίας PopphClass
+; Can't create PopphClass
+;
+MSG_Err_NoApp
+Αδυναμία δημιουργίας αντικειμένου εφαρμογής
+; Can't create application object
+;
+MSG_Err_NoPrefs
+Αδυναμία λήψης προτιμήσεων από την openurl.library
+; Can't obtain prefs from openurl.library
+;
+MSG_Err_BadPrefs
+Αυτή η έκδοση του προγράμματος δεν ξέρει πως πρέπει\n\
+να χειριστεί την έκδοση προτιμήσεων openurl.library %ld
+; This version of this program doesn't know how\n\
+; to handle openurl.library prefs version %ld
+;
+MSG_Err_FailedSave
+Αδυναμία αποθήκευσης προτιμήσεων
+; Can't save prefs
+;
+MSG_App_Description
+Προτιμήσεις εφαρμογής OpenURL.
+; OpenURL preferences application.
+;
+MSG_App_Copyright
+Λογισμικό Public Domain
+; Public Domain Software
+;
+MSG_App_ScreenTitle
+OpenURL
+; OpenURL
+;
+MSG_Menu_Project
+Εργασία
+; Project
+;
+MSG_Menu_About
+?\0Περί...
+; ?\0About...
+;
+MSG_Menu_AboutMUI
+!\0Περί MUI...
+; !\0About MUI...
+;
+MSG_Menu_Hide
+H\0Απόκρυψη
+; H\0Hide
+;
+MSG_Menu_Quit
+Q\0Έξοδος
+; Q\0Quit
+;
+MSG_Menu_Prefs
+Προτιμήσεις
+; Preferences
+;
+MSG_Menu_Save
+S\0Αποθήκευση
+; S\0Save
+;
+MSG_Menu_Use
+U\0Χρήση
+; U\0Use
+;
+MSG_Menu_LastSaved
+L\0Τελευταία αποθήκευση
+; L\0Last saved
+;
+MSG_Menu_Restore
+R\0Επαναφορά
+; R\0Restore
+;
+MSG_Menu_Defaults
+D\0Προκαθορισμένες ρυθμίσεις
+; D\0Default settings
+;
+MSG_Menu_MUI
+M\0Ρυθμίσεις MUI...
+; M\0MUI Setting...
+;
+MSG_Win_WinTitle
+OpenURL
+; OpenURL
+;
+MSG_Win_Labels_Browsers
+Περιηγητές
+; Browsers
+;
+MSG_Win_Labels_Mailers
+Αλληλογραφίες
+; Mailers
+;
+MSG_Win_Labels_FTPs
+FTPs
+; FTPs
+;
+MSG_Win_Labels_Misc
+Διάφορα
+; Misc
+;
+MSG_Win_Save
+_Αποθήκευση
+; _Save
+;
+MSG_Win_Save_Help
+Αποθήκευση προτιμήσεων.
+; Save preferences.
+;
+MSG_Win_Use
+_Χρήση
+; _Use
+;
+MSG_Win_Use_Help
+Χρήση προτιμήσεων.
+; Use preferences.
+;
+MSG_Win_Apply
+_Εφαρμογή
+; _Apply
+;
+MSG_Win_Apply_Help
+Χρήση προτιμήσεων χωρίς κλείσιμο του παραθύρου.
+; Use preferences without closing window.
+;
+MSG_Win_Cancel
+Α_κύρωση
+; _Cancel
+;
+MSG_Win_Cancel_Help
+Κλείσιμο παραθύρου, χωρίς χρήση των προτιμήσεων.
+; Close window, without using preferences.
+;
+MSG_AppList_Add
+_Προσθήκη
+; A_dd
+;
+MSG_AppList_Add_Help
+Προσθήκη μιας νέας καταχώρησης.
+; Add a new entry.
+;
+MSG_AppList_Edit
+Επε_ξεργασία
+; _Edit
+;
+MSG_AppList_Edit_Help
+Επεξεργασία της ενεργής καταχώρησης.
+; Edit active entry.
+;
+MSG_AppList_Clone
+Κ_λώνος
+; C_lone
+;
+MSG_AppList_Clone_Help
+Κλωνοποίηση της ενεργής καταχώρησης.
+; Clone active entry.
+;
+MSG_AppList_Delete
+Διαγρα_φή
+; Dele_te
+;
+MSG_AppList_Delete_Help
+Διαγραφή της ενεργής καταχώρησης.
+; Delete active entry.
+;
+MSG_AppList_Disable
+Απε_νεργοποίηση
+; D_isable
+;
+MSG_AppList_Disable_Help
+Απενεργοποίηση της ενεργής καταχώρησης.
+; Disable active entry.
+;
+MSG_AppList_MoveUp_Help
+Μετακίνηση ενεργής καταχώρησης προς τα πάνω.
+; Move active entry up.
+;
+MSG_AppList_MoveDown_Help
+Μετακίνηση ενεργής καταχώρησης προς τα κάτω.
+; Move active entry down.
+;
+;
+MSG_Edit_Use
+_Χρήση
+; _Use
+;
+MSG_Edit_Use_Help
+Εφαρμογή αλλαγών.
+; Apply changes.
+;
+MSG_Edit_Cancel
+_Ακύρωση
+; _Cancel
+;
+MSG_Edit_Cancel_Help
+Κλείσιμο παραθύρου.
+; Close window.
+;
+MSG_Edit_ListName
+Όνομα
+; Name
+;
+MSG_Edit_ListPath
+Διαδρομή
+; Path
+;
+MSG_Edit_Definitions
+Ορισμοί
+; Definitions
+;
+MSG_Edit_ARexx
+Εντολές ARexx
+; ARexx commands
+;
+MSG_Edit_PopURL
+URL
+; URL
+;
+MSG_Edit_PopScreen
+Όνομα κοινής οθόνης
+; Public screen name
+;
+;
+MSG_Edit_Name
+_Ονομα
+; _Name
+;
+MSG_Edit_Name_Help
+Όνομα καταχώρησης.
+; Name of entry.
+;
+MSG_Edit_Path
+_Διαδρομή
+; _Path
+;
+MSG_Edit_Path_Help
+Πλήρης διαδρομή της εφαρμογής.
+; Complete path to the application.
+;
+MSG_Edit_Port
+_Θύρα ARexx
+; _ARexx port
+;
+MSG_Edit_Port_Help
+Όνομα της θύρας ARexx της εφαρμογής για\n\
+την αποστολή εντολών.
+; Name of the application ARexx port\n\
+; to send commands to.
+;
+MSG_Edit_Show
+_Προβολή
+; _Show
+;
+MSG_Edit_Show_Help
+Εντολή ARexx για την επαναφορά της εφαρμογής στο προσκήνιο.
+; ARexx command to uniconify the application.
+;
+MSG_Edit_Screen
+Προς τα _εμπρός
+; _To front
+;
+MSG_Edit_Screen_Help
+Εντολή ARexx για την μετακίνηση της οθόνης\n\
+εφαρμογής προς τα εμπρός.
+; ARexx command to move the application\n\
+; screen to front.
+;
+MSG_Edit_OpenURL
+Ά_νοιγμα URL
+; _Open URL
+;
+MSG_Edit_OpenURL_Help
+Εντολή ARexx για την κλήση ενός URL.
+; ARexx command to reach an URL.
+;
+MSG_Edit_NewWin
+_Νέο παράθυρο
+; N_ew window
+;
+MSG_Edit_NewWin_Help
+Εντολή ARexx για την κλήση ενός URL\n\
+σε νέο παράθυρο (ή καρτέλα).
+; ARexx command to reach an URL\n\
+; in a new window (or tab).
+;
+MSG_Browser_List_Help
+Λίστα των περιηγητών.
+; List of browsers.
+;
+MSG_Browser_WinTitle
+Επεξεργασία περιηγητή
+; Edit Browser
+;
+MSG_Browser_NewBrowser
+Νέος περιηγητής
+; New browser
+;
+;
+MSG_Mailer_List_Help
+Λίστα προγραμμάτων αλληλογραφίας.
+; List of Mailers.
+;
+MSG_Mailer_WinTitle
+Επεξεργασία προγραμμάτων αλληλογραφίας
+; Edit Mailer
+;
+MSG_Mailer_NewMailer
+Νέο πρ. αλληλογραφίας
+; New mailer
+;
+MSG_Mailer_Write
+_Εγγραφή αλληλογραφίας
+; _Write mail
+;
+MSG_Mailer_Write_Help
+Εντολή ARexx για το άνοιγμα ενός\n\
+\"παραθύρου εγγραφής νέας αλληλογραφίας\".
+; ARexx command to open a\n\
+; \"write a new EMail window\".
+;
+MSG_Mailer_PopAddress
+Διεύθυνση
+; Address
+;
+MSG_Mailer_Popsubject
+Θέμα
+; Subject
+;
+MSG_Mailer_PopBodyText
+Σώμα κειμένου
+; Body text
+;
+MSG_Mailer_PopBodyFile
+Σώμα αρχείου
+; Body file
+;
+;
+MSG_FTP_List_Help
+Λίστα πελατών FTP.
+; List of FTP clients.
+;
+MSG_FTP_WinTitle
+Επεξεργασία πελάτη FTP
+; Edit FTP client
+;
+MSG_FTP_NewFTP
+Νέος πελάτης FTP
+; New FTP client
+;
+MSG_FTP_RemoveURLQualifier
+Α_φαίρεση 'ftp://'
+; Re_move 'ftp://'
+;
+MSG_FTP_RemoveURLQualifier_Help
+Αν επιλεχτεί, το \"ftp://\" θα αφαιρεθεί\n\
+από το URL.
+; If selected, \"ftp://\" is removed\n\
+; from the URL.
+;
+MSG_Misc_Options
+Επιλογές
+; Options
+;
+MSG_Misc_Defaults
+Προκαθορισμένες
+; Defaults
+;
+MSG_Misc_Prepend
+_Βάλτε μπροστά το πρόθεμα \"http://\" στα URL χωρίς σχήμα
+; _Prepend \"http://\" to URLs without a scheme
+;
+MSG_Misc_Prepend_Help
+Αν επιλεχτεί, το \"http://\" θα προστεθεί σε οποιοδήποτε\n\
+URL χωρίς κάποιο σχήμα, έτσι ώστε να φορτωθεί στον περιηγητή.
+; If selected, \"http://\" is added to any URL\n\
+; without a scheme, so that it is opened in the\n\
+; browser.
+;
+MSG_Misc_UseMailer
+Απο_στολή mailto: URLs στο πρόγραμμα αλληλογραφίας
+; S_end mailto: URLs to email application
+;
+MSG_Misc_UseMailer_Help
+Αν επιλεχτεί, τα \"mailto:\" URLs στέλνονται στο πρόγραμμα\n\
+αλληλογραφίας, αλλιώς στέλνονται στον περιηγητή.
+; If selected, \"mailto:\" URLs are sent to\n\
+; the mailer, otherwise they are sent to the\n\
+; browser.
+;
+MSG_Misc_UseFTP
+Αποστο_λή \"ftp://\" URLs στην εφαρμογή FTP
+; Se_nd \"ftp://\" URLs to FTP application
+;
+MSG_Misc_UseFTP_Help
+Αν επιλεχτεί, τα \"ftp://\" URLs στέλνονται στον\n\
+πελάτη FTP, αλλιώς στέλνονται στον περιηγητή.
+; If selected, \"fpt://\" URLs are sent to\n\
+; the FTP client, otherwise they are sent to\n\
+; the browser.
+;
+MSG_Misc_Show
+Επανα_φορά εφαρμογής στο προσκήνιο
+; Un_iconify application
+;
+MSG_Misc_Show_Help
+Αν επιλεχτεί, η εφαρμογή επαναφέρεται στο προσκήνιο,\n\
+πριν αποσταλεί το URL σε αυτό.
+; If selected, the application is uniconified,\n\
+; before sending the URL to it.
+;
+MSG_Misc_Bring
+Επαναφο_ρά οθόνη περιηγητή προς τα εμπρός
+; _Bring browser screen to front
+;
+MSG_Misc_Bring_Help
+Αν επιλεχτεί, η οθόνη εφαρμογής μετακινείται\n\
+προς τα εμπρός, πριν την αποστολή του URL.
+; If selected, the application screen is moved\n\
+; to front, before sending the URL.
+;
+MSG_Misc_Open
+Άνοι_γμα URL σε νεό παράθυρο πελάτη (ή καρτέλα)
+; _Open URL in new client window (or tab)
+;
+MSG_Misc_Open_Help
+Αν επιλεχτεί, ένα νέο παράθυρο εφαρμογής (ή καρτέλα)\n\
+θα ανοιχτεί, πρίν την αποστολή του URL.
+; If selected, a new application window (or tab)\n\
+; is opened, before sending the URL.
+;
+MSG_Misc_Launch
+Έναρ_ξη περιηγητή εάν δεν εκτελείται κανένας
+; _Launch browser if one isn't running
+;
+MSG_Misc_Launch_Help
+Αν επιλεχτεί, μια νέα εφαρμογή θα εκτελεστεί, αν δεν βρέθηκε καμία.
+; If selected, a new application is run, if none is found.
+;
+MSG_About_WinTitle
+Περί OpenURL
+; About OpenURL
+;
+MSG_About_OK
+_OK
+; _OK
+;
+MSG_About_Descr
+Το \33bOpenURL\33n είναι μια βιβλιοθήκη για την εύκολη αποστολή URLs\n\
+από τις εφαρμογές στους περιηγητές, προγράμματα αλληλογραφίας\n\
+και πελατών FTP.\n\n\
+\33cΤο OpenURL είναι λογισμικό Public Domain.\n\n\
+Ελληνική μετάφραση: Αντώνης Ηλιάκης (amiga.phantom@yahoo.gr)
+; \33bOpenURL\33n is a shared library for easily sending\n\
+; URLs from applications to browsers, mailers\n\
+; and FTP clients.\n\n\
+; \33cOpenURL is a Public Domain Software.
+;
