@@ -5,6 +5,12 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+#### v7.13 RELEASE #############################################################
+
+2013-04-25  Jens Langner <Jens.Langner@light-speed.de>
+
+  * misc: final 7.13 release preparations
+
 2013-04-24 Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/greek.ct: updated greek translation kindly provided by Antonis
