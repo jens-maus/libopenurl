@@ -5,6 +5,11 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2013-04-30 Thore Böckelmann <tboeckel@gmx.de>
+
+  * locale/greek.ct: updated greek translation kindly provided by Antonis
+    Iliakis.
+
 #### v7.13 RELEASE #############################################################
 
 2013-04-25  Jens Langner <Jens.Langner@light-speed.de>

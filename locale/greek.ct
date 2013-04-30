@@ -3,8 +3,7 @@
 ## language greek
 ## codeset 0
 ;
-; Greek translation by Anthony Iliakis (amiga.phantom@yahoo.gr)
-;
+; Greek translation by Anthony Iliakis (phantom@amigafuture.de)
 ;
 ; catcomp OpenURL.cd CTFILE OpenURL.ct
 ;
@@ -85,7 +84,7 @@ MSG_Err_NoPrefs
 ; Can't obtain prefs from openurl.library
 ;
 MSG_Err_BadPrefs
-Αυτή η έκδοση του προγράμματος δεν ξέρει πως πρέπει\n\
+Αυτή η έκδοση του προγράμματος δε ξέρει πως πρέπει\n\
 να χειριστεί την έκδοση προτιμήσεων openurl.library %ld
 ; This version of this program doesn't know how\n\
 ; to handle openurl.library prefs version %ld
@@ -292,12 +291,12 @@ URL
 ; URL
 ;
 MSG_Edit_PopScreen
-Όνομα κοινής οθόνης
+Όνομα δημόσιας οθόνης
 ; Public screen name
 ;
 ;
 MSG_Edit_Name
-_Ονομα
+Ό_νομα
 ; _Name
 ;
 MSG_Edit_Name_Help
@@ -341,19 +340,19 @@ MSG_Edit_Screen_Help
 ; screen to front.
 ;
 MSG_Edit_OpenURL
-Ά_νοιγμα URL
+Άνοι_γμα URL
 ; _Open URL
 ;
 MSG_Edit_OpenURL_Help
-Εντολή ARexx για την κλήση ενός URL.
+Εντολή ARexx για τη κλήση ενός URL.
 ; ARexx command to reach an URL.
 ;
 MSG_Edit_NewWin
-_Νέο παράθυρο
+Νέο _παράθυρο
 ; N_ew window
 ;
 MSG_Edit_NewWin_Help
-Εντολή ARexx για την κλήση ενός URL\n\
+Εντολή ARexx για τη κλήση ενός URL\n\
 σε νέο παράθυρο (ή καρτέλα).
 ; ARexx command to reach an URL\n\
 ; in a new window (or tab).
@@ -372,15 +371,15 @@ MSG_Browser_NewBrowser
 ;
 ;
 MSG_Mailer_List_Help
-Λίστα προγραμμάτων αλληλογραφίας.
+Λίστα εφαρμογών αλληλογραφίας.
 ; List of Mailers.
 ;
 MSG_Mailer_WinTitle
-Επεξεργασία προγραμμάτων αλληλογραφίας
+Επεξεργασία εφαρμογών αλληλογραφίας
 ; Edit Mailer
 ;
 MSG_Mailer_NewMailer
-Νέο πρ. αλληλογραφίας
+Νέα εφαρμογή αλληλογραφίας
 ; New mailer
 ;
 MSG_Mailer_Write
@@ -437,7 +436,7 @@ MSG_Misc_Options
 ; Options
 ;
 MSG_Misc_Defaults
-Προκαθορισμένες
+Προεπιλεγμένες
 ; Defaults
 ;
 MSG_Misc_Prepend
@@ -457,7 +456,7 @@ MSG_Misc_UseMailer
 ;
 MSG_Misc_UseMailer_Help
 Αν επιλεχτεί, τα \"mailto:\" URLs στέλνονται στο πρόγραμμα\n\
-αλληλογραφίας, αλλιώς στέλνονται στον περιηγητή.
+αλληλογραφίας, αλλιώς στέλνονται στο περιηγητή.
 ; If selected, \"mailto:\" URLs are sent to\n\
 ; the mailer, otherwise they are sent to the\n\
 ; browser.
@@ -468,7 +467,7 @@ MSG_Misc_UseFTP
 ;
 MSG_Misc_UseFTP_Help
 Αν επιλεχτεί, τα \"ftp://\" URLs στέλνονται στον\n\
-πελάτη FTP, αλλιώς στέλνονται στον περιηγητή.
+πελάτη FTP, αλλιώς στέλνονται στο περιηγητή.
 ; If selected, \"fpt://\" URLs are sent to\n\
 ; the FTP client, otherwise they are sent to\n\
 ; the browser.
@@ -499,16 +498,16 @@ MSG_Misc_Open
 ;
 MSG_Misc_Open_Help
 Αν επιλεχτεί, ένα νέο παράθυρο εφαρμογής (ή καρτέλα)\n\
-θα ανοιχτεί, πρίν την αποστολή του URL.
+θα ανοιχτεί, πριν την αποστολή του URL.
 ; If selected, a new application window (or tab)\n\
 ; is opened, before sending the URL.
 ;
 MSG_Misc_Launch
-Έναρ_ξη περιηγητή εάν δεν εκτελείται κανένας
+Έναρ_ξη περιηγητή αν δεν εκτελείται κανένας
 ; _Launch browser if one isn't running
 ;
 MSG_Misc_Launch_Help
-Αν επιλεχτεί, μια νέα εφαρμογή θα εκτελεστεί, αν δεν βρέθηκε καμία.
+Αν επιλεχτεί, μια νέα εφαρμογή θα εκτελεστεί, αν δε βρέθηκε καμία.
 ; If selected, a new application is run, if none is found.
 ;
 MSG_About_WinTitle
@@ -521,10 +520,10 @@ _OK
 ;
 MSG_About_Descr
 Το \33bOpenURL\33n είναι μια βιβλιοθήκη για την εύκολη αποστολή URLs\n\
-από τις εφαρμογές στους περιηγητές, προγράμματα αλληλογραφίας\n\
+από τις εφαρμογές στους περιηγητές, εφαρμογές αλληλογραφίας\n\
 και πελατών FTP.\n\n\
 \33cΤο OpenURL είναι λογισμικό Public Domain.\n\n\
-Ελληνική μετάφραση: Αντώνης Ηλιάκης (amiga.phantom@yahoo.gr)
+Ελληνική μετάφραση: Αντώνης Ηλιάκης (phantom@amigafuture.de)
 ; \33bOpenURL\33n is a shared library for easily sending\n\
 ; URLs from applications to browsers, mailers\n\
 ; and FTP clients.\n\n\
