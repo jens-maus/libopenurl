@@ -5,6 +5,10 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2013-10-15 Thore Böckelmann <tboeckel@gmx.de>
+
+  * library/lib.h: updated the AmigaOS4 build for the latest SDK.
+
 2013-04-30 Thore Böckelmann <tboeckel@gmx.de>
 
   * locale/greek.ct: updated greek translation kindly provided by Antonis

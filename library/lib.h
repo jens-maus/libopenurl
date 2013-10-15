@@ -28,6 +28,10 @@
 #include <proto/iffparse.h>
 #include <proto/rexxsyslib.h>
 
+#if defined(__amigaos4__)
+#include <dos/obsolete.h>
+#endif
+
 #include <clib/alib_protos.h>
 
 #if !defined(__AROS__)
