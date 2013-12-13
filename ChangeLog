@@ -5,6 +5,12 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+#### v7.14 RELEASE #############################################################
+
+2013-12-13  Jens Maus <mail@jens-maus.de>
+
+  * misc: final 7.14 release preparations
+
 2013-10-15 Thore Böckelmann <tboeckel@gmx.de>
 
   * library/lib.h: updated the AmigaOS4 build for the latest SDK.
