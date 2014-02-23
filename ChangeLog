@@ -5,6 +5,11 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2014-01-23  Jens Maus <mail@jens-maus.de>
+
+  * locale: all catalog translations have now been moved to use the free
+    services of transifex (http://www.transifex.com/projects/p/openurllib/)
+
 #### v7.14 RELEASE #############################################################
 
 2013-12-13  Jens Maus <mail@jens-maus.de>
