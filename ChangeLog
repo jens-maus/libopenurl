@@ -5,6 +5,11 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2014-04-01 Thore Böckelmann <tboeckel@gmx.de>
+
+  * library/misc: updated to the most recent SDI header files. This makes it
+    possible to remove the stub functions for AmigaOS4.
+
 2014-03-28 Thore Böckelmann <tboeckel@gmx.de>
 
   * cmd/SmartReadArgs.c: fixed the broken AmigaOS4 build due to recent SDK

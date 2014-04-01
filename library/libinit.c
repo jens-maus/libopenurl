@@ -76,6 +76,9 @@ struct ExecBase *SysBase = NULL;
 #endif
 
 struct LibraryHeader *OpenURLBase = NULL;
+#if defined(__amigaos4__)
+struct OpenURLIFace *IOpenURL = NULL;
+#endif
 
 static const char UserLibName[] = "openurl.library";
 static const char UserLibID[]   = "$VER: openurl.library " LIB_REV_STRING " [" SYSTEMSHORT "/" CPU "] (" LIB_DATE ") " LIB_COPYRIGHT;
@@ -527,6 +530,9 @@ static struct LibraryHeader * LIBFUNC LibInit(REG(d0, struct LibraryHeader *base
 
     // set the OpenURLBase
     OpenURLBase = base;
+    #if defined(__amigaos4__)
+    GETINTERFACE(IOpenURL, OpenURLBase);
+    #endif
 
     // If we are not running on AmigaOS4 (no stackswap required) we go and
     // do an explicit StackSwap() in case the user wants to make sure we
@@ -551,6 +557,7 @@ static struct LibraryHeader * LIBFUNC LibInit(REG(d0, struct LibraryHeader *base
     {
       callLibFunction(freeBase, base);
       OpenURLBase = NULL;
+      DROPINTERFACE(IOpenURL);
     }
 
     #if defined(__amigaos4__) && defined(__NEWLIB__)
@@ -597,6 +604,12 @@ STATIC BPTR LibDelete(struct LibraryHeader *base)
 
   // unprotect
   ReleaseSemaphore(&base->libSem);
+
+  #if defined(__amigaos4__)
+  DROPINTERFACE(IOpenURL);
+  IOpenURL = NULL;
+  #endif
+  OpenURLBase = NULL;
 
   #if defined(__amigaos4__) && defined(__NEWLIB__)
   if(NewlibBase)

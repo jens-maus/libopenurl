@@ -24,6 +24,9 @@
 
 #include "debug.h"
 
+#define __NOLIBBASE__
+#include <proto/openurl.h>
+
 /**************************************************************************/
 
 #define ID_BRWS MAKE_ID('B','R','W','S')

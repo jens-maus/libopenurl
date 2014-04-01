@@ -18,6 +18,8 @@
 
 ***************************************************************************/
 
+#ifndef BASE_H
+#define BASE_H 1
 
 #ifndef EXEC_LIBRARIES_H
 #include <exec/libraries.h>
@@ -47,6 +49,9 @@ struct LibraryHeader
   ULONG                   rexx_use;
 };
 
+#define __NOLIBBASE__
+#include <proto/openurl.h>
+
 /***************************************************************************/
 
 #if defined(__amigaos4__)
@@ -57,6 +62,15 @@ extern struct ExecBase *SysBase;
 
 extern struct LibraryHeader *OpenURLBase;
 
+#if defined(__amigaos4__)
+#define __BASE_OR_IFACE_TYPE	struct OpenURLIFace *
+#define __BASE_OR_IFACE_VAR		IOpenURL
+#else
+#define __BASE_OR_IFACE_TYPE	struct LibraryHeader *
+#define __BASE_OR_IFACE_VAR		OpenURLBase
+#endif
+#define __BASE_OR_IFACE			__BASE_OR_IFACE_TYPE __BASE_OR_IFACE_VAR
+
 /***************************************************************************/
 
 enum
@@ -66,3 +80,5 @@ enum
 };
 
 /***************************************************************************/
+
+#endif /* BASE_H */

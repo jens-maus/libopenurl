@@ -22,6 +22,9 @@
 
 #include "debug.h"
 
+#define __NOLIBBASE__
+#include <proto/openurl.h>
+
 #if defined(__amigaos4__)
 struct Library *DOSBase = NULL;
 struct Library *UtilityBase = NULL;
@@ -65,7 +68,7 @@ freeBase(struct LibraryHeader *lib)
 
   if(lib->prefs != NULL)
   {
-    URL_FreePrefsA(lib->prefs,NULL);
+    CALL_LFUNC(URL_FreePrefsA, lib->prefs, NULL);
     lib->prefs = NULL;
   }
 
