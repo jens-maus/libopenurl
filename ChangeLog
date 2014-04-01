@@ -17,7 +17,6 @@ $URL$
   * cmd/SmartReadArgs.c: fixed the broken AmigaOS4 build due to recent SDK
     changes by including dos/obsolete.h.
 
->>>>>>> .r206
 2014-01-23  Jens Maus <mail@jens-maus.de>
 
   * locale: all catalog translations have now been moved to use the free
