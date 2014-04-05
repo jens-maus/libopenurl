@@ -5,6 +5,12 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+#### v7.15 RELEASE #############################################################
+
+2014-04-05  Jens Maus <mail@jens-maus.de>
+
+  * misc: final 7.15 release preparations
+
 2014-04-01 Thore Böckelmann <tboeckel@gmx.de>
 
   * library/misc: updated to the most recent SDI header files. This makes it

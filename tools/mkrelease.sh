@@ -73,12 +73,14 @@ cp -a -R developer/C/include/* "release/OpenURL/Developer/C/include/"
 cp -a developer/sfd/* "release/OpenURL/Developer/sfd/"
 cp -a developer/xml/* "release/OpenURL/Developer/xml/"
 
-cp -a locale/OpenURL.cd "release/OpenURL/Catalogs/"
+cp -a locale/OpenURL.pot "release/OpenURL/Catalogs/"
 rm -f locale/*.catalog
 make -C prefs catalogs
-for language in french german greek italian polish swedish; do
-  mkdir -p "release/OpenURL/Catalogs/$language"
-  cp locale/$language.catalog "release/OpenURL/Catalogs/$language/OpenURL.catalog"
+for language in `ls locale/*.catalog`; do
+  catalog=$(basename "$language")
+  lang="${catalog%.*}"
+  mkdir -p "release/OpenURL/Catalogs/${lang}"
+  cp -a ${language} "release/OpenURL/Catalogs/${lang}/OpenURL.catalog"
 done
 
 releasever=`grep "#define LIB_VERSION" library/version.h | awk '{ print $3 }'`
