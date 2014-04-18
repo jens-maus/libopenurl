@@ -38,9 +38,8 @@ mkdir -p "release/OpenURL/Developer/sfd"
 mkdir -p "release/OpenURL/Developer/xml"
 
 for os in os3 os4 mos aros-i386 aros-ppc aros-x86_64; do
-
-  make OS=$os clean
-  make OS=$os DEBUG=
+	make OS=$os clean
+	make OS=$os DEBUG=
 
 	case $os in
 	    os3)         fullsys="AmigaOS3";;
@@ -53,10 +52,19 @@ for os in os3 os4 mos aros-i386 aros-ppc aros-x86_64; do
 	mkdir -p "release/OpenURL/C/$fullsys"
 	mkdir -p "release/OpenURL/Libs/$fullsys"
 	mkdir -p "release/OpenURL/Prefs/$fullsys"
-  cp -a cmd/bin_$os/OpenURL "release/OpenURL/C/$fullsys/"
-  cp -a library/bin_$os/openurl.library "release/OpenURL/Libs/$fullsys/"
-  cp -a prefs/bin_$os/OpenURL "release/OpenURL/Prefs/$fullsys/"
-  cp -a dist/OpenURL/Prefs/OpenURL.info "release/OpenURL/Prefs/$fullsys/"
+	cp -a cmd/bin_$os/OpenURL "release/OpenURL/C/$fullsys/"
+	cp -a library/bin_$os/openurl.library "release/OpenURL/Libs/$fullsys/"
+	if [ "$os" = "os4" ]; then
+		mkdir -p "release/OpenURL/Prefs/$fullsys/MUI"
+		mkdir -p "release/OpenURL/Prefs/$fullsys/ReAction"
+		cp -a prefs/bin_$os/OpenURL "release/OpenURL/Prefs/$fullsys/MUI"
+		cp -a raPrefs/bin_$os/OpenURL "release/OpenURL/C/$fullsys/ReAction"
+		cp -a dist/OpenURL/Prefs/OpenURL.info "release/OpenURL/Prefs/$fullsys/MUI/"
+		cp -a dist/OpenURL/Prefs/OpenURL.info "release/OpenURL/Prefs/$fullsys/ReAction/"
+	else
+		cp -a prefs/bin_$os/OpenURL "release/OpenURL/Prefs/$fullsys/"
+		cp -a dist/OpenURL/Prefs/OpenURL.info "release/OpenURL/Prefs/$fullsys/"
+	fi
 	mkdir -p "release/OpenURL/Developer"
 	mkdir -p "release/OpenURL/Developer/Autodocs"
 	mkdir -p "release/OpenURL/Developer/fd"
@@ -77,10 +85,10 @@ cp -a locale/OpenURL.pot "release/OpenURL/Catalogs/"
 rm -f locale/*.catalog
 make -C prefs catalogs
 for language in `ls locale/*.catalog`; do
-  catalog=$(basename "$language")
-  lang="${catalog%.*}"
-  mkdir -p "release/OpenURL/Catalogs/${lang}"
-  cp -a ${language} "release/OpenURL/Catalogs/${lang}/OpenURL.catalog"
+	catalog=$(basename "$language")
+	lang="${catalog%.*}"
+	mkdir -p "release/OpenURL/Catalogs/${lang}"
+	cp -a ${language} "release/OpenURL/Catalogs/${lang}/OpenURL.catalog"
 done
 
 releasever=`grep "#define LIB_VERSION" library/version.h | awk '{ print $3 }'`

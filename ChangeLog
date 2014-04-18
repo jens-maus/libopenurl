@@ -5,6 +5,12 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2014-04-17 Thore Böckelmann <tboeckel@gmx.de>
+
+  * tools/mkrelease.sh, dist/Install: for AmigaOS4 the ReAction version of the
+    preferences application is now included, too. Additionally the Installer
+    script lets the user choose between MUI and ReAction GUI to be installed.
+
 #### v7.15 RELEASE #############################################################
 
 2014-04-05  Jens Maus <mail@jens-maus.de>
