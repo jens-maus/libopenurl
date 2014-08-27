@@ -5,6 +5,11 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2014-08-27 Thore Böckelmann <tboeckel@gmx.de>
+
+  * mcp/locale: added dutch, russian, spanish and turkish translations and
+    updated all other translations.
+
 2014-04-17 Thore Böckelmann <tboeckel@gmx.de>
 
   * tools/mkrelease.sh, dist/Install: for AmigaOS4 the ReAction version of the
