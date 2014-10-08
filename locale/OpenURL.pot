@@ -31,8 +31,8 @@ msgid "_Abort"
 msgstr "_Abort"
 
 msgctxt "MSG_Err_NoMem (//)"
-msgid "Too few memory"
-msgstr "Too few memory"
+msgid "Out of memory"
+msgstr "Out of memory"
 
 msgctxt "MSG_Err_NoMUI (//)"
 msgid "Can't open muimaster.library %ld.%ld or higher"
