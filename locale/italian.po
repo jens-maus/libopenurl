@@ -8,13 +8,14 @@
 # 
 # Translators:
 # Translators:
+# Samir Hawamdeh <s.hawamdeh@teletu.it>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenURL\n"
 "Report-Msgid-Bugs-To: http://sf.net/p/openurllib/\n"
 "POT-Creation-Date: 2014-02-23 12:01+0100\n"
-"PO-Revision-Date: 2014-10-08 06:15+0000\n"
-"Last-Translator: Thore Böckelmann <tboeckel@gmx.de>\n"
+"PO-Revision-Date: 2014-10-08 06:44+0000\n"
+"Last-Translator: Samir Hawamdeh <s.hawamdeh@teletu.it>\n"
 "Language-Team: Italian (http://www.transifex.com/projects/p/openurllib/language/it/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -33,7 +34,7 @@ msgstr "_OK"
 
 msgctxt "MSG_Err_NoMem (//)"
 msgid "Out of memory"
-msgstr ""
+msgstr "Memoria insufficiente"
 
 msgctxt "MSG_Err_NoMUI (//)"
 msgid "Can't open muimaster.library %ld.%ld or higher"
@@ -61,39 +62,39 @@ msgstr "Impossibile aprire openurl.library %ld.%ld o superiore"
 
 msgctxt "MSG_Err_NoAppClass (//)"
 msgid "Can't create AppClass"
-msgstr "Impossibile create la classe App"
+msgstr "Impossibile creare la classe AppClass"
 
 msgctxt "MSG_Err_NoWinClass (11//)"
 msgid "Can't create WinClass"
-msgstr "Impossibile create la classe Win"
+msgstr "Impossibile creare la classe WinClass"
 
 msgctxt "MSG_Err_NoAppListClass (13//)"
 msgid "Can't create AppListClass"
-msgstr "Impossibile create la classe AppList"
+msgstr "Impossibile creare la classe AppListClass"
 
 msgctxt "MSG_Err_NoBrowserEditWinClass (//)"
 msgid "Can't create BrowserEditWinClass"
-msgstr "Impossibile create la classe BrowserEditWin"
+msgstr "Impossibile creare la classe BrowserEditWinClass"
 
 msgctxt "MSG_Err_NoMailerEditWinClass (//)"
 msgid "Can't create MailerEditWinClass"
-msgstr "Impossibile create la classe MailerEditWin"
+msgstr "Impossibile creare la classe MailerEditWinClass"
 
 msgctxt "MSG_Err_NoFTPEditWinClass (//)"
 msgid "Can't create FTPEditWinClass"
-msgstr "Impossibile create la classe FTPEdit"
+msgstr "Impossibile creare la classe FTPEditWinClass"
 
 msgctxt "MSG_Err_PopupPortClass (//)"
 msgid "Can't create PopupPortClass"
-msgstr "Impossibile create la classe PopupPort"
+msgstr "Impossibile creare la classe PopupPortClass"
 
 msgctxt "MSG_Err_PopphClass (//)"
 msgid "Can't create PopphClass"
-msgstr "Impossibile create la classe Popph"
+msgstr "Impossibile creare la classe PopphClass"
 
 msgctxt "MSG_Err_NoApp (//)"
 msgid "Can't create application object"
-msgstr "Impossibile create l'applicazione"
+msgstr "Impossibile creare l'applicazione"
 
 msgctxt "MSG_Err_NoPrefs (//)"
 msgid "Can't obtain prefs from openurl.library"
@@ -103,7 +104,7 @@ msgctxt "MSG_Err_BadPrefs (//)"
 msgid ""
 "This version of this program doesn't know how\n"
 "to handle openurl.library prefs version %ld"
-msgstr "La version di questo programma non gestiste\nle preferenze OpenURL versione %ld"
+msgstr "La versione di questo programma non è in grado di\ngestire le preferenze OpenURL versione %ld"
 
 msgctxt "MSG_Err_FailedSave (//)"
 msgid "Can't save prefs"
@@ -139,7 +140,7 @@ msgstr "H\\0Nascondi"
 
 msgctxt "MSG_Menu_Quit (//)"
 msgid "Q\\0Quit"
-msgstr "Q\\0Fine"
+msgstr "Q\\0Esci"
 
 msgctxt "MSG_Menu_Prefs (//)"
 msgid "Preferences"
@@ -159,11 +160,11 @@ msgstr "L\\0Ultimi valori salvati"
 
 msgctxt "MSG_Menu_Restore (//)"
 msgid "R\\0Restore"
-msgstr "R\\0Repristina"
+msgstr "R\\0Ripristina"
 
 msgctxt "MSG_Menu_Defaults (210//)"
 msgid "D\\0Default settings"
-msgstr "D\\0Valori di defaults"
+msgstr "D\\0Valori predefiniti"
 
 msgctxt "MSG_Menu_MUI (212//)"
 msgid "M\\0MUI Setting..."
@@ -223,7 +224,7 @@ msgstr "Chiude la finestra, senza\nusare le impostazioni."
 
 msgctxt "MSG_AppList_Add (400//)"
 msgid "A_dd"
-msgstr "A_ggungi"
+msgstr "A_ggiungi"
 
 msgctxt "MSG_AppList_Add_Help (//)"
 msgid "Add a new entry."
@@ -323,7 +324,7 @@ msgstr "_Percorso"
 
 msgctxt "MSG_Edit_Path_Help (//)"
 msgid "Complete path to the application."
-msgstr "Percorso completo all'applicazione"
+msgstr "Percorso completo dell'applicazione"
 
 msgctxt "MSG_Edit_Port (//)"
 msgid "_ARexx port"
@@ -423,15 +424,15 @@ msgstr "Testo da file"
 
 msgctxt "MSG_FTP_List_Help (800//)"
 msgid "List of FTP clients."
-msgstr "Lista clienti FTP"
+msgstr "Lista client FTP"
 
 msgctxt "MSG_FTP_WinTitle (//)"
 msgid "Edit FTP client"
-msgstr "Modifica cliente FTP"
+msgstr "Modifica client FTP"
 
 msgctxt "MSG_FTP_NewFTP (//)"
 msgid "New FTP client"
-msgstr "Nuovo cliente FTP"
+msgstr "Nuovo client FTP"
 
 msgctxt "MSG_FTP_RemoveURLQualifier (//)"
 msgid "Re_move 'ftp://'"
@@ -441,11 +442,11 @@ msgctxt "MSG_FTP_RemoveURLQualifier_Help (//)"
 msgid ""
 "If selected, \"ftp://\" is removed\n"
 "from the URL."
-msgstr "Se impostato, lo shcema \"ftp://\"\nè rimosso dalla URL."
+msgstr "Se impostato, lo schema \"ftp://\"\nsarà rimosso dalla URL."
 
 msgctxt "MSG_Misc_Options (900//)"
 msgid "Options"
-msgstr "Ipostazioni"
+msgstr "Opzioni"
 
 msgctxt "MSG_Misc_Defaults (//)"
 msgid "Defaults"
