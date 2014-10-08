@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: OpenURL\n"
 "Report-Msgid-Bugs-To: http://sf.net/p/openurllib/\n"
 "POT-Creation-Date: 2014-02-23 12:01+0100\n"
-"PO-Revision-Date: 2014-08-21 16:00+0000\n"
+"PO-Revision-Date: 2014-08-27 17:33+0000\n"
 "Last-Translator: Michael Malyshev\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/openurllib/language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -26,7 +26,7 @@ msgstr ""
 
 msgctxt "MSG_ErrReqTitle (1//)"
 msgid "OpenURL Error"
-msgstr ""
+msgstr "Ошибка OpenURL"
 
 msgctxt "MSG_ErrReqGadget (//)"
 msgid "_Abort"
@@ -34,31 +34,31 @@ msgstr "П_рервать"
 
 msgctxt "MSG_Err_NoMem (//)"
 msgid "Too few memory"
-msgstr ""
+msgstr "Слишком мало памяти"
 
 msgctxt "MSG_Err_NoMUI (//)"
 msgid "Can't open muimaster.library %ld.%ld or higher"
-msgstr ""
+msgstr "Невозможно открыть muimaster.library %ld.%ld или выше"
 
 msgctxt "MSG_Err_NoIntuition (//)"
 msgid "Can't open intuition.library %ld.%ld or higher"
-msgstr ""
+msgstr "Невозможно открыть intuition.library %ld.%ld или выше"
 
 msgctxt "MSG_Err_NoUtility (//)"
 msgid "Can't open utility.library %ld.%ld or higher"
-msgstr ""
+msgstr "Невозможно открыть utility.library %ld.%ld или выше"
 
 msgctxt "MSG_Err_NoGfx (//)"
 msgid "Can't open graphics.library %ld.%ld or higher"
-msgstr ""
+msgstr "Невозможно открыть graphics.library %ld.%ld или выше"
 
 msgctxt "MSG_Err_NoIcon (//)"
 msgid "Can't open icon.library %ld.%ld or higher"
-msgstr ""
+msgstr "Невозможно открыть icon.library %ld.%ld или выше"
 
 msgctxt "MSG_Err_NoOpenURL (//)"
 msgid "Can't open openurl.library %ld.%ld or higher"
-msgstr ""
+msgstr "Невозможно открыть openurl.library %ld.%ld или выше"
 
 msgctxt "MSG_Err_NoAppClass (//)"
 msgid "Can't create AppClass"
@@ -136,7 +136,7 @@ msgstr "!\\0О MUI..."
 
 msgctxt "MSG_Menu_Hide (//)"
 msgid "H\\0Hide"
-msgstr ""
+msgstr "H\\0Спрятать"
 
 msgctxt "MSG_Menu_Quit (//)"
 msgid "Q\\0Quit"
@@ -156,7 +156,7 @@ msgstr "U\\0Принять"
 
 msgctxt "MSG_Menu_LastSaved (//)"
 msgid "L\\0Last saved"
-msgstr ""
+msgstr "L\\0Последняя сохранённая"
 
 msgctxt "MSG_Menu_Restore (//)"
 msgid "R\\0Restore"
@@ -164,7 +164,7 @@ msgstr "R\\0Восстановить"
 
 msgctxt "MSG_Menu_Defaults (210//)"
 msgid "D\\0Default settings"
-msgstr ""
+msgstr "D\\0Настройки по умолчанию"
 
 msgctxt "MSG_Menu_MUI (212//)"
 msgid "M\\0MUI Setting..."
@@ -296,11 +296,11 @@ msgstr "Путь"
 
 msgctxt "MSG_Edit_Definitions (//)"
 msgid "Definitions"
-msgstr ""
+msgstr "Определения"
 
 msgctxt "MSG_Edit_ARexx (//)"
 msgid "ARexx commands"
-msgstr ""
+msgstr "Команды ARexx"
 
 msgctxt "MSG_Edit_PopURL (//)"
 msgid "URL"
@@ -308,7 +308,7 @@ msgstr "URL"
 
 msgctxt "MSG_Edit_PopScreen (//)"
 msgid "Public screen name"
-msgstr ""
+msgstr "Имя общего экрана"
 
 msgctxt "MSG_Edit_Name (//)"
 msgid "_Name"
@@ -328,7 +328,7 @@ msgstr ""
 
 msgctxt "MSG_Edit_Port (//)"
 msgid "_ARexx port"
-msgstr ""
+msgstr "Порт _ARexx"
 
 msgctxt "MSG_Edit_Port_Help (//)"
 msgid ""
