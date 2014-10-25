@@ -480,7 +480,7 @@ msgstr "Wysyłaj adr_esy \"ftp://\" do klienta FTP"
 
 msgctxt "MSG_Misc_UseFTP_Help (//)"
 msgid ""
-"If selected, \"fpt://\" URLs are sent to\n"
+"If selected, \"ftp://\" URLs are sent to\n"
 "the FTP client, otherwise they are sent to\n"
 "the browser."
 msgstr "Jeśli ta opcja jest włączona, adresy URL zaczynające się\nod \"ftp://\" będą wysyłane do klienta protokołu FTP,\nw przeciwnym razie będą wysyłane do przeglądarki."

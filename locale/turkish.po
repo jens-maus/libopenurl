@@ -479,7 +479,7 @@ msgstr "\"_ftp://\" URL'lerini FTP uygulamasına gönder"
 
 msgctxt "MSG_Misc_UseFTP_Help (//)"
 msgid ""
-"If selected, \"fpt://\" URLs are sent to\n"
+"If selected, \"ftp://\" URLs are sent to\n"
 "the FTP client, otherwise they are sent to\n"
 "the browser."
 msgstr "Etkinleştirildiğinde, \"ftp://\" ön ekiyle\nbaşlayan URL'ler FTP istemcisine\ngönderilir. Aksi halde tarayıca gönderilir."
