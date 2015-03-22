@@ -5,6 +5,11 @@ openurl.library - ChangeLog
 $Id$
 $URL$
 
+2015-03-22  Jens Maus <mail@jens-maus.de>
+
+  * tools/mkrelease.sh: fixed copy of ReAction-based prefs program which failed
+    due to incorrect path in mkrelease.sh. This fixes bug #13.
+
 #### v7.16 RELEASE #############################################################
 
 2015-03-21  Jens Maus <mail@jens-maus.de>

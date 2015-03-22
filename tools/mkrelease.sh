@@ -57,8 +57,8 @@ for os in os3 os4 mos aros-i386 aros-ppc aros-x86_64; do
 	if [ "$os" = "os4" ]; then
 		mkdir -p "release/OpenURL/Prefs/$fullsys/MUI"
 		mkdir -p "release/OpenURL/Prefs/$fullsys/ReAction"
-		cp -a prefs/bin_$os/OpenURL "release/OpenURL/Prefs/$fullsys/MUI"
-		cp -a raPrefs/bin_$os/OpenURL "release/OpenURL/C/$fullsys/ReAction"
+		cp -a prefs/bin_$os/OpenURL "release/OpenURL/Prefs/$fullsys/MUI/"
+		cp -a raPrefs/bin_$os/OpenURL "release/OpenURL/Prefs/$fullsys/ReAction/"
 		cp -a dist/OpenURL/Prefs/OpenURL.info "release/OpenURL/Prefs/$fullsys/MUI/"
 		cp -a dist/OpenURL/Prefs/OpenURL.info "release/OpenURL/Prefs/$fullsys/ReAction/"
 	else
