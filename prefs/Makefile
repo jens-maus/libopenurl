@@ -224,7 +224,7 @@ ifeq ($(OS), mos)
   CPU     = -mcpu=powerpc
   CFLAGS  += -noixemul
   LDFLAGS += -noixemul
-  LDLIBS  += -ldebug -mui
+  LDLIBS  += -ldebug
 
 else
 ifeq ($(OS), aros-i386)

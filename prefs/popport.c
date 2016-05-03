@@ -216,7 +216,8 @@ HOOKPROTONH(closeFun, void, Object *list, Object *str)
     DoMethod(list,MUIM_List_GetEntry,MUIV_List_GetEntry_Active,(IPTR)&port);
     if (port)
     {
-        TEXT buf[PORT_LEN], *dot, *digit;
+        TEXT buf[PORT_LEN], *digit;
+        STRPTR dot;
 
         dot = strrchr(port,'.');
 
