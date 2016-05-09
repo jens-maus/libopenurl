@@ -2,9 +2,6 @@
 openurl.library - ChangeLog
 ---------------------------
 
-$Id$
-$URL$
-
 2015-03-22  Jens Maus <mail@jens-maus.de>
 
   * tools/mkrelease.sh: fixed copy of ReAction-based prefs program which failed
