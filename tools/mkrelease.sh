@@ -3,7 +3,7 @@
 #
 # openurl.library - universal URL display and browser launcher library
 # Copyright (C) 1998-2005 by Troels Walsted Hansen, et al.
-# Copyright (C) 2005-2015 openurl.library Open Source Team
+# Copyright (C) 2005-2016 openurl.library Open Source Team
 #
 # This library is free software; it has been placed in the public domain
 # and you can freely redistribute it and/or modify it. Please note, however,
@@ -74,7 +74,7 @@ done
 
 cp -a -R dist/* "release/"
 rm -f "release/OpenURL/Prefs/OpenURL.info"
-cp -a AUTHORS ChangeLog COPYING "release/OpenURL/"
+cp -a ChangeLog COPYING "release/OpenURL/"
 cp -a developer/Autodocs/* "release/OpenURL/Developer/Autodocs/"
 cp -a developer/fd/* "release/OpenURL/Developer/fd/"
 cp -a -R developer/C/include/* "release/OpenURL/Developer/C/include/"

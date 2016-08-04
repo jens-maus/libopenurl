@@ -2,7 +2,7 @@
 #
 # openurl.library - universal URL display and browser launcher library
 # Copyright (C) 1998-2005 by Troels Walsted Hansen, et al.
-# Copyright (C) 2005-2015 openurl.library Open Source Team
+# Copyright (C) 2005-2016 openurl.library Open Source Team
 #
 # This library is free software; it has been placed in the public domain
 # and you can freely redistribute it and/or modify it. Please note, however,
@@ -370,12 +370,12 @@ install: all
 ## CATALOG GENERATION #################
 
 $(LOCALE)/%.catalog: $(LOCALE)/%.po $(LOCALE)/OpenURL.pot
-	@echo "  MK $@"
-	@$(FC) POFILE $< CATALOG $@
+	@echo "  FC $@"
+	@$(FC) REVISION $(shell git rev-list --all --count $<) POFILE $< CATALOG $@ CODESET UTF-8
 
 locale.h: $(LOCALE)/OpenURL.pot locale_h.sd
-	@echo "  MK $@"
-	@$(FC) $(LOCALE)/OpenURL.pot locale.h=locale_h.sd
+	@echo "  FC $@"
+	@$(FC) $(LOCALE)/OpenURL.pot locale.h=locale_h.sd CODESET ISO-8859-1
 
 .IGNORE: $(CATALOGS)
 
