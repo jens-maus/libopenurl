@@ -2,6 +2,12 @@
 openurl.library - ChangeLog
 ---------------------------
 
+#### v7.17 RELEASE #############################################################
+
+2016-08-04  Jens Maus <mail@jens-maus.de>
+
+  * misc: final 7.17 release preparations
+
 2015-03-22  Jens Maus <mail@jens-maus.de>
 
   * tools/mkrelease.sh: fixed copy of ReAction-based prefs program which failed
