@@ -233,7 +233,7 @@ HOOKPROTONH(closeFun, void, Object *list, Object *str)
 
                 if (dot)
                 {
-                    strlcpy(buf, port, dot-port);
+                    strlcpy(buf, port, (STRPTR)dot-port);
                     port = buf;
                 }
         }
