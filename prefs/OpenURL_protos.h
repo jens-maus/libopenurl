@@ -60,8 +60,6 @@ Object *opopport ( ULONG maxLen , ULONG key , ULONG help );
 Object *opopph ( CONST_STRPTR *syms , STRPTR *names , ULONG maxLen , ULONG key , ULONG asl , ULONG help );
 ULONG openWindow ( Object *app , Object *win );
 IPTR delEntry ( Object *obj , APTR entry );
-void STDARGS msprintf ( STRPTR to , STRPTR fmt , ... ) VARARGS68K;
-int STDARGS msnprintf ( STRPTR buf , int size , STRPTR fmt , ... ) VARARGS68K;
 
 /* ftpeditwin.c */
 BOOL initFTPEditWinClass ( void );
