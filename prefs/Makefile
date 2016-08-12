@@ -371,7 +371,7 @@ install: all
 
 $(LOCALE)/%.catalog: $(LOCALE)/%.po $(LOCALE)/OpenURL.pot
 	@echo "  FC $@"
-	@$(FC) REVISION $(shell git rev-list --all --count $<) POFILE $< CATALOG $@ CODESET UTF-8
+	@$(FC) REVISION $(shell git rev-list --all --count $<) POFILE $< CATALOG $@ CODESET ISO-8859-1
 
 locale.h: $(LOCALE)/OpenURL.pot locale_h.sd
 	@echo "  FC $@"
