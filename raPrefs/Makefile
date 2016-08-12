@@ -158,7 +158,7 @@ TARGET   = $(BINDIR)/OpenURL
 
 # Common compiler/linker flags
 WARN     = -W -Wall -Wwrite-strings -Wpointer-arith -Wsign-compare
-OPTFLAGS = -O3 -fomit-frame-pointer 
+OPTFLAGS = -O3 -fomit-frame-pointer
 DEBUG    = -DDEBUG -O0
 DEBUGSYM = -g -gstabs
 CFLAGS   = -I. -I../include $(CPU) $(WARN) $(OPTFLAGS) $(DEBUG) $(DEBUGSYM) $(USER_CFLAGS)
@@ -247,7 +247,7 @@ ifeq ($(OS), aros-i386)
   endif
 
   # Compiler/Linker flags
-  OPTFLAGS = -O2 -fomit-frame-pointer 
+  OPTFLAGS = -O2 -fomit-frame-pointer
   CFLAGS += -Wno-pointer-sign -DNO_INLINE_STDARG
   LDLIBS += -larossupport -lrom -lmui
 
@@ -268,7 +268,7 @@ ifeq ($(OS), aros-ppc)
   endif
 
   # Compiler/Linker flags
-  OPTFLAGS = -O2 -fomit-frame-pointer 
+  OPTFLAGS = -O2 -fomit-frame-pointer
   CFLAGS += -Wno-pointer-sign -DNO_INLINE_STDARG
   LDLIBS += -larossupport -lrom -lmui
 
@@ -289,7 +289,7 @@ ifeq ($(OS), aros-x86_64)
   endif
 
   # Compiler/Linker flags
-  OPTFLAGS = -O2 -fomit-frame-pointer 
+  OPTFLAGS = -O2 -fomit-frame-pointer
   CFLAGS += -Wno-pointer-sign -DNO_INLINE_STDARG
   LDLIBS += -larossupport -lrom -lmui
 
@@ -381,7 +381,7 @@ install: all
 
 $(LOCALE)/%.catalog: $(LOCALE)/%.po $(LOCALE)/OpenURL.pot
 	@echo "  FC $@"
-	@$(FC) REVISION $(shell git rev-list --all --count $<) POFILE $< CATALOG $@ CODESET UTF-8
+	@$(FC) REVISION $(shell git rev-list --all --count $<) POFILE $< CATALOG $@ CODESET ISO-8859-1
 
 locale.h: $(LOCALE)/OpenURL.pot locale_h.sd
 	@echo "  FC $@"
