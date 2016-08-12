@@ -2,6 +2,11 @@
 openurl.library - ChangeLog
 ---------------------------
 
+2016-08-12 Thore Böckelmann <tboeckel@gmx.de>
+
+  * prefs/Makefile: generate ISO8859-1 encoded catalogs instead of UTF8 encoded
+    ones.
+
 2016-08-06  Jens Maus <mail@jens-maus.de>
 
   * include: updated SDI headers to latest versions available.
