@@ -1,5 +1,6 @@
 # OpenURL.library
 
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RAQSDY9YNZVCL)
 [![Build Status](https://travis-ci.org/jens-maus/libopenurl.svg?branch=master)](https://travis-ci.org/jens-maus/libopenurl) [![Code Climate](https://codeclimate.com/github/jens-maus/libopenurl/badges/gpa.svg)](https://codeclimate.com/github/jens-maus/libopenurl) [![License](http://img.shields.io/:license-public_domain-blue.svg?style=flat)](http://www.gnu.org/licenses/license-list.html#PublicDomain) [![Github Issues](http://githubbadges.herokuapp.com/jens-maus/libopenurl/issues.svg)](https://github.com/jens-maus/libopenurl/issues)
 
 This Amiga-based shared library was created to make it easier for application
