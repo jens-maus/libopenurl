@@ -46,8 +46,10 @@ ULONG SetAttrs( APTR object, ULONG tag1, ... )
 { return SetAttrsA(object, (struct TagItem *)&tag1); }
 
 #include <proto/dos.h>
+#ifndef Printf
 LONG Printf( CONST_STRPTR format, ... )
 { return VPrintf(format, (APTR)(&format+1)); }
+#endif
 
 #include <proto/openurl.h>
 ULONG URL_Open(STRPTR url, Tag tag1, ...)

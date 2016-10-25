@@ -203,8 +203,8 @@ ifeq ($(OS), os3)
 
   # Compiler/Linker flags
   CPU	    = -m68020-60 -msoft-float
-  CFLAGS  += -noixemul -DNO_INLINE_STDARG
-  LDFLAGS += -noixemul
+  CFLAGS  += -mcrt=clib2 -DNO_INLINE_STDARG
+  LDFLAGS += -mcrt=clib2
   LDLIBS  += -ldebug -lmui
 
 else
