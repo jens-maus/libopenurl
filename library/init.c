@@ -43,12 +43,12 @@ extern struct UtilityIFace*  __IUtility;
 
 #else
 struct DosLibrary *DOSBase = NULL;
-#if defined(__AROS__)
+#if defined(__AROS__) || defined(__amigaos3__)
 struct UtilityBase *UtilityBase = NULL;
 #else
 struct Library *UtilityBase = NULL;
-struct Library *__UtilityBase = NULL; // required by clib2 & libnix
 #endif
+struct Library *__UtilityBase = NULL; // required by clib2 & libnix
 #if defined(__MORPHOS__)
 struct Library *RexxSysBase = NULL;
 #else
