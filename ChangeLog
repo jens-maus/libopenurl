@@ -2,6 +2,8 @@
 openurl.library - ChangeLog
 ---------------------------
 
+#### v7.18 RELEASE #############################################################
+
 2016-09-07 Thore Böckelmann <tboeckel@gmx.de>
 
   * libinit.c: moved the system and CPU description behind the copyright part.
