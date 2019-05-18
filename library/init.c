@@ -47,8 +47,8 @@ struct DosLibrary *DOSBase = NULL;
 struct UtilityBase *UtilityBase = NULL;
 #else
 struct Library *UtilityBase = NULL;
-#endif
 struct Library *__UtilityBase = NULL; // required by clib2 & libnix
+#endif
 #if defined(__MORPHOS__)
 struct Library *RexxSysBase = NULL;
 #else
