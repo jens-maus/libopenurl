@@ -139,9 +139,13 @@
 
 #if defined(__amigaos4__)
   #define LIBFUNC
-  #if (__STDC_VERSION__ >= 199901L || __GNUC__ >= 3 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 95))
-    #define LIBPROTO(name, ret, ...) LIBFUNC ret LIB_##name(__VA_ARGS__)
-    #define LIBPROTOVA(name, ret, ...) LIBFUNC ret VARARGS68K LIB_##name(__VA_ARGS__)
+  #if !defined(__cplusplus) &&                                        \
+    (__STDC_VERSION__ >= 199901L || __GNUC__ >= 3 ||                  \
+    (__GNUC__ == 2 && __GNUC_MINOR__ >= 95))
+    #define LIBPROTO(name, ret, ...)                                  \
+      LIBFUNC ret LIB_##name(__VA_ARGS__)
+    #define LIBPROTOVA(name, ret, ...)                                \
+      LIBFUNC ret VARARGS68K LIB_##name(__VA_ARGS__)
     #define LIBSTUB(name, ret, ...)
     #define CALL_LFUNC_NP(name, ...) LIB_##name(__BASE_OR_IFACE_VAR)
     #define CALL_LFUNC(name, ...) LIB_##name(__BASE_OR_IFACE_VAR, __VA_ARGS__)
@@ -154,10 +158,15 @@
   #define LFUNC(name)     LIB_##name
 #elif defined(__MORPHOS__)
   #define LIBFUNC
-  #if (__STDC_VERSION__ >= 199901L || __GNUC__ >= 3 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 95))
-    #define LIBPROTO(name, ret, ...) LIBFUNC ret LIBSTUB_##name(void); LIBFUNC ret LIB_##name(__VA_ARGS__)
+  #if !defined(__cplusplus) &&                                        \
+    (__STDC_VERSION__ >= 199901L || __GNUC__ >= 3 ||                  \
+    (__GNUC__ == 2 && __GNUC_MINOR__ >= 95))
+    #define LIBPROTO(name, ret, ...)                                  \
+      LIBFUNC ret LIBSTUB_##name(void);                               \
+      LIBFUNC ret LIB_##name(__VA_ARGS__)
     #define LIBPROTOVA(name, ret, ...)
-    #define LIBSTUB(name, ret, ...) LIBFUNC ret LIBSTUB_##name(void)
+    #define LIBSTUB(name, ret, ...)                                   \
+      LIBFUNC ret LIBSTUB_##name(void)
     #define CALL_LFUNC_NP(name, ...) LIB_##name(__BASE_OR_IFACE_VAR)
     #define CALL_LFUNC(name, ...) LIB_##name(__BASE_OR_IFACE_VAR, __VA_ARGS__)
   #endif
@@ -167,6 +176,44 @@
   #define LFUNC_VA_(name)
   #define LFUNC_NULL      ,NULL
   #define LFUNC(name)     LIBSTUB_##name
+#elif defined(__AROS__)
+  #if defined(AROS_ABI_V1)
+    #define LIBFUNC
+    #if !defined(__cplusplus) &&                                        \
+      (__STDC_VERSION__ >= 199901L || __GNUC__ >= 3 ||                  \
+      (__GNUC__ == 2 && __GNUC_MINOR__ >= 95))
+      #define LIBPROTO(name, ret, ...)                                  \
+        LIBFUNC ret LIB_##name(__VA_ARGS__)
+      #define LIBPROTOVA(name, ret, ...)
+      #define LIBSTUB(name, ret, ...)                                   \
+        LIBFUNC ret LIBSTUB_0_##name(void)
+      #define CALL_LFUNC_NP(name, ...) LIB_##name(__BASE_OR_IFACE_VAR)
+      #define CALL_LFUNC(name, ...) LIB_##name(__BASE_OR_IFACE_VAR, __VA_ARGS__)
+    #endif
+    #define LFUNC_FAS(name) LIBSTUB_0_##name
+    #define LFUNC_VAS(name)
+    #define LFUNC_FA_(name) ,LIBSTUB_0_##name
+    #define LFUNC_VA_(name)
+    #define LFUNC(name)     LIBSTUB_0_##name
+  #else
+    #define LIBFUNC
+    #if !defined(__cplusplus) &&                                        \
+      (__STDC_VERSION__ >= 199901L || __GNUC__ >= 3 ||                  \
+      (__GNUC__ == 2 && __GNUC_MINOR__ >= 95))
+      #define LIBPROTO(name, ret, ...)                                  \
+        LIBFUNC ret LIB_##name(__VA_ARGS__)
+      #define LIBPROTOVA(name, ret, ...)
+      #define LIBSTUB(name, ret, ...)                                   \
+        LIBFUNC ret LIBSTUB_##name(void)
+      #define CALL_LFUNC_NP(name, ...) LIB_##name(__BASE_OR_IFACE_VAR)
+      #define CALL_LFUNC(name, ...) LIB_##name(__BASE_OR_IFACE_VAR, __VA_ARGS__)
+    #endif
+    #define LFUNC_FAS(name) LIBSTUB_##name
+    #define LFUNC_VAS(name)
+    #define LFUNC_FA_(name) ,LIBSTUB_##name
+    #define LFUNC_VA_(name)
+    #define LFUNC(name)     LIBSTUB_##name
+  #endif
 #else
   #define LIBFUNC SAVEDS ASM
   #if (__STDC_VERSION__ >= 199901L || __GNUC__ >= 3 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 95))
