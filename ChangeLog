@@ -10,7 +10,7 @@ openurl.library - ChangeLog
   * raPrefs/locale.c: explicitly state "english" as built-in language.
   * raPrefs/locale.c: the getString() function was always using the original and
     untranslated string array. Of course this resulted in untranslated strings
-    in the GUI. This closes #7.
+    in the GUI. This closes #6.
 
 #### v7.18 RELEASE #############################################################
 
