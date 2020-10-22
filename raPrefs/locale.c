@@ -23,6 +23,8 @@
 #include "locale.h"
 struct Catalog         *g_cat = NULL;
 
+#include "SDI_compiler.h"
+
 /***********************************************************************/
 
 #define CATNAME "OpenURL.catalog"
@@ -35,7 +37,7 @@ static struct Catalog *openCatalog(CONST_STRPTR name,ULONG minVer,ULONG minRev)
 {
     struct Catalog *cat;
 
-    if((cat = ILocale->OpenCatalogA(NULL,name,NULL)) != NULL)
+    if((cat = ILocale->OpenCatalog(NULL, name, OC_BuiltInLanguage, (IPTR)"english", TAG_DONE)) != NULL)
     {
         ULONG ver = cat->cat_Version;
 

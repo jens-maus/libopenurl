@@ -5,6 +5,9 @@ openurl.library - ChangeLog
 2020-10-22 Thore Böckelmann <tboeckel@gmx.de>
 
   * dist/Install: let the Installer script install the catalog files as well.
+  * prefs/locale.c: close the catalog upon program termination to avoid memory
+    leaks.
+  * raPrefs/locale.c: explicitly state "english" as built-in language.
 
 #### v7.18 RELEASE #############################################################
 
