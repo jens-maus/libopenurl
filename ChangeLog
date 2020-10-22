@@ -8,6 +8,9 @@ openurl.library - ChangeLog
   * prefs/locale.c: close the catalog upon program termination to avoid memory
     leaks.
   * raPrefs/locale.c: explicitly state "english" as built-in language.
+  * raPrefs/locale.c: the getString() function was always using the original and
+    untranslated string array. Of course this resulted in untranslated strings
+    in the GUI. This closes #7.
 
 #### v7.18 RELEASE #############################################################
 

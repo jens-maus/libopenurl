@@ -113,11 +113,9 @@ STRPTR getString(ULONG id)
     struct CatCompArrayType *cca;
     int                     cnt;
 
-    for (cnt = (sizeof(CatCompArray)/sizeof(struct CatCompArrayType))-1, cca = (struct CatCompArrayType *)CatCompArray+cnt;
+    for (cnt = (sizeof(CatCompArray)/sizeof(struct CatCompArrayType))-1, cca = (struct CatCompArrayType *)privateCatCompArray+cnt;
          cnt>=0;
-         cnt--, cca--)
-         if (cca->cca_ID==id)
-         	return cca->cca_Str;
+         cnt--, cca--) if (cca->cca_ID==id) return cca->cca_Str;
 
     return (STRPTR)"";
 }
