@@ -2,6 +2,10 @@
 openurl.library - ChangeLog
 ---------------------------
 
+2020-10-22 Thore Böckelmann <tboeckel@gmx.de>
+
+  * dist/Install: let the Installer script install the catalog files as well.
+
 #### v7.18 RELEASE #############################################################
 
 2016-09-07 Thore Böckelmann <tboeckel@gmx.de>

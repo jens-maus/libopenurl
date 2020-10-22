@@ -27,8 +27,8 @@ mkdir -p "release"
 mkdir -p "release/OpenURL"
 mkdir -p "release/OpenURL/C"
 mkdir -p "release/OpenURL/Libs"
+mkdir -p "release/OpenURL/Locale/Catalogs"
 mkdir -p "release/OpenURL/Prefs"
-mkdir -p "release/OpenURL/Catalogs"
 mkdir -p "release/OpenURL/Developer"
 mkdir -p "release/OpenURL/Developer/Autodocs"
 mkdir -p "release/OpenURL/Developer/C"
@@ -37,7 +37,8 @@ mkdir -p "release/OpenURL/Developer/fd"
 mkdir -p "release/OpenURL/Developer/sfd"
 mkdir -p "release/OpenURL/Developer/xml"
 
-for os in os3 os4 mos aros-i386 aros-ppc aros-x86_64; do
+#for os in os3 os4 mos aros-i386 aros-ppc aros-x86_64; do
+for os in os3 os4; do
 	make OS=$os clean
 	make OS=$os DEBUG=
 
@@ -81,15 +82,16 @@ cp -a -R developer/C/include/* "release/OpenURL/Developer/C/include/"
 cp -a developer/sfd/* "release/OpenURL/Developer/sfd/"
 cp -a developer/xml/* "release/OpenURL/Developer/xml/"
 
-cp -a locale/OpenURL.pot "release/OpenURL/Catalogs/"
+cp -a locale/OpenURL.pot "release/OpenURL/Locale/Catalogs/"
 rm -f locale/*.catalog
 make -C prefs catalogs
 for language in `ls locale/*.catalog`; do
 	catalog=$(basename "$language")
 	lang="${catalog%.*}"
-	mkdir -p "release/OpenURL/Catalogs/${lang}"
-	cp -a ${language} "release/OpenURL/Catalogs/${lang}/OpenURL.catalog"
+	mkdir -p "release/OpenURL/Locale/Catalogs/${lang}"
+	cp -a ${language} "release/OpenURL/Locale/Catalogs/${lang}/OpenURL.catalog"
 done
+cp -a locale/OpenURL.pot "release/OpenURL/Locale/"
 
 releasever=`grep "#define LIB_VERSION" library/version.h | awk '{ print $3 }'`
 releaserev=`grep "#define LIB_REVISION" library/version.h | awk '{ print $3 }'`
