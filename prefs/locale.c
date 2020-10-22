@@ -26,6 +26,8 @@
 
 #include "macros.h"
 
+#include "SDI_compiler.h"
+
 /***********************************************************************/
 
 #define CATNAME "OpenURL.catalog"
@@ -98,6 +100,12 @@ void uninitStrings(void)
         FreeVec( privateCatCompArray );
     }
     privateCatCompArray = NULL;
+
+    if(g_cat != NULL)
+    {
+        CloseCatalog(g_cat);
+    }
+    g_cat = NULL;
 }
 
 /***********************************************************************/
@@ -126,9 +134,18 @@ void localizeStrings(STRPTR *s)
 
 void localizeNewMenu(struct NewMenu *nm)
 {
+    STRPTR str = NULL;
     for ( ; nm->nm_Type!=NM_END; nm++)
         if (nm->nm_Label!=NM_BARLABEL)
-            nm->nm_Label = (STRPTR)getString((IPTR)nm->nm_Label);
+        {
+            str = getString((ULONG)nm->nm_Label);
+            if( str[1] == '\0' )
+            {
+                nm->nm_CommKey = str;
+                str += 2;
+            }
+            nm->nm_Label = str;
+        }
 }
 
 /***********************************************************************/
