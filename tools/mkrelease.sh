@@ -37,8 +37,7 @@ mkdir -p "release/OpenURL/Developer/fd"
 mkdir -p "release/OpenURL/Developer/sfd"
 mkdir -p "release/OpenURL/Developer/xml"
 
-#for os in os3 os4 mos aros-i386 aros-ppc aros-x86_64; do
-for os in os3 os4; do
+for os in os3 os4 mos aros-i386 aros-ppc aros-x86_64; do
 	make OS=$os clean
 	make OS=$os DEBUG=
 
