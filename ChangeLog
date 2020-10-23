@@ -5,6 +5,7 @@ openurl.library - ChangeLog
 2020-10-23 Thore Böckelmann <tboeckel@gmx.de>
 
   * prefs: use Hyperlink class if it is available.
+  * prefs: use Aboutbox class if it is available.
 
 2020-10-22 Thore Böckelmann <tboeckel@gmx.de>
 
