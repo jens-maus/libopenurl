@@ -74,6 +74,8 @@ static struct NewMenu menu[] =
 
 static CONST_STRPTR usedClasses[] =
 {
+    "Aboutbox.mcc",
+    "Hyperlink.mcc",
     "Urltext.mcc",
     NULL
 };

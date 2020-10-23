@@ -41,16 +41,27 @@
 
 static Object *ourltext(CONST_STRPTR url, CONST_STRPTR text)
 {
-    Object *o;
+    Object *o = NULL;
 
     ENTER();
 
-    o = UrltextObject,
-        MUIA_Urltext_Text,           text,
-        MUIA_Urltext_Url,            url,
-        MUIA_Urltext_SetMax,         FALSE,
-        MUIA_Urltext_NoOpenURLPrefs, TRUE,
-    End;
+    if(o == NULL)
+    {
+		o = HyperlinkObject,
+			MUIA_Hyperlink_URI, url,
+			(text != NULL) ? MUIA_Hyperlink_Text : TAG_IGNORE, text,
+		End;
+	}
+
+    if(o == NULL)
+    {
+		o = UrltextObject,
+			MUIA_Urltext_Url, url,
+			MUIA_Urltext_Text, text,
+			MUIA_Urltext_SetMax, FALSE,
+			MUIA_Urltext_NoOpenURLPrefs, TRUE,
+		End;
+	}
 
     if(o == NULL)
     {
@@ -108,7 +119,7 @@ static IPTR mNew(struct IClass *cl,Object *obj,struct opSet *msg)
 
                 Child, HGroup,
                     Child, HSpace(0),
-                    Child, ourltext("http://sourceforge.net/projects/openurllib",NULL),
+                    Child, ourltext("https://github.com/jens-maus/libopenurl", NULL),
                     Child, HSpace(0),
                 End,
 

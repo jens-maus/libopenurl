@@ -48,6 +48,7 @@
 #include <clib/debug_protos.h>
 #endif
 
+#include <mui/Hyperlink_mcc.h>
 #include <mui/textinput_mcc.h>
 #include <mui/Urltext_mcc.h>
 
