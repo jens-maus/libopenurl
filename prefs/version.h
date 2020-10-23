@@ -2,7 +2,7 @@
 
  openurl.library - universal URL display and browser launcher library
  Copyright (C) 1998-2005 by Troels Walsted Hansen, et al.
- Copyright (C) 2005-2019 openurl.library Open Source Team
+ Copyright (C) 2005-2020 openurl.library Open Source Team
 
  This library is free software; it has been placed in the public domain
  and you can freely redistribute it and/or modify it. Please note, however,
@@ -27,7 +27,7 @@
 #define LIB_VERSION    7
 #define LIB_REVISION   18
 #define LIB_DATE       "16.01.2018"
-#define LIB_COPYRIGHT  "Copyright (C) 2005-2019 openurl.library Open Source Team"
+#define LIB_COPYRIGHT  "Copyright (C) 2005-2020 openurl.library Open Source Team"
 
 // set the LIB_REV_STRING
 #define LIB_REV_STRING STR(LIB_VERSION) "." STR(LIB_REVISION)

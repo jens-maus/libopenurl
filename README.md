@@ -51,7 +51,7 @@ To report bugs use the [bug/issue tracker](https://github.com/jens-maus/libopenu
 
 ```
 Copyright (C) 1998-2005 by Troels Walsted Hansen, et al.
-Copyright (C) 2005-2019 openurl.library Open Source Team
+Copyright (C) 2005-2020 openurl.library Open Source Team
 ```
 OpenURL was originally developed by Troels Walsted Hansen, et al. Since 2005
 it is developed by an independent open source developer group. It is released
