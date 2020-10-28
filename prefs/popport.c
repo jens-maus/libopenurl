@@ -12,7 +12,7 @@
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
- openurl.library project: http://sourceforge.net/projects/openurllib/
+ openurl.library project: http://github.com/jens-maus/libopenurl
 
  $Id$
 

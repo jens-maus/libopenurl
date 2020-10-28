@@ -12,7 +12,7 @@
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
- openurl.library project: http://sourceforge.net/projects/openurllib/
+ openurl.library project: http://github.com/jens-maus/libopenurl
 
  $Id$
 
@@ -92,12 +92,12 @@ static IPTR mNew(struct IClass *cl, Object *obj, struct opSet *msg)
                          "\tOpenURL Open Source Team\n"
                          "\n"
                          "\033b%W\033n\n"
-                         "\thttp:github.com/jens-maus/libopenurl", sizeof(credits));
+                         "\thttp://github.com/jens-maus/libopenurl", sizeof(credits));
 
         if((obj = (Object *)DoSuperNew(cl,obj,
             MUIA_Aboutbox_Credits, credits,
             MUIA_Aboutbox_URL, "http://github.com/jens-maus/libopenurl",
-            MUIA_Aboutbox_URLText, "Visit OpenURL homepage",
+            MUIA_Aboutbox_URLText, "Visit the OpenURL homepage",
             TAG_MORE, msg->ops_AttrList)) != NULL)
         {
         }
