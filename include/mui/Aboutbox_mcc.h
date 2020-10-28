@@ -29,7 +29,7 @@
 
  MUI Official Support Site:  http://www.sasg.com/
 
- $Id: Aboutbox_mcc.h 6513 2020-01-02 05:36:08Z tboeckel $
+ $Id: Aboutbox_mcc.h 6700 2020-10-28 16:23:02Z tboeckel $
 
 ***************************************************************************/
 
@@ -67,6 +67,8 @@
 #define MUIA_Aboutbox_LogoFallbackMode   0xfed10003    /* [I..] ULONG                              */
 #define MUIA_Aboutbox_LogoFile           0xfed10004    /* [I..] CONST_STRPTR                       */
 #define MUIA_Aboutbox_Build              0xfed1001e    /* [I..] CONST_STRPTR                       */
+#define MUIA_Aboutbox_URL                0xfed10021    /* [I..] CONST_STRPTR                       */
+#define MUIA_Aboutbox_URLText            0xfed10022    /* [I..] CONST_STRPTR                       */
 
 /***********************************************************************/
 

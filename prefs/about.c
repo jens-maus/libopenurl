@@ -96,6 +96,8 @@ static IPTR mNew(struct IClass *cl, Object *obj, struct opSet *msg)
 
         if((obj = (Object *)DoSuperNew(cl,obj,
             MUIA_Aboutbox_Credits, credits,
+            MUIA_Aboutbox_URL, "http://github.com/jens-maus/libopenurl",
+            MUIA_Aboutbox_URLText, "Visit OpenURL homepage",
             TAG_MORE, msg->ops_AttrList)) != NULL)
         {
         }
