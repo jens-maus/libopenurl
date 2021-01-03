@@ -2,6 +2,8 @@
 openurl.library - ChangeLog
 ---------------------------
 
+#### v7.19 RELEASE #############################################################
+
 2020-10-23 Thore Böckelmann <tboeckel@gmx.de>
 
   * prefs: use Hyperlink class if it is available.
