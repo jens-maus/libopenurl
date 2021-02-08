@@ -183,7 +183,7 @@ ifeq ($(OS), os4)
   CPU      = -mcpu=powerpc
   WARN     += -Wdeclaration-after-statement -Wdisabled-optimization
   REDEFINE =
-  CFLAGS   += -mcrt=$(CRT) -D__NEW_TIMEVAL_DEFINITION_USED__ \
+  CFLAGS   += -mcrt=$(CRT) -D__NEW_TIMEVAL_DEFINITION_USED__ -DMENUCLASS \
               $(REDEFINE) -Wa,-mregnames
   LDFLAGS  += -mcrt=$(CRT)
   LDLIBS   += -lraauto -lauto
