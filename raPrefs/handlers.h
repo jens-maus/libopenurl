@@ -21,11 +21,23 @@
 #ifndef HANDLERS_H
 #define HANDLERS_H
 
+
 #include <exec/types.h>
+#include <libraries/gadtools.h>
 
 BOOL HandleInput_Main_Win(void);
 void HandleInput_Edit_Brow_Win(void);
 void HandleInput_Edit_Mail_Win(void);
 void HandleInput_Edit_FTP_Win(void);
+
+#ifdef MENUCLASS
+	#include <intuition/menuclass.h>
+	#include <intuition/classes.h>
+	extern Object *menustripobj;
+#else
+	extern struct Menu *MenuStrip;
+#endif
+ULONG HandleMenu(uint16 selection);
+
 
 #endif //HANDLERS_H

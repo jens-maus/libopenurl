@@ -73,6 +73,10 @@ BOOL HandleInput_Main_Win(void)
             case WMHI_CLOSEWINDOW:
                 done = TRUE;
                 break;
+case WMHI_MENUPICK:
+IDOS->Printf("[WMHI_MENUPICK] code=0x%08lx\n",code);
+	done = HandleMenu(code);
+break;
             case WMHI_GADGETUP:
                 switch (result & WMHI_GADGETMASK)
                 {
@@ -356,3 +360,39 @@ void HandleInput_Edit_FTP_Win()
     }
 }
 ///
+
+ULONG HandleMenu(uint16 selection)
+{
+	ULONG closeme = FALSE;
+	uint32 item;
+#ifndef MENUCLASS
+	struct MenuItem *MItem = NULL;
+
+	while( selection && (MItem=IIntuition->ItemAddress(MenuStrip, selection)) )
+	{
+		item = (uint32)GTMENUITEM_USERDATA(MItem);
+		selection = MItem->NextSelect; // "queue" next menu opt selection
+IDOS->Printf("0x%08lx\n",item);
+#else
+	item = NO_MENU_ID;
+	while( (item=IIntuition->IDoMethod(menustripobj, MM_NEXTSELECT, 0, item)) != NO_MENU_ID )
+	{
+#endif
+		switch(item)
+		{
+			case MSG_Menu_About:
+IDOS->Printf("ABOUT\n");
+			break;
+			case MSG_Menu_Hide:
+IDOS->Printf("HIDE\n");
+			break;
+			case MSG_Menu_Quit:
+IDOS->Printf("QUIT\n");
+			closeme = TRUE;
+			break;
+// ... add other MSG_Menu_ entries
+		}
+	}
+
+	return closeme;
+}
