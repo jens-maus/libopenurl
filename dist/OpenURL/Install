@@ -1,5 +1,5 @@
 ;
-; $VER: Install 1.6 (22.10.2020)
+; $VER: Install 1.7 (10.05.2021)
 ;
 ; $Id: Install 246 2010-06-11 10:07:45Z thboeckel $
 ;
@@ -15,6 +15,8 @@
 ;   1.5   17.04.2014: let the user choose between MUI and ReAction GUI for
 ;                     AmigaOS4.
 ;   1.6   22.10.2020: install the catalogs as well
+;   1.7   10.05.2021: added italian translation kindly provided by Samir
+;                     Hawamdeh.
 
 ; /// language bit definition, do not change these!!
 (set #lang_english             0)
@@ -108,6 +110,23 @@
                                  "nötig, um die Installation abzuschließen!"))
     )
 )
+; ///
+; /// ***** Italiano
+(if (= #language "italiano")
+    (
+        (set #acknowledgeOS (cat "Per favore conferma il rilevamento\n"
+                                 "automatico del sistema operativo in uso:"))
+        (set #chooseGUI          "Per favore seleziona la GUI di sistema preferita:")
+        (set #lang_catalog  (cat "Quale catalogo di lingua si desidera installare?\n"
+                                 "(La lingua inglese è incorporata)"))
+        (set #done          (cat "\n"
+                                 @app-name " è stata installata correttamente.\n"
+                                 "\n"
+                                 "Potrebbe essere necessario un riavvio\n"
+                                 "per completare questa installazione!"))
+    )
+)
+
 ; ///
 
 ;----------------------------------------------------------------------------
