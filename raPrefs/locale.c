@@ -2,7 +2,7 @@
 
  openurl.library - universal URL display and browser launcher library
  Copyright (C) 1998-2005 by Troels Walsted Hansen, et al.
- Copyright (C) 2005-2019 openurl.library Open Source Team
+ Copyright (C) 2005-2021 openurl.library Open Source Team
 
  This library is free software; it has been placed in the public domain
  and you can freely redistribute it and/or modify it. Please note, however,
@@ -12,7 +12,7 @@
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
- openurl.library project: http://sourceforge.net/projects/openurllib/
+ openurl.library project: http://github.com/jens-maus/libopenurl
 
  $Id$
 
@@ -22,6 +22,8 @@
 #define CATCOMP_ARRAY
 #include "locale.h"
 struct Catalog         *g_cat = NULL;
+
+#include "SDI_compiler.h"
 
 /***********************************************************************/
 
@@ -35,7 +37,7 @@ static struct Catalog *openCatalog(CONST_STRPTR name,ULONG minVer,ULONG minRev)
 {
     struct Catalog *cat;
 
-    if((cat = ILocale->OpenCatalogA(NULL,name,NULL)) != NULL)
+    if((cat = ILocale->OpenCatalog(NULL, name, OC_BuiltInLanguage, (IPTR)"english", TAG_DONE)) != NULL)
     {
         ULONG ver = cat->cat_Version;
 
@@ -111,11 +113,9 @@ STRPTR getString(ULONG id)
     struct CatCompArrayType *cca;
     int                     cnt;
 
-    for (cnt = (sizeof(CatCompArray)/sizeof(struct CatCompArrayType))-1, cca = (struct CatCompArrayType *)CatCompArray+cnt;
+    for (cnt = (sizeof(CatCompArray)/sizeof(struct CatCompArrayType))-1, cca = (struct CatCompArrayType *)privateCatCompArray+cnt;
          cnt>=0;
-         cnt--, cca--)
-         if (cca->cca_ID==id)
-         	return cca->cca_Str;
+         cnt--, cca--) if (cca->cca_ID==id) return cca->cca_Str;
 
     return (STRPTR)"";
 }

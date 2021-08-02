@@ -2,7 +2,7 @@
 
  openurl.library - universal URL display and browser launcher library
  Copyright (C) 1998-2005 by Troels Walsted Hansen, et al.
- Copyright (C) 2005-2019 openurl.library Open Source Team
+ Copyright (C) 2005-2021 openurl.library Open Source Team
 
  This library is free software; it has been placed in the public domain
  and you can freely redistribute it and/or modify it. Please note, however,
@@ -12,7 +12,7 @@
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
- openurl.library project: http://sourceforge.net/projects/openurllib/
+ openurl.library project: http://github.com/jens-maus/libopenurl
 
  $Id$
 
@@ -48,6 +48,8 @@
 #include <clib/debug_protos.h>
 #endif
 
+#include <mui/Aboutbox_mcc.h>
+#include <mui/Hyperlink_mcc.h>
 #include <mui/textinput_mcc.h>
 #include <mui/Urltext_mcc.h>
 

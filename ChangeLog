@@ -2,6 +2,23 @@
 openurl.library - ChangeLog
 ---------------------------
 
+#### v7.19 RELEASE #############################################################
+
+2020-10-23 Thore Böckelmann <tboeckel@gmx.de>
+
+  * prefs: use Hyperlink class if it is available.
+  * prefs: use Aboutbox class if it is available.
+
+2020-10-22 Thore Böckelmann <tboeckel@gmx.de>
+
+  * dist/Install: let the Installer script install the catalog files as well.
+  * prefs/locale.c: close the catalog upon program termination to avoid memory
+    leaks.
+  * raPrefs/locale.c: explicitly state "english" as built-in language.
+  * raPrefs/locale.c: the getString() function was always using the original and
+    untranslated string array. Of course this resulted in untranslated strings
+    in the GUI. This closes #6.
+
 #### v7.18 RELEASE #############################################################
 
 2016-09-07 Thore Böckelmann <tboeckel@gmx.de>

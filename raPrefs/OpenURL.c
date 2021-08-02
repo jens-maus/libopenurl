@@ -2,7 +2,7 @@
 
  openurl.library - universal URL display and browser launcher library
  Copyright (C) 1998-2005 by Troels Walsted Hansen, et al.
- Copyright (C) 2005-2019 openurl.library Open Source Team
+ Copyright (C) 2005-2021 openurl.library Open Source Team
 
  This library is free software; it has been placed in the public domain
  and you can freely redistribute it and/or modify it. Please note, however,
@@ -12,7 +12,7 @@
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
- openurl.library project: http://sourceforge.net/projects/openurllib/
+ openurl.library project: http://github.com/jens-maus/libopenurl
 
  $Id$
 
@@ -22,7 +22,7 @@
 #include <intuition/intuition.h>
 #include <intuition/icclass.h>
 #include <dos/dos.h>
-#include <libraries/gadtools.h>
+#include <proto/gadtools.h>
 #include <images/label.h>
 #include <images/glyph.h>
 
@@ -39,8 +39,10 @@
 #include <gadgets/string.h>
 #include <gadgets/getfile.h>
 #include <gadgets/chooser.h>
+#include <images/bitmap.h>
 
 #include <proto/exec.h>
+#include <proto/dos.h>
 #include <proto/intuition.h>
 #include <proto/utility.h>
 #include <proto/icon.h>
@@ -58,6 +60,7 @@
 #include <proto/getfile.h>
 #include <proto/chooser.h>
 #include <proto/label.h>
+#include <proto/bitmap.h>
 
 #include <reaction/reaction_macros.h>
 
@@ -151,23 +154,144 @@ struct TagItem	lst2btn[] = {
     {TAG_END, 0 }
 };
 
-static struct NewMenu menu[] =
+#ifdef MENUCLASS
+	Object *menustripobj;
+
+struct Image *MenuImage(CONST_STRPTR name, struct Screen *screen)
 {
-    Title((STRPTR)MSG_Menu_Project),
-        MyItem(MSG_Menu_About),
-        ItemBar,
-        MyItem(MSG_Menu_Hide),
-        ItemBar,
-        MyItem(MSG_Menu_Quit),
-    Title((STRPTR)MSG_Menu_Prefs),
-        MyItem(MSG_Menu_Save),
-        MyItem(MSG_Menu_Use),
-        ItemBar,
-        MyItem(MSG_Menu_LastSaved),
-        MyItem(MSG_Menu_Restore),
-        MyItem(MSG_Menu_Defaults),
-    EndMenu
-};
+	struct Image *i = NULL;
+	APTR prev_win;
+	BPTR dir, prev_dir;
+	STRPTR name_s, name_g;
+	uint32 len, totlen;
+
+	len = IUtility->Strlen(name);
+	totlen = 2*len + 6; //len + 3 + len + 3
+
+	name_s = IExec->AllocVecTags(totlen, TAG_END);
+	if(name_s)
+	{
+		name_g = name_s + len + 3;
+
+		IUtility->Strlcpy(name_s, name, totlen);
+		IUtility->Strlcat(name_s, "_s", totlen);
+
+		IUtility->Strlcpy(name_g, name, totlen);
+		IUtility->Strlcat(name_g, "_g", totlen);
+
+		prev_win = IDOS->SetProcWindow( (APTR)-1 ); // Disable requesters
+		dir = IDOS->Lock("TBIMAGES:", SHARED_LOCK);
+		IDOS->SetProcWindow(prev_win);              // Re-enable requesters
+		if(dir != ZERO)
+		{
+			prev_dir = IDOS->SetCurrentDir(dir);
+
+			i = (struct Image *)BitMapObject,//IIntuition->NewObject(BitMapClass, NULL, //"bitmap.image",
+			                     //menu_img==24? TAG_IGNORE : IA_Scalable, TRUE,
+			                     //IA_Width,menu_img, IA_Height,menu_img+2,
+			                     BITMAP_SourceFile,         name,
+			                     BITMAP_SelectSourceFile,   name_s,
+			                     BITMAP_DisabledSourceFile, name_g,
+			                     BITMAP_Screen, screen,
+			                     BITMAP_Masking, TRUE,
+			                    TAG_END);
+			if(i)
+				//IIntuition->SetAttrs( (Object *)i, IA_Height,menu_img+2, IA_Width,menu_img, TAG_END);
+				IIntuition->SetAttrs( (Object *)i, IA_Height,24+2, IA_Width,24, TAG_END);
+
+			IDOS->SetCurrentDir(prev_dir);
+			IDOS->UnLock(dir);
+		}
+
+		IExec->FreeVec(name_s);
+	}
+
+	return (i);
+}
+
+void CreateMainMenu(struct Screen *scr)
+{
+    menustripobj = IIntuition->NewObject(NULL, "menuclass",
+
+     MA_AddChild, IIntuition->NewObject(NULL, "menuclass",
+      MA_Type,T_MENU, MA_Label,"Project",
+      MA_AddChild, IIntuition->NewObject(NULL, "menuclass",
+        MA_Type,T_ITEM, MA_Label,"Iconify",
+        MA_ID,    MSG_Menu_Hide,
+        MA_Key,   "I",
+        MA_Image, MenuImage("iconify",scr),
+      TAG_END),
+      MA_AddChild, IIntuition->NewObject(NULL, "menuclass",
+        MA_Type,T_ITEM, MA_Label,"About",
+        MA_ID,    MSG_Menu_About,
+        MA_Key,   "?",
+        MA_Image, MenuImage("info",scr),
+      TAG_END),
+      MA_AddChild, IIntuition->NewObject(NULL, "menuclass", MA_Type,T_ITEM, MA_Separator,TRUE, TAG_END),
+      MA_AddChild, IIntuition->NewObject(NULL, "menuclass",
+        MA_Type,T_ITEM, MA_Label,"Quit",
+        MA_ID,    MSG_Menu_Quit,
+        MA_Key,   "Q",
+        MA_Image, MenuImage("quit",scr),
+      TAG_END),
+     TAG_END),
+     MA_AddChild, IIntuition->NewObject(NULL, "menuclass",
+      MA_Type,T_MENU, MA_Label,"Preferences",
+      MA_AddChild, IIntuition->NewObject(NULL, "menuclass",
+        MA_Type,T_ITEM, MA_Label,"Save settings",
+        MA_ID,    MSG_Menu_Save,
+        MA_Key,   "S",
+        MA_Image, MenuImage("save",scr),
+      TAG_END),
+      MA_AddChild, IIntuition->NewObject(NULL, "menuclass",
+        MA_Type,T_ITEM, MA_Label,"Use settings",
+        MA_ID,    MSG_Menu_Use,
+        MA_Key,   "U",
+        MA_Image, MenuImage("use",scr),
+      TAG_END),
+      MA_AddChild, IIntuition->NewObject(NULL, "menuclass", MA_Type,T_ITEM, MA_Separator,TRUE, TAG_END),
+      MA_AddChild, IIntuition->NewObject(NULL, "menuclass",
+        MA_Type,T_ITEM, MA_Label,"Default settings",
+        MA_ID,    MSG_Menu_Defaults,
+        MA_Key,   "D",
+        MA_Image, MenuImage("restore",scr),
+      TAG_END),
+      MA_AddChild, IIntuition->NewObject(NULL, "menuclass",
+        MA_Type,T_ITEM, MA_Label,"Last saved",
+        MA_ID,    MSG_Menu_LastSaved,
+        MA_Key,   "L",
+        MA_Image, MenuImage("undo_reverttosaved",scr),
+      TAG_END),
+      MA_AddChild, IIntuition->NewObject(NULL, "menuclass",
+        MA_Type,T_ITEM, MA_Label,"Restore",
+        MA_ID,    MSG_Menu_Restore,
+        MA_Key,   "R",
+        MA_Image, MenuImage("undo",scr),
+      TAG_END),
+     TAG_END),
+
+    TAG_END);
+}
+#else
+	struct NewMenu menu[] =
+	{
+	    Title((STRPTR)MSG_Menu_Project),
+	        MyItem(MSG_Menu_About),
+	        ItemBar,
+	        MyItem(MSG_Menu_Hide),
+	        ItemBar,
+	        MyItem(MSG_Menu_Quit),
+	    Title((STRPTR)MSG_Menu_Prefs),
+	        MyItem(MSG_Menu_Save),
+	        MyItem(MSG_Menu_Use),
+	        ItemBar,
+	        MyItem(MSG_Menu_LastSaved),
+	        MyItem(MSG_Menu_Restore),
+	        MyItem(MSG_Menu_Defaults),
+	    EndMenu
+	};
+	struct Menu *MenuStrip;
+#endif
 
 void IDCMPFunc(struct Hook *hook,Object *wobj,struct IntuiMessage *Msg);
 ULONG loadPrefs(ULONG mode);
@@ -426,7 +550,6 @@ Object *make_window(void)
         PageEnd,
     ClickTabEnd;
 
-
     return WindowObject,
         WA_ScreenTitle,        getString(MSG_App_ScreenTitle),
         WA_Title,              getString(MSG_Win_WinTitle),
@@ -441,7 +564,11 @@ Object *make_window(void)
         WINDOW_AppPort,        AppPort,
         WINDOW_SharedPort,     AppPort,
         WINDOW_Position,       WPOS_CENTERSCREEN,
-        WINDOW_NewMenu,        menu,
+#ifdef MENUCLASS
+        WA_MenuStrip, menustripobj,
+#else
+        WINDOW_NewMenu, menu,
+#endif
         WINDOW_Layout,         VLayoutObject,
 
             LAYOUT_AddChild,       OBJ(OBJ_CLICKTAB),
@@ -493,7 +620,9 @@ int main()
 
     localizeStrings(PageLabels);
 
+#ifndef MENUCLASS
     localizeNewMenu(menu);
+#endif
 
     if(!(OpenURLBase = IExec->OpenLibrary(OPENURLNAME, OPENURLVER)))
          return -1;
@@ -504,6 +633,12 @@ int main()
 
     if((AppPort = IExec->AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
     {
+#ifdef MENUCLASS
+		struct Screen *screen = IIntuition->LockPubScreen(NULL);
+		CreateMainMenu(screen);
+		IIntuition->UnlockPubScreen(NULL, screen);
+#endif
+
         IExec->NewList(&list_Brow);
         IExec->NewList(&list_Mail);
         IExec->NewList(&list_FTPs);
@@ -512,6 +647,10 @@ int main()
         edit_brow_win = make_edit_brow_win();
         edit_mail_win = make_edit_mail_win();
         edit_ftp_win = make_edit_ftp_win();
+
+#ifndef MENUCLASS
+		MenuStrip = IGadTools->CreateMenusA(menu, NULL);
+#endif
 
         loadPrefs(URL_GetPrefs_Mode_InUse);
 
@@ -549,8 +688,17 @@ int main()
 
         //  The hidden chooser isn't attached to anything,
         //  so we must dispose of it ourselves...
-
         IIntuition->DisposeObject(OBJ(OBJ_HIDDEN_CHOOSER));
+
+#ifdef MENUCLASS
+	if(menustripobj)
+	{
+		 IIntuition->DisposeObject(menustripobj);
+		menustripobj = NULL;
+	}
+#else
+		IGadTools->FreeMenus(MenuStrip);
+#endif
 
         IListBrowser->FreeListBrowserList(&list_FTPs);
         IListBrowser->FreeListBrowserList(&list_Mail);

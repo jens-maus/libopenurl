@@ -3,7 +3,7 @@
 #
 # openurl.library - universal URL display and browser launcher library
 # Copyright (C) 1998-2005 by Troels Walsted Hansen, et al.
-# Copyright (C) 2005-2019 openurl.library Open Source Team
+# Copyright (C) 2005-2021 openurl.library Open Source Team
 #
 # This library is free software; it has been placed in the public domain
 # and you can freely redistribute it and/or modify it. Please note, however,
@@ -13,7 +13,7 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 #
-# openurl.library project: http://sourceforge.net/projects/openurllib/
+# openurl.library project: http://github.com/jens-maus/libopenurl
 #
 # $Id$
 #
@@ -27,8 +27,8 @@ mkdir -p "release"
 mkdir -p "release/OpenURL"
 mkdir -p "release/OpenURL/C"
 mkdir -p "release/OpenURL/Libs"
+mkdir -p "release/OpenURL/Locale/Catalogs"
 mkdir -p "release/OpenURL/Prefs"
-mkdir -p "release/OpenURL/Catalogs"
 mkdir -p "release/OpenURL/Developer"
 mkdir -p "release/OpenURL/Developer/Autodocs"
 mkdir -p "release/OpenURL/Developer/C"
@@ -81,15 +81,16 @@ cp -a -R developer/C/include/* "release/OpenURL/Developer/C/include/"
 cp -a developer/sfd/* "release/OpenURL/Developer/sfd/"
 cp -a developer/xml/* "release/OpenURL/Developer/xml/"
 
-cp -a locale/OpenURL.pot "release/OpenURL/Catalogs/"
+cp -a locale/OpenURL.pot "release/OpenURL/Locale/Catalogs/"
 rm -f locale/*.catalog
 make -C prefs catalogs
 for language in `ls locale/*.catalog`; do
 	catalog=$(basename "$language")
 	lang="${catalog%.*}"
-	mkdir -p "release/OpenURL/Catalogs/${lang}"
-	cp -a ${language} "release/OpenURL/Catalogs/${lang}/OpenURL.catalog"
+	mkdir -p "release/OpenURL/Locale/Catalogs/${lang}"
+	cp -a ${language} "release/OpenURL/Locale/Catalogs/${lang}/OpenURL.catalog"
 done
+cp -a locale/OpenURL.pot "release/OpenURL/Locale/"
 
 releasever=`grep "#define LIB_VERSION" library/version.h | awk '{ print $3 }'`
 releaserev=`grep "#define LIB_REVISION" library/version.h | awk '{ print $3 }'`

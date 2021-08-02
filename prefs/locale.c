@@ -2,7 +2,7 @@
 
  openurl.library - universal URL display and browser launcher library
  Copyright (C) 1998-2005 by Troels Walsted Hansen, et al.
- Copyright (C) 2005-2019 openurl.library Open Source Team
+ Copyright (C) 2005-2021 openurl.library Open Source Team
 
  This library is free software; it has been placed in the public domain
  and you can freely redistribute it and/or modify it. Please note, however,
@@ -12,7 +12,7 @@
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
- openurl.library project: http://sourceforge.net/projects/openurllib/
+ openurl.library project: http://github.com/jens-maus/libopenurl
 
  $Id$
 
@@ -25,6 +25,8 @@
 #include <proto/exec.h>
 
 #include "macros.h"
+
+#include "SDI_compiler.h"
 
 /***********************************************************************/
 
@@ -98,6 +100,12 @@ void uninitStrings(void)
         FreeVec( privateCatCompArray );
     }
     privateCatCompArray = NULL;
+
+    if(g_cat != NULL)
+    {
+        CloseCatalog(g_cat);
+    }
+    g_cat = NULL;
 }
 
 /***********************************************************************/
@@ -126,9 +134,18 @@ void localizeStrings(STRPTR *s)
 
 void localizeNewMenu(struct NewMenu *nm)
 {
+    STRPTR str = NULL;
     for ( ; nm->nm_Type!=NM_END; nm++)
         if (nm->nm_Label!=NM_BARLABEL)
-            nm->nm_Label = (STRPTR)getString((IPTR)nm->nm_Label);
+        {
+            str = getString((ULONG)nm->nm_Label);
+            if( str[1] == '\0' )
+            {
+                nm->nm_CommKey = str;
+                str += 2;
+            }
+            nm->nm_Label = str;
+        }
 }
 
 /***********************************************************************/
