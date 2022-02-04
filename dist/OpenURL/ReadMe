@@ -10,7 +10,7 @@ Architecture: ppc-amigaos >= 4.0.0; m68k-amigaos >= 3.0; ppc-morphos >= 1.4.2; i
 Introduction
 ~~~~~~~~~~~~
 Copyright (C) 1998-2005 by Troels Walsted Hansen, et al.
-Copyright (C) 2005-2021 openurl.library Open Source Team
+Copyright (C) 2005-2022 openurl.library Open Source Team
 
 This library was created to make it easier for application programmers to
 include clickable URLs in their applications, about windows, etc.
