@@ -4,6 +4,18 @@ openurl.library - ChangeLog
 
 #### v7.19 RELEASE #############################################################
 
+2021-05-10 Thore Böckelmann <tboeckel@gmx.de>
+
+  * dist/Install: added italian translations kindly provided by Samir Hawamdeh.
+
+2021-02-08 Thore Böckelmann <tboeckel@gmx.de>
+
+  * raPrefs: use menuclass on AmigaOS4.
+
+2020-10-28 Thore Böckelmann <tboeckel@gmx.de>
+
+  * prefs: added a link to the Github project page.
+
 2020-10-23 Thore Böckelmann <tboeckel@gmx.de>
 
   * prefs: use Hyperlink class if it is available.
