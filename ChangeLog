@@ -2,6 +2,10 @@
 openurl.library - ChangeLog
 ---------------------------
 
+2022-04-21 Thore Böckelmann <tboeckel@gmx.de>
+
+  * prefs/popport.c: cast the pointer difference to size_t.
+
 #### v7.19 RELEASE #############################################################
 
 2021-05-10 Thore Böckelmann <tboeckel@gmx.de>
