@@ -21,6 +21,7 @@
 #ifndef FTPS_H
 #define FTPS_H
 
+
 #include <intuition/classusr.h>
 #include <exec/lists.h>
 
@@ -34,5 +35,5 @@ void updateFTPWindow( struct URL_FTPNode  * pFTP );
 
 void updateFTPNode( void );
 
-#endif // FTPS_H
 
+#endif // FTPS_H

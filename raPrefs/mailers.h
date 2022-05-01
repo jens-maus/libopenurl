@@ -21,6 +21,7 @@
 #ifndef MAILERS_H
 #define MAILERS_H
 
+
 #include <intuition/classusr.h>
 #include <exec/lists.h>
 
@@ -33,5 +34,5 @@ BOOL updateMailerList( struct List * list, struct MinList PrefsMailerList );
 void updateMailerWindow( struct URL_MailerNode  * pMailer );
 void updateMailerNode( void );
 
-#endif // MAILERS_H
 
+#endif // MAILERS_H

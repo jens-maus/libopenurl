@@ -22,17 +22,21 @@
 #include <intuition/intuition.h>
 #include <intuition/icclass.h>
 #include <dos/dos.h>
-#include <proto/gadtools.h>
+#include <workbench/icon.h>
+
+//#include <proto/gadtools.h>
+
 #include <images/label.h>
-#include <images/glyph.h>
+//#include <images/glyph.h>
 
 #include <classes/window.h>
+#include <classes/requester.h>
 
 #include <gadgets/layout.h>
 #include <gadgets/space.h>
 #include <gadgets/button.h>
 #include <gadgets/clicktab.h>
-#include <gadgets/texteditor.h>
+//#include <gadgets/texteditor.h>
 #include <gadgets/scroller.h>
 #include <gadgets/checkbox.h>
 #include <gadgets/listbrowser.h>
@@ -47,12 +51,13 @@
 #include <proto/utility.h>
 #include <proto/icon.h>
 
-#include <proto/window.h>
+/*#include <proto/window.h>
+#include <proto/requester.h>
 #include <proto/layout.h>
 #include <proto/space.h>
 #include <proto/button.h>
 #include <proto/clicktab.h>
-#include <proto/texteditor.h>
+//#include <proto/texteditor.h>
 #include <proto/scroller.h>
 #include <proto/checkbox.h>
 #include <proto/listbrowser.h>
@@ -60,39 +65,77 @@
 #include <proto/getfile.h>
 #include <proto/chooser.h>
 #include <proto/label.h>
-#include <proto/bitmap.h>
+#include <proto/bitmap.h>*/
+#include <proto/chooser.h>
+#include <proto/layout.h>
+#include <proto/listbrowser.h>
 
 #include <reaction/reaction_macros.h>
+#include "my_reaction_macros.h"
 
 #include <libraries/openurl.h>
 #include <proto/openurl.h>
 
+#include "OpenURL.h"
 #include "gui_global.h"
 #include "browsers.h"
 #include "ftps.h"
 #include "handlers.h"
 #include "mailers.h"
 #include "utility.h"
-#include "macros.h"
+//#include "macros.h"
 
 #include "version.h"
 
 static const char USED_VAR version[] = "$VER: OpenURL-Prefs " LIB_REV_STRING " [" SYSTEMSHORT "/" CPU "] (" LIB_DATE ") " LIB_COPYRIGHT;
 
-Object *win;
+struct ClassLibrary *WindowBase; Class *WindowClass;
+struct Library *LayoutBase; Class *LayoutClass;
+struct LayoutIFace *ILayout = NULL;
+struct ClassLibrary *LabelBase; Class *LabelClass;
+struct ClassLibrary *SpaceBase; Class *SpaceClass;
+struct ClassLibrary *ButtonBase; Class *ButtonClass;
+struct ClassLibrary *StringBase; Class *StringClass;
+struct ClassLibrary *BitMapBase; Class *BitMapClass;
+struct ClassLibrary *ClickTabBase; Class *ClickTabClass;
+struct Library *ChooserBase; Class *ChooserClass;
+struct ChooserIFace *IChooser = NULL;
+struct ClassLibrary *GetFileBase; Class *GetFileClass;
+struct ClassLibrary *CheckBoxBase; Class *CheckBoxClass;
+struct Library *ListBrowserBase; Class *ListBrowserClass;
+struct ListBrowserIFace *IListBrowser = NULL;
+struct ClassLibrary *RequesterBase; Class *RequesterClass;
+
+struct Library *UtilityBase = NULL;
+struct Library *IntuitionBase = NULL;
+struct Library *IconBase = NULL;
+//struct Library *AslBase = NULL;
+struct Library * OpenURLBase = NULL;
+
+struct UtilityIFace *IUtility = NULL;
+struct IntuitionIFace *IIntuition = NULL;
+struct IconIFace *IIcon = NULL;
+//struct AslIFace *IAsl = NULL;
+struct OpenURLIFace *IOpenURL = NULL;
+
+
 struct MsgPort *AppPort;
-struct Hook idcmphook;
+//struct Hook idcmphook;
 
 struct Window *window;
 
 struct List list_Brow;
 struct List list_Mail;
 struct List list_FTPs;
+struct ColumnInfo *LB_ColInfo;
 
-struct Library * OpenURLBase = NULL;
-struct OpenURLIFace *IOpenURL = NULL;
+struct List *popup_www_ftp, *popup_mail, *popup_arexxports;
 
+Object *win;
 Object *Objects[OBJ_NUM];
+Object *edit_brow_win, *edit_mail_win, *edit_ftp_win;
+
+int32 mimgsize; // Menu images size
 
 static STRPTR PageLabels[] =
 {
@@ -103,35 +146,9 @@ static STRPTR PageLabels[] =
     NULL
 };
 
-struct ColumnInfo BrowsColInfo[] =
+/*uint16 pageData[13] =
 {
-    { 20, (STRPTR)"Use", CIF_WEIGHTED },
-    { 20, (STRPTR)" Name", CIF_WEIGHTED },
-    { 20, (STRPTR)" Path", CIF_WEIGHTED },
-    { -1, NULL, -1 }
-};
-
-struct ColumnInfo MailColInfo[] =
-{
-    { 20, (STRPTR)"Use", CIF_WEIGHTED },
-    { 20, (STRPTR)" Name", CIF_WEIGHTED },
-    { 20, (STRPTR)" Path", CIF_WEIGHTED },
-    { -1, NULL, -1 }
-};
-
-struct ColumnInfo FTPsColInfo[] =
-{
-    { 20, (STRPTR)"Use", CIF_WEIGHTED },
-    { 20, (STRPTR)" Name", CIF_WEIGHTED },
-    { 20, (STRPTR)" Path", CIF_WEIGHTED },
-    { -1, NULL, -1 }
-};
-
-#define SPACE LAYOUT_AddChild, SpaceObject, End
-
-uint16 pageData[13] =
-{
-    //      Plane 0
+    // Plane 0
     0x3FF8,0x2008,0x2008,0x3FF8,0x2008,0x2008,0x2008,0x2008,
     0x2008,0x2008,0x2008,0x2008,0x3FF8
 };
@@ -143,16 +160,15 @@ struct Image chooser_image =
     pageData,       // ImageData
     0x0001, 0x0000, // PlanePick, PlaneOnOff
     NULL            // NextImage
-};
-
-#define MyItem(i) Item((STRPTR)i,0,i)
+};*/
 
 /**
 **/
-struct TagItem	lst2btn[] = {
-    {LISTBROWSER_SelectedNode, GA_ReadOnly },
-    {TAG_END, 0 }
-};
+/*struct TagItem lst2btn[] = {
+    { LISTBROWSER_SelectedNode, GA_ReadOnly },
+    { TAG_END, 0 }
+};*/
+
 
 #ifdef MENUCLASS
 	Object *menustripobj;
@@ -166,7 +182,7 @@ struct Image *MenuImage(CONST_STRPTR name, struct Screen *screen)
 	uint32 len, totlen;
 
 	len = IUtility->Strlen(name);
-	totlen = 2*len + 6; //len + 3 + len + 3
+	totlen = 2*len + 6; // [name_LENGHT + 3] + [name_LENGTH + 3] -> [name_s] + [name_g]
 
 	name_s = IExec->AllocVecTags(totlen, TAG_END);
 	if(name_s)
@@ -186,9 +202,9 @@ struct Image *MenuImage(CONST_STRPTR name, struct Screen *screen)
 		{
 			prev_dir = IDOS->SetCurrentDir(dir);
 
-			i = (struct Image *)BitMapObject,//IIntuition->NewObject(BitMapClass, NULL, //"bitmap.image",
-			                     //menu_img==24? TAG_IGNORE : IA_Scalable, TRUE,
-			                     //IA_Width,menu_img, IA_Height,menu_img+2,
+			i = (struct Image *)BitMapObject,
+			                     (mimgsize!=24)? IA_Scalable : TAG_IGNORE, TRUE,
+			                     //IA_Width,24, IA_Height,24+2,
 			                     BITMAP_SourceFile,         name,
 			                     BITMAP_SelectSourceFile,   name_s,
 			                     BITMAP_DisabledSourceFile, name_g,
@@ -196,8 +212,8 @@ struct Image *MenuImage(CONST_STRPTR name, struct Screen *screen)
 			                     BITMAP_Masking, TRUE,
 			                    TAG_END);
 			if(i)
-				//IIntuition->SetAttrs( (Object *)i, IA_Height,menu_img+2, IA_Width,menu_img, TAG_END);
-				IIntuition->SetAttrs( (Object *)i, IA_Height,24+2, IA_Width,24, TAG_END);
+				IIntuition->SetAttrs( (Object *)i, IA_Height,mimgsize+2, IA_Width,mimgsize, TAG_END);
+				//IIntuition->SetAttrs( (Object *)i, IA_Height,24+2, IA_Width,24, TAG_END);
 
 			IDOS->SetCurrentDir(prev_dir);
 			IDOS->UnLock(dir);
@@ -214,58 +230,58 @@ void CreateMainMenu(struct Screen *scr)
     menustripobj = IIntuition->NewObject(NULL, "menuclass",
 
      MA_AddChild, IIntuition->NewObject(NULL, "menuclass",
-      MA_Type,T_MENU, MA_Label,"Project",
+      MA_Type,T_MENU, MA_Label,getString(MSG_Menu_Project),//"Project",
       MA_AddChild, IIntuition->NewObject(NULL, "menuclass",
-        MA_Type,T_ITEM, MA_Label,"Iconify",
-        MA_ID,    MSG_Menu_Hide,
-        MA_Key,   "I",
+        MA_Type,T_ITEM, MA_Label,getString(MSG_Menu_Iconify),//"Iconify",
+        MA_ID,    MSG_Menu_Iconify,//MSG_Menu_Hide,
+        //MA_Key,   "I",
         MA_Image, MenuImage("iconify",scr),
       TAG_END),
       MA_AddChild, IIntuition->NewObject(NULL, "menuclass",
-        MA_Type,T_ITEM, MA_Label,"About",
+        MA_Type,T_ITEM, MA_Label,getString(MSG_Menu_About),//"About",
         MA_ID,    MSG_Menu_About,
-        MA_Key,   "?",
+        //MA_Key,   "?",
         MA_Image, MenuImage("info",scr),
       TAG_END),
       MA_AddChild, IIntuition->NewObject(NULL, "menuclass", MA_Type,T_ITEM, MA_Separator,TRUE, TAG_END),
       MA_AddChild, IIntuition->NewObject(NULL, "menuclass",
-        MA_Type,T_ITEM, MA_Label,"Quit",
+        MA_Type,T_ITEM, MA_Label,getString(MSG_Menu_Quit),//"Quit",
         MA_ID,    MSG_Menu_Quit,
-        MA_Key,   "Q",
+        //MA_Key,   "Q",
         MA_Image, MenuImage("quit",scr),
       TAG_END),
      TAG_END),
      MA_AddChild, IIntuition->NewObject(NULL, "menuclass",
-      MA_Type,T_MENU, MA_Label,"Preferences",
+      MA_Type,T_MENU, MA_Label,getString(MSG_Menu_Prefs),//"Preferences",
       MA_AddChild, IIntuition->NewObject(NULL, "menuclass",
-        MA_Type,T_ITEM, MA_Label,"Save settings",
+        MA_Type,T_ITEM, MA_Label,getString(MSG_Menu_Save),//"Save settings",
         MA_ID,    MSG_Menu_Save,
-        MA_Key,   "S",
+        //MA_Key,   "S",
         MA_Image, MenuImage("save",scr),
       TAG_END),
       MA_AddChild, IIntuition->NewObject(NULL, "menuclass",
-        MA_Type,T_ITEM, MA_Label,"Use settings",
+        MA_Type,T_ITEM, MA_Label,getString(MSG_Menu_Use),//"Use settings",
         MA_ID,    MSG_Menu_Use,
-        MA_Key,   "U",
+        //MA_Key,   "U",
         MA_Image, MenuImage("use",scr),
       TAG_END),
       MA_AddChild, IIntuition->NewObject(NULL, "menuclass", MA_Type,T_ITEM, MA_Separator,TRUE, TAG_END),
       MA_AddChild, IIntuition->NewObject(NULL, "menuclass",
-        MA_Type,T_ITEM, MA_Label,"Default settings",
+        MA_Type,T_ITEM, MA_Label,getString(MSG_Menu_Defaults),//"Default settings",
         MA_ID,    MSG_Menu_Defaults,
-        MA_Key,   "D",
+        //MA_Key,   "D",
         MA_Image, MenuImage("restore",scr),
       TAG_END),
       MA_AddChild, IIntuition->NewObject(NULL, "menuclass",
-        MA_Type,T_ITEM, MA_Label,"Last saved",
+        MA_Type,T_ITEM, MA_Label,getString(MSG_Menu_LastSaved),//"Last saved",
         MA_ID,    MSG_Menu_LastSaved,
-        MA_Key,   "L",
+        //MA_Key,   "L",
         MA_Image, MenuImage("undo_reverttosaved",scr),
       TAG_END),
       MA_AddChild, IIntuition->NewObject(NULL, "menuclass",
-        MA_Type,T_ITEM, MA_Label,"Restore",
+        MA_Type,T_ITEM, MA_Label,getString(MSG_Menu_Restore),//"Restore",
         MA_ID,    MSG_Menu_Restore,
-        MA_Key,   "R",
+        //MA_Key,   "R",
         MA_Image, MenuImage("undo",scr),
       TAG_END),
      TAG_END),
@@ -273,12 +289,15 @@ void CreateMainMenu(struct Screen *scr)
     TAG_END);
 }
 #else
+	#define MyItem(i) Item((STRPTR)i,0,i)
+
 	struct NewMenu menu[] =
 	{
 	    Title((STRPTR)MSG_Menu_Project),
 	        MyItem(MSG_Menu_About),
 	        ItemBar,
-	        MyItem(MSG_Menu_Hide),
+	        //MyItem(MSG_Menu_Hide),
+	        MyItem(MSG_Menu_Iconify),
 	        ItemBar,
 	        MyItem(MSG_Menu_Quit),
 	    Title((STRPTR)MSG_Menu_Prefs),
@@ -293,10 +312,6 @@ void CreateMainMenu(struct Screen *scr)
 	struct Menu *MenuStrip;
 #endif
 
-void IDCMPFunc(struct Hook *hook,Object *wobj,struct IntuiMessage *Msg);
-ULONG loadPrefs(ULONG mode);
-ULONG storePrefs(BOOL bStorePrefs);
-void updateFTPWindow(struct URL_FTPNode  * pFTP);
 
 Object *make_window(void)
 {
@@ -306,21 +321,32 @@ Object *make_window(void)
         *page3 = NULL,
         *page4 = NULL;
 
+    struct DiskObject *iconify = NULL;
+
+    // reset icon X/Y positions so it iconifies properly on Workbench
+    if( (iconify=IIcon->GetIconTags("OpenURL", ICONGETA_FailIfUnavailable,FALSE, TAG_END)) )
+    {
+     iconify->do_CurrentX = NO_ICON_POSITION;
+     iconify->do_CurrentY = NO_ICON_POSITION;
+    }
+
+/*
     OBJ(OBJ_HIDDEN_CHOOSER) = ChooserObject,
         GA_ID,                  OBJ_HIDDEN_CHOOSER,
         GA_RelVerify,           TRUE,
-  //      CHOOSER_Labels,         &chooserlist,
+          //CHOOSER_Labels,         &chooserlist,
         CHOOSER_DropDown,       TRUE,
         CHOOSER_AutoFit,        TRUE,
         CHOOSER_Hidden,         TRUE,
         ICA_TARGET,             ICTARGET_IDCMP,
     End;  // Chooser
+*/
 
     page1 = VLayoutObject,
         LAYOUT_AddChild,    HLayoutObject,
 
-            LAYOUT_AddChild,    VLayoutObject,
-                LAYOUT_SpaceOuter,  TRUE,
+//            LAYOUT_AddChild,    VLayoutObject,
+//                LAYOUT_SpaceOuter,  TRUE,
                 LAYOUT_AddChild, OBJ(OBJ_LBROWSER_BROW) = ListBrowserObject,
                     GA_ID,                      OBJ_LBROWSER_BROW,
            //         GA_Immediate,               TRUE,
@@ -329,10 +355,10 @@ Object *make_window(void)
                     LISTBROWSER_HorizontalProp, TRUE,
                     LISTBROWSER_ShowSelected,   TRUE,
                     LISTBROWSER_Labels,         &list_Brow,
-                    LISTBROWSER_ColumnInfo,     &BrowsColInfo,
+                    LISTBROWSER_ColumnInfo,     LB_ColInfo,//&BrowsColInfo,
                     LISTBROWSER_ColumnTitles,   TRUE,
                 End,  // ListBrowser
-            End,   // VLayout
+//            End,   // VLayout
 
             LAYOUT_AddChild,    VLayoutObject,
                 LAYOUT_SpaceOuter,  TRUE,
@@ -373,8 +399,8 @@ Object *make_window(void)
     page2 = VLayoutObject,
         LAYOUT_AddChild,    HLayoutObject,
 
-            LAYOUT_AddChild,    VLayoutObject,
-                LAYOUT_SpaceOuter,  TRUE,
+//            LAYOUT_AddChild,    VLayoutObject,
+//                LAYOUT_SpaceOuter,  TRUE,
                 LAYOUT_AddChild, OBJ(OBJ_LBROWSER_MAIL) = ListBrowserObject,
                     GA_ID,                      OBJ_LBROWSER_MAIL,
            //         GA_Immediate,               TRUE,
@@ -383,10 +409,10 @@ Object *make_window(void)
                     LISTBROWSER_HorizontalProp, TRUE,
                     LISTBROWSER_ShowSelected,   TRUE,
                     LISTBROWSER_Labels,         &list_Mail,
-                    LISTBROWSER_ColumnInfo,     &MailColInfo,
+                    LISTBROWSER_ColumnInfo,     LB_ColInfo,//&MailColInfo,
                     LISTBROWSER_ColumnTitles,   TRUE,
                 End,  // ListBrowser
-            End,   // VLayout
+//            End,   // VLayout
 
             LAYOUT_AddChild,    VLayoutObject,
                 LAYOUT_SpaceOuter,  TRUE,
@@ -423,21 +449,22 @@ Object *make_window(void)
         End,   // HLayout
     End;  // VLayout         // *** end of page 2 ***
 
+
     page3 = VLayoutObject,
         LAYOUT_AddChild,    HLayoutObject,
 
-            LAYOUT_AddChild,    VLayoutObject,
-                LAYOUT_SpaceOuter,  TRUE,
+//            LAYOUT_AddChild,    VLayoutObject,
+//                LAYOUT_SpaceOuter,  TRUE,
                 LAYOUT_AddChild, OBJ(OBJ_LBROWSER_FTP) = ListBrowserObject,
                     GA_ID,                      OBJ_LBROWSER_FTP,
                     GA_RelVerify,               TRUE,
                     LISTBROWSER_AutoFit,        TRUE,
                     LISTBROWSER_ShowSelected,   TRUE,
                     LISTBROWSER_Labels,         &list_FTPs,
-                    LISTBROWSER_ColumnInfo,     &FTPsColInfo,
+                    LISTBROWSER_ColumnInfo,     LB_ColInfo,//&FTPsColInfo,
                     LISTBROWSER_ColumnTitles,   TRUE,
                 End,  // ListBrowser
-            End,   // VLayout
+//            End,   // VLayout
 
             LAYOUT_AddChild,    VLayoutObject,
                 LAYOUT_SpaceOuter,  TRUE,
@@ -551,7 +578,7 @@ Object *make_window(void)
     ClickTabEnd;
 
     return WindowObject,
-        WA_ScreenTitle,        getString(MSG_App_ScreenTitle),
+        WA_ScreenTitle,        "OpenURL " LIB_REV_STRING " (" LIB_DATE ")",//getString(MSG_App_ScreenTitle),
         WA_Title,              getString(MSG_Win_WinTitle),
         WA_DragBar,            TRUE,
         WA_CloseGadget,        TRUE,
@@ -559,8 +586,8 @@ Object *make_window(void)
         WA_DepthGadget,        TRUE,
         WA_Activate,           TRUE,
         WINDOW_IconifyGadget,  TRUE,
-        WINDOW_Icon,           IIcon->GetDiskObject("PROGDIR:OpenURL"),
-        WINDOW_IconTitle,      getString(MSG_Win_WinTitle),
+        WINDOW_Icon,           iconify,//IIcon->GetDiskObject("PROGDIR:OpenURL"),
+        //WINDOW_IconTitle,      getString(MSG_Win_WinTitle),
         WINDOW_AppPort,        AppPort,
         WINDOW_SharedPort,     AppPort,
         WINDOW_Position,       WPOS_CENTERSCREEN,
@@ -614,125 +641,265 @@ Object *make_window(void)
 }
 
 
-int main()
+void createChooserList(struct List *popup_list, CONST_STRPTR popup_s, uint32 *popup_n)
 {
-    initStrings();
+	uint16 i;
+	char temp_buf[64];
+	struct Node *n;
 
-    localizeStrings(PageLabels);
+	for(i=0; popup_s[i]!='\0'; ++i)
+	{
+		IUtility->SNPrintf(temp_buf, sizeof(temp_buf), "%%%lc - %s",popup_s[i],getString(popup_n[i]));
+//IDOS->Printf("createChooserList: [%ld]'%s'\n",i,temp_buf);
+		n = IChooser->AllocChooserNode(CNA_CopyText,TRUE, CNA_Text,temp_buf, TAG_DONE);
+
+		IExec->AddTail(popup_list, n);
+	}
+}
+
+void freeChooserList(struct List *list)
+{
+	struct Node *node, *nextnode;
+
+	node = IExec->GetHead(list);
+	while(node)
+	{
+//DBUG("freeChooserList 0x%08lx\n",node);
+		nextnode = IExec->GetSucc(node);
+		IChooser->FreeChooserNode(node);
+		node = nextnode;
+	}
+
+	IExec->FreeSysObject(ASOT_LIST, list);
+	list = NULL;
+}
+
+
+void createChooserARexxPorts(struct List *list)
+{
+	struct Node *n, *nd;
+	struct Hook *prhook = NULL;
+	//int32 count = 0;
+
+	IExec->Forbid();
+	for(nd=((struct ExecBase *)SysBase)->PortList.lh_Head; nd->ln_Succ; nd=nd->ln_Succ)
+	{
+//IDOS->Printf("portname: '%s'\n",nd->ln_Name);
+		n = IChooser->AllocChooserNode(CNA_CopyText,TRUE, CNA_Text,nd->ln_Name, TAG_DONE);
+		IExec->AddTail(list, n);
+	}
+	IExec->Permit();
+
+	// Sort list by name
+	prhook = (struct Hook *)IExec->AllocSysObjectTags(ASOT_HOOK,
+	                                                  ASOHOOK_Entry, CompareNameNodes,
+	                                                 TAG_DONE);
+	sort_list(list, prhook);
+	IExec->FreeSysObject(ASOT_HOOK, prhook);
+}
+
+
+int main(void)
+{
+	struct DiskObject *icon = NULL;
+
+	if( !open_libs() )
+	{
+		close_libs();
+		IDOS->PutErrStr("Can't open requiered libraries.\n");
+		return(RETURN_FAIL);
+	}
+
+	if( !(OpenURLBase=IExec->OpenLibrary(OPENURLNAME, OPENURLVER)) )
+	{
+		close_libs();
+		IDOS->PutErrStr("Can't open 'openurl.library'.\n");
+		return(RETURN_FAIL);
+	}
+	if( !(IOpenURL=(struct OpenURLIFace*)IExec->GetInterface(OpenURLBase, "main", 1L, NULL)) )
+	{
+		IExec->CloseLibrary(OpenURLBase);
+		close_libs();
+		IDOS->PutErrStr("Can't get 'openurl.library' IFace.\n");
+		return(RETURN_FAIL);
+	}
+
+	initStrings();
+
+	localizeStrings(PageLabels);
+
+	mimgsize = 24;
+	/* tooltypes - START */
+	if( (icon=IIcon->GetDiskObjectNew("PROGDIR:OpenURL")) )
+	{
+		mimgsize = CFGInteger(icon, "MENUIMAGESIZE", 24);
+		if(mimgsize < 1) mimgsize = 24;
+	}
+	/* tooltypes - END */
 
 #ifndef MENUCLASS
-    localizeNewMenu(menu);
+	localizeNewMenu(menu);
 #endif
 
-    if(!(OpenURLBase = IExec->OpenLibrary(OPENURLNAME, OPENURLVER)))
+    /*if(!(OpenURLBase = IExec->OpenLibrary(OPENURLNAME, OPENURLVER)))
          return -1;
     if(!(IOpenURL = (struct OpenURLIFace*)IExec->GetInterface(OpenURLBase, "main", 1L, NULL)))
-        return -1;
+        return -1;*/
 
-    RA_SetUpHook(idcmphook, IDCMPFunc, NULL);
+	//RA_SetUpHook(idcmphook, IDCMPFunc, NULL);
 
-    if((AppPort = IExec->AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
-    {
+	if((AppPort = IExec->AllocSysObjectTags(ASOT_PORT, TAG_DONE)) != NULL)
+	{
+		char syms[] = "asbfup";		// browser & ftp (aka &syms[4])
+		uint32 names[] = {
+			MSG_Mailer_PopAddress,
+			MSG_Mailer_Popsubject,
+			MSG_Mailer_PopBodyText,
+			MSG_Mailer_PopBodyFile,
+			MSG_Edit_PopURL,		//<- browser & ftp (aka names+4)
+			MSG_Edit_PopScreen
+		};
+
 #ifdef MENUCLASS
 		struct Screen *screen = IIntuition->LockPubScreen(NULL);
 		CreateMainMenu(screen);
 		IIntuition->UnlockPubScreen(NULL, screen);
 #endif
 
-        IExec->NewList(&list_Brow);
-        IExec->NewList(&list_Mail);
-        IExec->NewList(&list_FTPs);
+		popup_www_ftp = IExec->AllocSysObjectTags(ASOT_LIST, TAG_DONE);
+		popup_mail = IExec->AllocSysObjectTags(ASOT_LIST, TAG_DONE);
+		createChooserList(popup_www_ftp, &syms[4], names+4); // "only" last 2 entries
+		createChooserList(popup_mail, syms, names);
 
-        win = make_window();
-        edit_brow_win = make_edit_brow_win();
-        edit_mail_win = make_edit_mail_win();
-        edit_ftp_win = make_edit_ftp_win();
+		popup_arexxports = IExec->AllocSysObjectTags(ASOT_LIST, TAG_DONE);
+		createChooserARexxPorts(popup_arexxports);
+
+		IExec->NewList(&list_Brow);
+		IExec->NewList(&list_Mail);
+		IExec->NewList(&list_FTPs);
+
+		//Localize listbrowser's column titles
+		LB_ColInfo = IListBrowser->AllocLBColumnInfo(3,
+		                              LBCIA_Column,0, LBCIA_Title,getString(MSG_Edit_ListUse),
+		                              LBCIA_Column,1, LBCIA_Title,getString(MSG_Edit_ListName),
+		                              LBCIA_Column,2, LBCIA_Title,getString(MSG_Edit_ListPath),
+		                           TAG_DONE);
+
+		win = make_window();
+
+		edit_brow_win = make_edit_brow_win();
+		edit_mail_win = make_edit_mail_win();
+		edit_ftp_win = make_edit_ftp_win();
 
 #ifndef MENUCLASS
 		MenuStrip = IGadTools->CreateMenusA(menu, NULL);
 #endif
 
-        loadPrefs(URL_GetPrefs_Mode_InUse);
+		loadPrefs(URL_GetPrefs_Mode_InUse);
 
-        // Set up inter-group label alignment
+		// Set up inter-group label alignment
+		iset( OBJ(OBJ_BROW_ALIGN_T), LAYOUT_AlignLabels,OBJ(OBJ_BROW_ALIGN_B) );
+		iset( OBJ(OBJ_MAIL_ALIGN_T), LAYOUT_AlignLabels,OBJ(OBJ_MAIL_ALIGN_B) );
+		iset( OBJ(OBJ_FTP_ALIGN_T), LAYOUT_AlignLabels,OBJ(OBJ_FTP_ALIGN_B) );
 
-        iset(OBJ(OBJ_FTP_ALIGN1), LAYOUT_AlignLabels, OBJ(OBJ_FTP_ALIGN2));
-        iset(OBJ(OBJ_MAIL_ALIGN1), LAYOUT_AlignLabels, OBJ(OBJ_MAIL_ALIGN2));
-        iset(OBJ(OBJ_LBROWSER_BROW), ICA_TARGET, OBJ(OBJ_EDIT_BROW),
+        /*iset(OBJ(OBJ_LBROWSER_FTP), ICA_TARGET, OBJ(OBJ_EDIT_FTP),
+                                    ICA_MAP,    lst2btn);
+        iset(OBJ(OBJ_LBROWSER_MAIL), ICA_TARGET, OBJ(OBJ_EDIT_MAIL),
                                      ICA_MAP,    lst2btn);
+        iset(OBJ(OBJ_LBROWSER_BROW), ICA_TARGET, OBJ(OBJ_EDIT_BROW),
+                                     ICA_MAP,    lst2btn);*/
 
-        if((window = RA_OpenWindow(win)) != NULL)
-        {
-            uint32 sigmask;
-            BOOL done = FALSE;
+		if((window = RA_OpenWindow(win)) != NULL)
+		{
+			uint32 sigmask;
+			BOOL done = FALSE;
 
-            sigmask = iget(win, WINDOW_SigMask);
-            while (!done)
-            {
-                uint32 siggot;
+			sigmask = iget(win, WINDOW_SigMask);
+			while (!done)
+			{
+				uint32 siggot = IExec->Wait(sigmask|SIGBREAKF_CTRL_C);
 
-                siggot = IExec->Wait(sigmask);
-                if (siggot & sigmask)
-                {
-                    done = HandleInput_Main_Win();
-                    HandleInput_Edit_Brow_Win();
-                    HandleInput_Edit_Mail_Win();
-                    HandleInput_Edit_FTP_Win();
-                }
-            }
-        }
-        IIntuition->DisposeObject(edit_ftp_win);
-        IIntuition->DisposeObject(edit_mail_win);
-        IIntuition->DisposeObject(edit_brow_win);
-        IIntuition->DisposeObject(win);
+				if(siggot & SIGBREAKF_CTRL_C)
+				{
+					done = TRUE;
+					break;
+				}
 
-        //  The hidden chooser isn't attached to anything,
-        //  so we must dispose of it ourselves...
-        IIntuition->DisposeObject(OBJ(OBJ_HIDDEN_CHOOSER));
+				if (siggot & sigmask)
+				{
+					done = HandleInput_Main_Win();
+					HandleInput_Edit_Brow_Win();
+					HandleInput_Edit_Mail_Win();
+					HandleInput_Edit_FTP_Win();
+				}
+			}
+		}
+
+		IIntuition->DisposeObject(edit_ftp_win);
+		IIntuition->DisposeObject(edit_mail_win);
+		IIntuition->DisposeObject(edit_brow_win);
+
+		IIntuition->DisposeObject(win);
+
+		freeChooserList(popup_arexxports);
+		freeChooserList(popup_mail);
+		freeChooserList(popup_www_ftp);
+
+		// The hidden chooser isn't attached to anything,
+		// so we must dispose of it ourselves...
+		//IIntuition->DisposeObject(OBJ(OBJ_HIDDEN_CHOOSER));
 
 #ifdef MENUCLASS
-	if(menustripobj)
-	{
-		 IIntuition->DisposeObject(menustripobj);
-		menustripobj = NULL;
-	}
+		if(menustripobj)
+		{
+			IIntuition->DisposeObject(menustripobj);
+			menustripobj = NULL;
+		}
 #else
 		IGadTools->FreeMenus(MenuStrip);
 #endif
 
-        IListBrowser->FreeListBrowserList(&list_FTPs);
-        IListBrowser->FreeListBrowserList(&list_Mail);
-        IListBrowser->FreeListBrowserList(&list_Brow);
-        IExec->FreeSysObject(ASOT_PORT, AppPort);
-    }
+		IListBrowser->FreeLBColumnInfo(LB_ColInfo);
 
-    IExec->DropInterface((struct Interface*)IOpenURL);
-    IExec->CloseLibrary(OpenURLBase);
+		IListBrowser->FreeListBrowserList(&list_FTPs);
+		IListBrowser->FreeListBrowserList(&list_Mail);
+		IListBrowser->FreeListBrowserList(&list_Brow);
+ 
+		IExec->FreeSysObject(ASOT_PORT, AppPort);
+	}
 
-    uninitStrings();
+	IExec->DropInterface((struct Interface*)IOpenURL);
+	IExec->CloseLibrary(OpenURLBase);
 
-    return 0;
+	uninitStrings();
+
+	close_libs();
+
+	return 0;
 }
 
-void IDCMPFunc(UNUSED struct Hook *hook, UNUSED Object *wobj, struct IntuiMessage *Msg)
+/*uint32 IDCMPFunc(UNUSED struct Hook *hook, UNUSED Object *wobj, struct IntuiMessage *Msg)
 {
-    //struct Window *window = Msg->IDCMPWindow;
-    uint32 active;
+	//struct Window *w = Msg->IDCMPWindow;
+	struct Node *nod_sel;
 
-    if (Msg->Class == IDCMP_IDCMPUPDATE)
-    {
-        if (IUtility->GetTagData(GA_ID, 0, Msg->IAddress) == OBJ_HIDDEN_CHOOSER)
-        {
-            active = IUtility->GetTagData(CHOOSER_Active, -1, Msg->IAddress);
-   //         printf("chooser picked = %d\n",active);
+	if (Msg->Class == IDCMP_IDCMPUPDATE)
+	{
+		if (IUtility->GetTagData(GA_ID, 0, Msg->IAddress) == OBJ_HIDDEN_CHOOSER)
+		{
+			STRPTR label;
+uint32 id_sel;
+			nod_sel = (struct Node *)IUtility->GetTagData(CHOOSER_SelectedNode, -1, Msg->IAddress);
+			id_sel = IUtility->GetTagData(GA_ID, 0, Msg->IAddress);
+			IChooser->GetChooserNodeAttrs(nod_sel, CNA_Text,&label, TAG_END);
+IDOS->Printf("chooser picked = 0x%08lx '%s' (0x%08lx)\n",nod_sel,label,id_sel);
+			//find out which button was clicked, to replace OBJ_STRING with the correct String gad
+			//gadset(GAD(), w, NULL, GA_Text,hidden_strings[active], TAG_END);
+		}
+	}
 
- //  find out which button was clicked, to replace OBJ_STRING with the correct String gad
-
-   //         gadset(GAD(OBJ_STRING), window, NULL,
-   //             GA_Text, hidden_strings[active], TAG_END);
-        }
-    }
-}
+	return 0;
+}*/
 
 ULONG loadPrefs(ULONG mode)
 {
@@ -740,16 +907,16 @@ ULONG loadPrefs(ULONG mode)
     ULONG                  error = 0;
 
     /* get the openurl.library prefs */
-/*    switch(mode)
+    switch(mode)
     {
-        case MUIV_Win_GetPrefs_InUse:      mode = URL_GetPrefs_Mode_InUse;   break;
-        case MUIV_Win_GetPrefs_LastSaveds: mode = URL_GetPrefs_Mode_Envarc;  break;
-        case MUIV_Win_GetPrefs_Restore:    mode = URL_GetPrefs_Mode_Env;     break;
-        case MUIV_Win_GetPrefs_Defaults:   mode = URL_GetPrefs_Mode_Default; break;
+        case URL_GetPrefs_Mode_InUse: mode = URL_GetPrefs_Mode_InUse;   break;
+        case MSG_Menu_LastSaved     : mode = URL_GetPrefs_Mode_Envarc;  break;
+        case MSG_Menu_Restore       : mode = URL_GetPrefs_Mode_Env;     break;
+        case MSG_Menu_Defaults      : mode = URL_GetPrefs_Mode_Default; break;
         default: return FALSE;
     }
-*/
-    p = IOpenURL->URL_GetPrefs(URL_GetPrefs_Mode,mode,TAG_DONE);
+
+    p = IOpenURL->URL_GetPrefs(URL_GetPrefs_Mode,mode, TAG_DONE);
     if (!p) error = MSG_Err_NoPrefs;
     else if (p->up_Version!=PREFS_VERSION) error = MSG_Err_BadPrefs;
 
@@ -767,7 +934,7 @@ ULONG loadPrefs(ULONG mode)
 
     /* Browsers */
 	gadset(GAD(OBJ_LBROWSER_BROW), window, LISTBROWSER_Labels, ~0);
-    updateBrowserList(&list_Brow, p->up_BrowserList);
+	updateBrowserList(&list_Brow, p->up_BrowserList);
 	gadset(GAD(OBJ_LBROWSER_BROW), window, LISTBROWSER_Labels, &list_Brow, LISTBROWSER_AutoFit, TRUE);
 
     /* Mailers */
@@ -777,18 +944,18 @@ ULONG loadPrefs(ULONG mode)
 
     /* FTPs */
 	gadset(GAD(OBJ_LBROWSER_FTP), window, LISTBROWSER_Labels, ~0, TAG_DONE);
-    updateFTPList(&list_FTPs, p->up_FTPList);
+	updateFTPList(&list_FTPs, p->up_FTPList);
 	gadset(GAD(OBJ_LBROWSER_FTP), window, LISTBROWSER_Labels, &list_FTPs, LISTBROWSER_AutoFit, TRUE);
 
     /* Miscellaneous */
-    gadset(GAD(OBJ_PREPEND), window, GA_Selected, isFlagSet(p->up_Flags, UPF_PREPENDHTTP));
-    gadset(GAD(OBJ_SEND_MAILTO), window, GA_Selected, isFlagSet(p->up_Flags, UPF_DOMAILTO));
-    gadset(GAD(OBJ_SEND_FTP), window, GA_Selected, isFlagSet(p->up_Flags, UPF_DOFTP));
+    gadset( GAD(OBJ_PREPEND),     window, GA_Selected, isFlagSet(p->up_Flags,UPF_PREPENDHTTP) );
+    gadset( GAD(OBJ_SEND_MAILTO), window, GA_Selected, isFlagSet(p->up_Flags,UPF_DOMAILTO) );
+    gadset( GAD(OBJ_SEND_FTP),    window, GA_Selected, isFlagSet(p->up_Flags,UPF_DOFTP) );
 
     gadset(GAD(OBJ_UNICONIFY), window, GA_Selected, p->up_DefShow);
-    gadset(GAD(OBJ_BRING), window, GA_Selected, p->up_DefBringToFront);
-    gadset(GAD(OBJ_OPEN), window, GA_Selected, p->up_DefNewWindow);
-    gadset(GAD(OBJ_LAUNCH), window, GA_Selected, p->up_DefLaunch);
+    gadset(GAD(OBJ_BRING),     window, GA_Selected, p->up_DefBringToFront);
+    gadset(GAD(OBJ_OPEN),      window, GA_Selected, p->up_DefNewWindow);
+    gadset(GAD(OBJ_LAUNCH),    window, GA_Selected, p->up_DefLaunch);
 
     /* free the preferences */
     IOpenURL->URL_FreePrefsA(p,NULL);
@@ -848,4 +1015,132 @@ ULONG storePrefs(BOOL bStorePrefs)
         RA_Request((Object *)window,getString(MSG_ErrReqTitle),getString(MSG_ErrReqGadget),getString(MSG_Err_FailedSave),NULL);
 
     return TRUE;
+}
+
+
+BOOL myOpenLibrary(CONST_STRPTR libname, uint32 libversion, CONST_STRPTR ifacename, uint32 ifaceversion, struct Library **base, struct Interface **iface)
+{
+	if( !((*base)=IExec->OpenLibrary(libname, libversion)) )
+	{
+		IExec->DebugPrintF("Unable to open '%s' V%ld\n",libname,libversion);
+
+		return FALSE;
+	}
+
+	if( !((*iface)=IExec->GetInterface((*base), ifacename, ifaceversion, NULL)) )
+	{
+		IExec->DebugPrintF("Unable to open interface %s V%ld of '%s'\n",ifacename,ifaceversion,libname);
+
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+BOOL open_libs(void)
+{
+	BOOL res;
+
+	res = myOpenLibrary("dos.library",50L, "main",1, &DOSBase, (struct Interface **)&IDOS);
+	res &= myOpenLibrary("intuition.library",50L, "main",1, &IntuitionBase, (struct Interface **)&IIntuition);
+	res &= myOpenLibrary("utility.library",50L, "main",1, &UtilityBase, (struct Interface **)&IUtility);
+	res &= myOpenLibrary("icon.library",50L, "main",1, &IconBase, (struct Interface **)&IIcon);
+	//res &= myOpenLibrary("asl.library",50L, "main",1, &AslBase, (struct Interface **)&IAsl);
+
+	WindowBase = IIntuition->OpenClass("window.class", 0, &WindowClass);
+	LabelBase  = IIntuition->OpenClass("images/label.image", 0, &LabelClass);
+	BitMapBase = IIntuition->OpenClass("images/bitmap.image", 0, &BitMapClass);
+	LayoutBase = (struct Library*)IIntuition->OpenClass("gadgets/layout.gadget", 0, &LayoutClass);
+	SpaceBase   = IIntuition->OpenClass("gadgets/space.gadget",  0, &SpaceClass);
+	ButtonBase  = IIntuition->OpenClass("gadgets/button.gadget", 0, &ButtonClass);
+	StringBase  = IIntuition->OpenClass("gadgets/string.gadget", 0, &StringClass);
+	GetFileBase = IIntuition->OpenClass("gadgets/getfile.gadget", 0, &GetFileClass);
+	ChooserBase = (struct Library*)IIntuition->OpenClass("gadgets/chooser.gadget", 0, &ChooserClass);
+	ClickTabBase  = IIntuition->OpenClass("gadgets/clicktab.gadget", 0, &ClickTabClass);
+	CheckBoxBase  = IIntuition->OpenClass("gadgets/checkbox.gadget", 0, &CheckBoxClass);
+	RequesterBase = IIntuition->OpenClass("requester.class", 0, &RequesterClass);
+	ListBrowserBase = (struct Library*)IIntuition->OpenClass("gadgets/listbrowser.gadget", 41, &ListBrowserClass);
+
+	if(!ListBrowserBase || !CheckBoxBase || !ClickTabBase || !ChooserBase || !GetFileBase
+	   || !StringBase || !ButtonBase || !SpaceBase || !RequesterBase || !LayoutBase
+	   || !BitMapBase || !LabelBase || !WindowBase) return(FALSE);
+
+	ILayout      = (struct LayoutIFace *)IExec->GetInterface( (struct Library*)LayoutBase, "main", 1, NULL );
+	IListBrowser = (struct ListBrowserIFace *)IExec->GetInterface( (struct Library*)ListBrowserBase, "main", 1, NULL );
+	IChooser     = (struct ChooserIFace *)IExec->GetInterface( (struct Library*)ChooserBase, "main", 1, NULL );
+
+	return res;
+}
+
+void close_libs(void)
+{
+	if(IListBrowser   ) IExec->DropInterface( (struct Interface *)IListBrowser );
+	if(ListBrowserBase) IIntuition->CloseClass( (struct ClassLibrary*)ListBrowserBase );
+
+	if(BitMapBase ) IIntuition->CloseClass(BitMapBase);
+	if(GetFileBase) IIntuition->CloseClass(GetFileBase);
+
+	if(IChooser   ) IExec->DropInterface( (struct Interface *)IChooser );
+	if(ChooserBase) IIntuition->CloseClass( (struct ClassLibrary*)ChooserBase );
+
+	if(ClickTabBase) IIntuition->CloseClass(ClickTabBase);
+	if(CheckBoxBase) IIntuition->CloseClass(CheckBoxBase);
+	if(StringBase  ) IIntuition->CloseClass(StringBase);
+	if(ButtonBase  ) IIntuition->CloseClass(ButtonBase);
+	if(SpaceBase   ) IIntuition->CloseClass(SpaceBase);
+	if(LabelBase   ) IIntuition->CloseClass(LabelBase);
+
+	if(ILayout   ) IExec->DropInterface( (struct Interface *)ILayout );
+	if(LayoutBase) IIntuition->CloseClass( (struct ClassLibrary*)LayoutBase );
+
+	if(RequesterBase) IIntuition->CloseClass(RequesterBase);
+	if(WindowBase   ) IIntuition->CloseClass(WindowBase);
+
+	//IExec->DropInterface( (struct Interface *)IAsl );
+	//IExec->CloseLibrary(AslBase);
+	IExec->DropInterface( (struct Interface *)IIcon );
+	IExec->CloseLibrary(IconBase);
+	IExec->DropInterface( (struct Interface *)IUtility );
+	IExec->CloseLibrary(UtilityBase);
+	IExec->DropInterface( (struct Interface *)IIntuition );
+	IExec->CloseLibrary(IntuitionBase);
+	IExec->DropInterface( (struct Interface *)IDOS );
+	IExec->CloseLibrary(DOSBase);
+}
+
+/* sort_list() by Fredrik 'salas00' Wikstrom */
+void sort_list(struct List *list, struct Hook *cmphook)
+{
+	struct Node *curr, *next;
+	int32 j, i = 0, n = 0;
+
+	for( curr=IExec->GetHead(list); curr; curr=IExec->GetSucc(curr) ) ++n;
+
+	for(; i<n; ++i)
+	{
+		curr = IExec->GetHead(list);
+		for(j=0; j<n-1-i; ++j)
+		{
+			next = IExec->GetSucc(curr);
+
+			if( (int)IUtility->CallHookPkt(cmphook,curr,next) > 0 )
+			{
+				IExec->Remove(curr);
+
+				IExec->Insert(list, curr, next);
+			}
+			else { curr = next; }
+		}
+	}
+}
+
+
+int CompareNameNodes(UNUSED struct Hook *hook, struct Node *node1, struct Node *node2)
+{
+	STRPTR name1, name2;
+
+	IChooser->GetChooserNodeAttrs(node1, CNA_Text,&name1, TAG_DONE);
+	IChooser->GetChooserNodeAttrs(node2, CNA_Text,&name2, TAG_DONE);
+
+	return( IUtility->Stricmp(name1,name2) );
 }

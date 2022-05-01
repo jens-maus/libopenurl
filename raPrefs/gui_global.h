@@ -21,26 +21,30 @@
 #ifndef GUI_GLOBAL_H
 #define GUI_GLOBAL_H
 
+
 #include <exec/lists.h>
 #include <intuition/intuition.h>
 #include <intuition/classusr.h>
+#include <intuition/classes.h>
 
 #define CATCOMP_NUMBERS
 #include "locale.h"
 #undef CATCOMP_NUMBERS
 
-struct Gadget;
+//struct Gadget;
 
 enum
 {
     // ***** edit browser *****
-    OBJ_BROW_ALIGN,
+    OBJ_BROW_ALIGN_T,
 
     OBJ_BROW_NAME_STR,
     OBJ_BROW_PATH_GET,
     OBJ_BROW_PATH_CHOOSE,
     OBJ_BROW_AREXX_STR,
     OBJ_BROW_AREXX_CHOOSE,
+
+    OBJ_BROW_ALIGN_B,
 
     OBJ_BROW_SHOW_STR,
     OBJ_BROW_FRONT_STR,
@@ -53,7 +57,7 @@ enum
     OBJ_BROW_CANCEL,
 
     // ***** edit mailer *****
-    OBJ_MAIL_ALIGN1,
+    OBJ_MAIL_ALIGN_T,
 
     OBJ_MAIL_NAME_STR,
     OBJ_MAIL_PATH_GET,
@@ -61,7 +65,7 @@ enum
     OBJ_MAIL_AREXX_STR,
     OBJ_MAIL_AREXX_CHOOSE,
 
-    OBJ_MAIL_ALIGN2,
+    OBJ_MAIL_ALIGN_B,
 
     OBJ_MAIL_SHOW_STR,
     OBJ_MAIL_FRONT_STR,
@@ -72,7 +76,7 @@ enum
     OBJ_MAIL_CANCEL,
 
     // ***** edit FTP client *****
-    OBJ_FTP_ALIGN1,
+    OBJ_FTP_ALIGN_T,
 
     OBJ_FTP_NAME_STR,
     OBJ_FTP_PATH_GET,
@@ -81,7 +85,7 @@ enum
     OBJ_FTP_AREXX_CHOOSE,
     OBJ_FTP_REMOVE,
 
-    OBJ_FTP_ALIGN2,
+    OBJ_FTP_ALIGN_B,
 
     OBJ_FTP_SHOW_STR,
     OBJ_FTP_FRONT_STR,
@@ -111,7 +115,6 @@ enum
     OBJ_DOWN_MAIL,
     OBJ_DELETE_MAIL,
 
-
     // ***** page 3 *****
     OBJ_LBROWSER_FTP,
     OBJ_ADD_FTP,
@@ -138,7 +141,7 @@ enum
     OBJ_APPLY,
     OBJ_CANCEL,
 
-    OBJ_HIDDEN_CHOOSER,
+    //OBJ_HIDDEN_CHOOSER,
 
     OBJ_NUM
 };
@@ -146,19 +149,7 @@ enum
 #define OBJ(x) Objects[x]
 #define GAD(x) (struct Gadget *)Objects[x]
 
-extern Object *Objects[OBJ_NUM];
+#define SPACE  LAYOUT_AddChild,SpaceObject,End
 
-struct Image chooser_image;
-
-extern struct List list_Brow;
-extern struct List list_Mail;
-extern struct List list_FTPs;
-
-extern struct MsgPort *AppPort;
-extern struct Hook idcmphook;
-
-extern Object *edit_brow_win;
-extern Object *edit_mail_win;
-extern Object *edit_ftp_win;
 
 #endif // GUI_GLOBAL_H

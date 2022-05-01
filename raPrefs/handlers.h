@@ -29,6 +29,9 @@ BOOL HandleInput_Main_Win(void);
 void HandleInput_Edit_Brow_Win(void);
 void HandleInput_Edit_Mail_Win(void);
 void HandleInput_Edit_FTP_Win(void);
+void deleteEntry(struct List *, uint32 objID);
+void moveUpEntry(struct List *, uint32 objID);
+void moveDownEntry(struct List *, uint32 objID);
 
 #ifdef MENUCLASS
 	#include <intuition/menuclass.h>

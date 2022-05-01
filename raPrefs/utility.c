@@ -23,13 +23,20 @@
 #include <classes/requester.h>
 
 #include <proto/exec.h>
+#include <proto/dos.h>
+#include <proto/icon.h>
 #include <proto/requester.h>
 #include <proto/intuition.h>
 #include <proto/listbrowser.h>
+//#include <proto/requester.h>
 
 #include <reaction/reaction_macros.h>
+#include "my_reaction_macros.h"
 
 #include <stdarg.h> // for va_list handling
+
+
+extern Class *RequesterClass;
 
 
 int VARARGS68K RA_Request(Object * pWin, const char * strTitle, const char * strGadgets, const char * strFormat, ...)
@@ -41,12 +48,12 @@ int VARARGS68K RA_Request(Object * pWin, const char * strTitle, const char * str
 	va_startlinear(valist, strFormat);
 
 	pReq = RequesterObject,
-				REQ_Type,		REQTYPE_INFO,
-				REQ_TitleText,	strTitle,
-				REQ_BodyText,	strFormat,
-				REQ_VarArgs,	va_getlinearva(valist,APTR),
-				REQ_GadgetText,	strGadgets,
-			EndObject;
+				REQ_Type,       REQTYPE_INFO,
+				REQ_TitleText,  strTitle,
+				REQ_BodyText,   strFormat,
+				REQ_VarArgs,    va_getlinearva(valist,APTR),
+				REQ_GadgetText, strGadgets,
+	EndObject;
 
 	va_end(valist);
 
@@ -64,9 +71,18 @@ int VARARGS68K RA_Request(Object * pWin, const char * strTitle, const char * str
 // libération de la liste
 void freeList(struct List * list)
 {
-    struct Node *node;
+	struct Node *node;
 
-    while((node = IExec->RemHead(list)) != NULL)
-    	IListBrowser->FreeListBrowserNode(node);
+	while((node = IExec->RemHead(list)) != NULL)
+		IListBrowser->FreeListBrowserNode(node);
 }
 
+int32 CFGInteger(struct DiskObject *icon, CONST_STRPTR attr, int32 def)
+{
+	STRPTR val;
+
+	val = IIcon->FindToolType(icon->do_ToolTypes, attr);
+	if(val) IDOS->StrToLong(val, &def);
+
+	return def;
+}
