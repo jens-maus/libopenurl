@@ -25,13 +25,13 @@
 
 // for setting all necessary version information
 #define LIB_VERSION    7
-#define LIB_REVISION   18
+#define LIB_REVISION   19
 #if defined(__amigaos4__)
   #define LIB_DATE  __AMIGADATE__
   #define LIB_COPYRIGHT  "Copyright (C) 2005-"YEAR" openurl.library Open Source Team"
 #else
-  #define LIB_DATE  "16.01.2018"
-  #define LIB_COPYRIGHT  "Copyright (C) 2005-2021 openurl.library Open Source Team"
+  #define LIB_DATE  "04.02.2022"
+  #define LIB_COPYRIGHT  "Copyright (C) 2005-2022 openurl.library Open Source Team"
 #endif
 
 // set the LIB_REV_STRING
