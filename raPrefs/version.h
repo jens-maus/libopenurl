@@ -2,7 +2,7 @@
 
  openurl.library - universal URL display and browser launcher library
  Copyright (C) 1998-2005 by Troels Walsted Hansen, et al.
- Copyright (C) 2005-2021 openurl.library Open Source Team
+ Copyright (C) 2005-2022 openurl.library Open Source Team
 
  This library is free software; it has been placed in the public domain
  and you can freely redistribute it and/or modify it. Please note, however,
@@ -26,13 +26,8 @@
 // for setting all necessary version information
 #define LIB_VERSION    7
 #define LIB_REVISION   19
-#if defined(__amigaos4__)
-  #define LIB_DATE  __AMIGADATE__
-  #define LIB_COPYRIGHT  "Copyright (C) 2005-"YEAR" openurl.library Open Source Team"
-#else
-  #define LIB_DATE  "04.02.2022"
-  #define LIB_COPYRIGHT  "Copyright (C) 2005-2022 openurl.library Open Source Team"
-#endif
+#define LIB_DATE       "04.02.2022"
+#define LIB_COPYRIGHT  "Copyright (C) 2005-2022 openurl.library Open Source Team"
 
 // set the LIB_REV_STRING
 #define LIB_REV_STRING STR(LIB_VERSION) "." STR(LIB_REVISION)

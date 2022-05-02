@@ -2,7 +2,7 @@
 #
 # openurl.library - universal URL display and browser launcher library
 # Copyright (C) 1998-2005 by Troels Walsted Hansen, et al.
-# Copyright (C) 2005-2021 openurl.library Open Source Team
+# Copyright (C) 2005-2022 openurl.library Open Source Team
 #
 # This library is free software; it has been placed in the public domain
 # and you can freely redistribute it and/or modify it. Please note, however,
@@ -182,8 +182,8 @@ ifeq ($(OS), os4)
   CRT      = newlib
   CPU      = -mcpu=powerpc
   WARN     += -Wdeclaration-after-statement -Wdisabled-optimization
-  REDEFINE = -D__AMIGADATE__=\"`c:date LFORMAT %d.%m.%Y`\" -DYEAR=\"`c:date LFORMAT %Y`\"
-  CFLAGS   += -mcrt=$(CRT) -D__NEW_TIMEVAL_DEFINITION_USED__ -DMENUCLASS\
+  REDEFINE =
+  CFLAGS   += -mcrt=$(CRT) -D__NEW_TIMEVAL_DEFINITION_USED__ -DMENUCLASS \
               $(REDEFINE) -Wa,-mregnames
   LDFLAGS  += -mcrt=$(CRT)
   LDLIBS   += #-lraauto -lauto

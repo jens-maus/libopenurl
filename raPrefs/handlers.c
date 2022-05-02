@@ -2,7 +2,7 @@
 
  openurl.library - universal URL display and browser launcher library
  Copyright (C) 1998-2005 by Troels Walsted Hansen, et al.
- Copyright (C) 2005-2021 openurl.library Open Source Team
+ Copyright (C) 2005-2022 openurl.library Open Source Team
 
  This library is free software; it has been placed in the public domain
  and you can freely redistribute it and/or modify it. Please note, however,
@@ -89,10 +89,12 @@ BOOL HandleInput_Main_Win(void)
             case WMHI_CLOSEWINDOW:
                 done = TRUE;
                 break;
+
             case WMHI_MENUPICK:
-//IDOS->Printf("[WMHI_MENUPICK] code=0x%08lx\n",code);
+                // IDOS->Printf("[WMHI_MENUPICK] code=0x%08lx\n",code);
                 done = HandleMenu(code);
                 break;
+
             case WMHI_GADGETUP:
                 switch (result & WMHI_GADGETMASK)
                 {
@@ -394,6 +396,7 @@ BOOL HandleInput_Main_Win(void)
                         break;
                 }
                 break;
+
             case WMHI_ICONIFY:
                 if (RA_Iconify(win))
                 {
@@ -415,6 +418,7 @@ BOOL HandleInput_Main_Win(void)
                     }
                 }
                 break;
+
             case WMHI_UNICONIFY:
                 window = RA_OpenWindow(win);
                 break;
@@ -438,6 +442,7 @@ void HandleInput_Edit_Brow_Win()
                 RA_CloseWindow(edit_brow_win);
                 edit_brow_window = NULL;
                 break;
+
             case WMHI_GADGETUP:
                 switch (result & WMHI_GADGETMASK)
                 {
@@ -447,17 +452,21 @@ void HandleInput_Edit_Brow_Win()
                         gadset(GAD(OBJ_LBROWSER_BROW), window,  LISTBROWSER_Labels, &list_Brow,
                                                                 LISTBROWSER_AutoFit, TRUE);
                         // and we close the window
+                        // fall through
+
                     case OBJ_BROW_CANCEL:
                         RA_CloseWindow(edit_brow_win);
                         edit_brow_window = NULL;
                         break;
+
                     case OBJ_BROW_PATH_GET:
                         gfRequestFile(OBJ(OBJ_BROW_PATH_GET), edit_brow_window);
                         /*if (gfRequestFile(OBJ(OBJ_BROW_PATH_GET), edit_brow_window))
                         {
                         }*/
                         break;
-                    case OBJ_BROW_PATH_CHOOSE:
+
+                    case OBJ_BROW_PATH_CHOOSE:  // set Attrs according to the button clicked on.
                     case OBJ_BROW_OPEN_CHOOSE:
                     case OBJ_BROW_NEW_CHOOSE:
                         {
@@ -478,6 +487,7 @@ void HandleInput_Edit_Brow_Win()
                          gadset(GAD(obj_ID-1), edit_brow_window, attrib,res_txt);
                         }
                         break;
+
                     case OBJ_BROW_AREXX_CHOOSE:
                         {
                          STRPTR res_txt;
@@ -508,6 +518,7 @@ void HandleInput_Edit_Mail_Win()
                 RA_CloseWindow(edit_mail_win);
                 edit_mail_window = NULL;
                 break;
+
             case WMHI_GADGETUP:
                 switch (result & WMHI_GADGETMASK)
                 {
@@ -517,16 +528,20 @@ void HandleInput_Edit_Mail_Win()
                         gadset(GAD(OBJ_LBROWSER_MAIL), window, LISTBROWSER_Labels, &list_Mail,
                                                                LISTBROWSER_AutoFit, TRUE);
                         // and we close the window
+			                  // fall through
+
                     case OBJ_MAIL_CANCEL:
                         RA_CloseWindow(edit_mail_win);
                         edit_mail_window = NULL;
                         break;
+
                     case OBJ_MAIL_PATH_GET:
                         gfRequestFile(OBJ(OBJ_MAIL_PATH_GET), edit_mail_window);
                         /*if (gfRequestFile(OBJ(OBJ_MAIL_PATH_GET), edit_mail_window))
                         {
                         }*/
                         break;
+
                     case OBJ_MAIL_PATH_CHOOSE:  // set Attrs according to the button clicked on.
                     case OBJ_MAIL_WRITE_CHOOSE:
                         {
@@ -547,6 +562,7 @@ void HandleInput_Edit_Mail_Win()
                          gadset(GAD(obj_ID-1), edit_mail_window, attrib,res_txt);
                         }
                         break;
+
                     case OBJ_MAIL_AREXX_CHOOSE:
                         {
                          STRPTR res_txt;
@@ -577,6 +593,7 @@ void HandleInput_Edit_FTP_Win()
                 RA_CloseWindow(edit_ftp_win);
                 edit_ftp_window = NULL;
                 break;
+
             case WMHI_GADGETUP:
                 switch (result & WMHI_GADGETMASK)
                 {
@@ -586,16 +603,20 @@ void HandleInput_Edit_FTP_Win()
                         gadset(GAD(OBJ_LBROWSER_FTP), window, LISTBROWSER_Labels, &list_FTPs,
                                                               LISTBROWSER_AutoFit, TRUE);
                         // and we close the window
+                        // fall through
+
                     case OBJ_FTP_CANCEL:
                         RA_CloseWindow(edit_ftp_win);
                         edit_ftp_window = NULL;
                         break;
+
                     case OBJ_FTP_PATH_GET:
                         gfRequestFile(OBJ(OBJ_FTP_PATH_GET), edit_ftp_window);
                         /*if (gfRequestFile(OBJ(OBJ_FTP_PATH_GET), edit_ftp_window))
                         {
                         }*/
                         break;
+
                     case OBJ_FTP_PATH_CHOOSE:  // set Attrs according to the button clicked on.
                     case OBJ_FTP_OPEN_CHOOSE:
                     case OBJ_FTP_NEW_CHOOSE:
@@ -618,6 +639,7 @@ void HandleInput_Edit_FTP_Win()
                          gadset(GAD(obj_ID-1), edit_ftp_window, attrib,res_txt);
                         }
                         break;
+
                     case OBJ_FTP_AREXX_CHOOSE:
                         {
                          STRPTR res_txt;
@@ -647,11 +669,11 @@ ULONG HandleMenu(UNUSED uint16 selection)
 	{
 		item = (uint32)GTMENUITEM_USERDATA(MItem);
 		selection = MItem->NextSelect; // "queue" next menu opt selection
-//IDOS->Printf("0x%08lx\n",item);
+        // IDOS->Printf("0x%08lx\n",item);
 #else
-	item = NO_MENU_ID;
-	while( (item=IIntuition->IDoMethod(menustripobj, MM_NEXTSELECT, 0, item)) != NO_MENU_ID )
-	{
+        item = NO_MENU_ID;
+        while( (item=IIntuition->IDoMethod(menustripobj, MM_NEXTSELECT, 0, item)) != NO_MENU_ID )
+        {
 #endif
 
 		switch(item)
@@ -666,6 +688,7 @@ ULONG HandleMenu(UNUSED uint16 selection)
 				RA_Request((Object *)window,getString(MSG_About_WinTitle),getString(MSG_About_OK),buf,NULL);
 			}
 			break;
+        
 			//case MSG_Menu_Hide:
 			case MSG_Menu_Iconify:
 				if (RA_Iconify(win))
@@ -696,7 +719,8 @@ ULONG HandleMenu(UNUSED uint16 selection)
 				storePrefs(item==MSG_Menu_Save);
 				closeme=TRUE;
 			break;
-			case MSG_Menu_LastSaved:
+
+      case MSG_Menu_LastSaved:
 			case MSG_Menu_Restore:
 			case MSG_Menu_Defaults:
 				loadPrefs(item);
