@@ -21,6 +21,7 @@
 #ifndef BROWSERS_H
 #define BROWSERS_H
 
+
 #include <intuition/classusr.h>
 #include <exec/lists.h>
 
@@ -33,5 +34,6 @@ BOOL updateBrowserList( struct List * list, struct MinList PrefsBrowserList );
 void updateBrowserWindow( struct URL_BrowserNode  * pBrowser );
 
 void updateBrowserNode();
-#endif // BROWSERS_H
 
+
+#endif // BROWSERS_H

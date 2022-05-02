@@ -142,12 +142,12 @@ msgid "Preferences"
 msgstr "Preferences"
 
 msgctxt "MSG_Menu_Save (//)"
-msgid "S\\0Save"
-msgstr "S\\0Save"
+msgid "S\\0Save settings"
+msgstr "S\\0Save settings"
 
 msgctxt "MSG_Menu_Use (//)"
-msgid "U\\0Use"
-msgstr "U\\0Use"
+msgid "U\\0Use settings"
+msgstr "U\\0Use settings"
 
 msgctxt "MSG_Menu_LastSaved (//)"
 msgid "L\\0Last saved"
@@ -306,15 +306,15 @@ msgid "Public screen name"
 msgstr "Public screen name"
 
 msgctxt "MSG_Edit_Name (//)"
-msgid "_Name"
-msgstr "_Name"
+msgid "_Name:"
+msgstr "_Name:"
 
 msgctxt "MSG_Edit_Name_Help (//)"
 msgid "Name of entry."
 msgstr "Name of entry."
 
 msgctxt "MSG_Edit_Path (//)"
-msgid "_Path"
+msgid "_Path:"
 msgstr "_Path"
 
 msgctxt "MSG_Edit_Path_Help (//)"
@@ -322,8 +322,8 @@ msgid "Complete path to the application."
 msgstr "Complete path to the application."
 
 msgctxt "MSG_Edit_Port (//)"
-msgid "_ARexx port"
-msgstr "_ARexx port"
+msgid "_ARexx port:"
+msgstr "_ARexx port:"
 
 msgctxt "MSG_Edit_Port_Help (//)"
 msgid ""
@@ -332,16 +332,16 @@ msgid ""
 msgstr "Name of the application ARexx port\nto send commands to."
 
 msgctxt "MSG_Edit_Show (//)"
-msgid "_Show"
-msgstr "_Show"
+msgid "_Show:"
+msgstr "_Show:"
 
 msgctxt "MSG_Edit_Show_Help (//)"
 msgid "ARexx command to uniconify the application."
 msgstr "ARexx command to uniconify the application."
 
 msgctxt "MSG_Edit_Screen (//)"
-msgid "_To front"
-msgstr "_To front"
+msgid "_To front:"
+msgstr "_To front:"
 
 msgctxt "MSG_Edit_Screen_Help (//)"
 msgid ""
@@ -350,16 +350,16 @@ msgid ""
 msgstr "ARexx command to move the application\nscreen to front."
 
 msgctxt "MSG_Edit_OpenURL (//)"
-msgid "_Open URL"
-msgstr "_Open URL"
+msgid "_Open URL:"
+msgstr "_Open URL:"
 
 msgctxt "MSG_Edit_OpenURL_Help (//)"
 msgid "ARexx command to reach an URL."
 msgstr "ARexx command to reach an URL."
 
 msgctxt "MSG_Edit_NewWin (//)"
-msgid "N_ew window"
-msgstr "N_ew window"
+msgid "N_ew window:"
+msgstr "N_ew window:"
 
 msgctxt "MSG_Edit_NewWin_Help (//)"
 msgid ""
@@ -392,8 +392,8 @@ msgid "New mailer"
 msgstr "New mailer"
 
 msgctxt "MSG_Mailer_Write (//)"
-msgid "_Write mail"
-msgstr "_Write mail"
+msgid "_Write mail:"
+msgstr "_Write mail:"
 
 msgctxt "MSG_Mailer_Write_Help (//)"
 msgid ""
@@ -534,3 +534,74 @@ msgid ""
 "\n"
 "\\33cOpenURL is a Public Domain Software."
 msgstr "\\33bOpenURL\\33n is a shared library for easily sending\nURLs from applications to browsers, mailers\nand FTP clients.\n\n\\33cOpenURL is a Public Domain Software."
+#
+# 2021.01.31
+#
+msgctxt "MSG_About_TabAbout (1113//)"
+msgid "About"
+msgstr "About"
+
+msgctxt "MSG_About_TabCredits (1114//)"
+msgid "Credits"
+msgstr "Credits"
+
+msgctxt "MSG_About_TabLicence (1115//)"
+msgid "Licence"
+msgstr "Licence"
+
+msgctxt "MSG_About_Developer (1116//)"
+msgid "Developed by :"
+msgstr "Developed by :"
+
+msgctxt "MSG_About_ProjectManagement (1117//)"
+msgid "Project management by :"
+msgstr "Project management by :"
+
+msgctxt "MSG_About_HelpOf (1118//)"
+msgid "With the help of :"
+msgstr "With the help of :"
+
+msgctxt "MSG_About_GfxBy (1119//)"
+msgid "Graphics and icons by :"
+msgstr "Graphics and icons by :"
+
+msgctxt "MSG_About_Translation (1120//)"
+msgid "Translated by :"
+msgstr "Translated by :"
+
+#NOTE: left a blank space at beginning of each line/translator
+msgctxt "MSG_About_Translators (1121//)"
+msgid " (using built-in strings)"
+msgstr " (using built-in strings)"
+
+msgctxt "MSG_ASL_Browser (1122//)"
+msgid "Select path to Browser"
+msgstr "Select path to Browser"
+
+msgctxt "MSG_ASL_Mailer (1123//)"
+msgid "Select path to Mailer"
+msgstr "Select path to Mailer"
+
+msgctxt "MSG_ASL_FTP (1124//)"
+msgid "Select path to FTP"
+msgstr "Select path to FTP"
+
+msgctxt "MSG_Edit_ListUse (1125//)"
+msgid "Use"
+msgstr "Use"
+
+msgctxt "MSG_About_Descr2 (1126//)"
+msgid ""
+"OpenURL is a shared library for easily sending"
+" URLs from applications to browsers, mailers"
+" and FTP clients.\n"
+"\n"
+"\\033cOpenURL is a Public Domain Software."
+msgstr "OpenURL is a shared library for easily sending"
+" URLs from applications to browsers, mailers"
+" and FTP clients.\n\n"
+\\033cOpenURL is a Public Domain Software."
+
+msgctxt "MSG_Menu_Iconify (1127//)"
+msgid "I\\0Iconify"
+msgstr "I\\0Iconify"

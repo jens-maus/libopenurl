@@ -22,39 +22,54 @@
 
 #include "gui_global.h"
 #include "utility.h"
-#include "macros.h"
+//#include "macros.h"
+#include "version.h"
 
 #include <classes/window.h>
 #include <libraries/openurl.h>
 
 #include <reaction/reaction_macros.h>
-
+#include "my_reaction_macros.h"
 #include <images/label.h>
+#include <gadgets/layout.h>
 #include <gadgets/space.h>
-
+#include <gadgets/listbrowser.h>
+#include <gadgets/string.h>
 #include <gadgets/getfile.h>
+#include <gadgets/chooser.h>
 
 #include <proto/dos.h>
 #include <proto/exec.h>
-#include <proto/label.h>
+#include <proto/intuition.h>
+#include <proto/utility.h>
+/*#include <proto/label.h>
 #include <proto/space.h>
 #include <proto/layout.h>
 #include <proto/window.h>
 #include <proto/string.h>
-#include <proto/getfile.h>
-#include <proto/utility.h>
-#include <proto/intuition.h>
+#include <proto/getfile.h>*/
 #include <proto/listbrowser.h>
 
-extern struct Window *window;
 
-Object *edit_mail_win;
+extern Class *ChooserClass, *StringClass, *GetFileClass, *LabelClass, *CheckBoxClass,
+             *RequesterClass, *ButtonClass, *SpaceClass, *LayoutClass, *StringClass,
+             *GetFileClass, *WindowClass;
+
+extern Object *Objects[OBJ_NUM];
+extern Object *edit_mail_win;
+
+extern struct List *popup_mail, *popup_arexxports;
+
+extern struct MsgPort *AppPort;
+//extern struct Hook idcmphook;
+
 struct Window *edit_mail_window;
+
 
 Object * make_edit_mail_win(void)
 {
     return WindowObject,
-        WA_ScreenTitle,        getString(MSG_App_ScreenTitle),
+        WA_ScreenTitle,        "OpenURL " LIB_REV_STRING " (" LIB_DATE ")",//getString(MSG_App_ScreenTitle),
         WA_Title,              getString(MSG_Mailer_WinTitle),
         WA_DragBar,            TRUE,
         WA_CloseGadget,        TRUE,
@@ -63,15 +78,20 @@ Object * make_edit_mail_win(void)
         WA_Activate,           TRUE,
   //      WINDOW_AppPort,        AppPort,
         WINDOW_SharedPort,     AppPort,
+        //WINDOW_IDCMPHook,      &idcmphook,
+        //WINDOW_IDCMPHookBits,  IDCMP_IDCMPUPDATE,
         WINDOW_Position,       WPOS_CENTERSCREEN,
         WINDOW_LockHeight,     TRUE,
         WINDOW_Layout,         VLayoutObject,
+            //LAYOUT_Orientation, LAYOUT_ORIENT_VERT,
             LAYOUT_SpaceOuter,  TRUE,
-            LAYOUT_AddChild,  OBJ(OBJ_MAIL_ALIGN1) = VLayoutObject,
+
+            LAYOUT_AddChild,  OBJ(OBJ_MAIL_ALIGN_T) = VLayoutObject,
+                LAYOUT_Orientation, LAYOUT_ORIENT_VERT,
                 LAYOUT_SpaceOuter,  TRUE,
                 LAYOUT_BevelStyle,  BVS_GROUP,
                 LAYOUT_Label,       getString(MSG_Edit_Definitions),
-
+ 
                 LAYOUT_AddChild,   OBJ(OBJ_MAIL_NAME_STR) = StringObject,
                     GA_ID,               OBJ_MAIL_NAME_STR,
                     GA_RelVerify,        TRUE,
@@ -85,12 +105,14 @@ Object * make_edit_mail_win(void)
                     LAYOUT_AddChild,       OBJ(OBJ_MAIL_PATH_GET) = GetFileObject,
                         GA_ID,                 OBJ_MAIL_PATH_GET,
                         GA_RelVerify,          TRUE,
-          //              GETFILE_TitleText,     "Select Path To Browser",
+                        GETFILE_TitleText,     getString(MSG_ASL_Mailer),//"Select Path To Browser",
                     End,  // GetFile
-                    LAYOUT_AddChild,    OBJ(OBJ_MAIL_PATH_CHOOSE) = ButtonObject,
+                    LAYOUT_AddChild,    OBJ(OBJ_MAIL_PATH_CHOOSE) = ChooserObject,//ButtonObject,
                         GA_ID,              OBJ_MAIL_PATH_CHOOSE,
                         GA_RelVerify,       TRUE,
-                        GA_Image,           &chooser_image,
+                        //GA_Image,           &chooser_image,
+                        CHOOSER_DropDown, TRUE,
+                        CHOOSER_Labels,   popup_mail,
                     End,  // Button
                     CHILD_WeightedWidth, 0,
                 End,   // HLayout
@@ -104,10 +126,14 @@ Object * make_edit_mail_win(void)
                         GA_TabCycle,         TRUE,
              //           STRINGA_Buffer,        buffer,
                     End,  // String
-                    LAYOUT_AddChild,    OBJ(OBJ_MAIL_AREXX_CHOOSE) = ButtonObject,
+                    LAYOUT_AddChild,    OBJ(OBJ_MAIL_AREXX_CHOOSE) = ChooserObject,//ButtonObject,
                         GA_ID,              OBJ_MAIL_AREXX_CHOOSE,
                         GA_RelVerify,       TRUE,
-                        GA_Image,           &chooser_image,
+                        //GA_Image,           &chooser_image,
+                        CHOOSER_DropDown,      TRUE,
+                        CHOOSER_Labels,        popup_arexxports,
+                        CHOOSER_MaxLabels,     99,
+                        CHOOSER_Justification, CHJ_CENTER,
                     End,  // Button
                     CHILD_WeightedWidth, 0,
                 End,   // HLayout
@@ -115,10 +141,11 @@ Object * make_edit_mail_win(void)
             End,   // VLayout
 
 
-            LAYOUT_AddChild,  OBJ(OBJ_MAIL_ALIGN2) = VLayoutObject,
+            LAYOUT_AddChild,  OBJ(OBJ_MAIL_ALIGN_B) = VLayoutObject,
                 LAYOUT_SpaceOuter,  TRUE,
                 LAYOUT_BevelStyle,  BVS_GROUP,
                 LAYOUT_Label,       getString(MSG_Edit_ARexx),
+                LAYOUT_AlignLabels, OBJ(OBJ_MAIL_ALIGN_T),  // align with the 4 labels above
 
                 LAYOUT_AddChild,     OBJ(OBJ_MAIL_SHOW_STR) = StringObject,
                     GA_ID,                 OBJ_MAIL_SHOW_STR,
@@ -144,10 +171,12 @@ Object * make_edit_mail_win(void)
                         GA_TabCycle,        TRUE,
              //           STRINGA_Buffer,        buffer,
                     End,  // String
-                    LAYOUT_AddChild,    OBJ(OBJ_MAIL_WRITE_CHOOSE) = ButtonObject,
+                    LAYOUT_AddChild,    OBJ(OBJ_MAIL_WRITE_CHOOSE) = ChooserObject,//ButtonObject,
                             GA_ID,          OBJ_MAIL_WRITE_CHOOSE,
                             GA_RelVerify,   TRUE,
-                            GA_Image,       &chooser_image,
+                            //GA_Image,       &chooser_image,
+                            CHOOSER_DropDown, TRUE,
+                            CHOOSER_Labels,   popup_mail,
                         End,  // Button
                         CHILD_WeightedWidth, 0,
                     End,   // HLayout
@@ -210,7 +239,6 @@ BOOL updateMailerList(struct List * list, struct MinList PrefsMailerList)
                                                             LBNA_Column,    2,
                                                             LBNCA_Text,     newNode->umn_Path,
                                                             TAG_END);
-
             IExec->AddTail(list, (struct Node*)newNode);
         }
         else
@@ -225,9 +253,11 @@ BOOL updateMailerList(struct List * list, struct MinList PrefsMailerList)
 
 void updateMailerWindow(struct URL_MailerNode  * pMailer)
 {
+    iset(edit_mail_win, WINDOW_UserData, pMailer);
+
     if(pMailer != NULL)
     {
-        iset(edit_mail_win,  WINDOW_UserData, pMailer);
+        //iset(edit_mail_win,  WINDOW_UserData, pMailer);
         gadset(GAD(OBJ_MAIL_NAME_STR), edit_mail_window, STRINGA_TextVal, pMailer->umn_Name);
         gadset(GAD(OBJ_MAIL_PATH_GET), edit_mail_window, GETFILE_File, pMailer->umn_Path);
         gadset(GAD(OBJ_MAIL_AREXX_STR), edit_mail_window, STRINGA_TextVal, pMailer->umn_Port);
@@ -245,24 +275,25 @@ void updateMailerNode()
     {
         STRPTR strValue;
 
-        strValue = (STRPTR)iget(GAD(OBJ_MAIL_NAME_STR), STRINGA_TextVal);
+        strValue = (STRPTR)iget(OBJ(OBJ_MAIL_NAME_STR), STRINGA_TextVal);
         IUtility->Strlcpy(pMailer->umn_Name, strValue, sizeof(pMailer->umn_Name));
-        strValue = (STRPTR)iget(GAD(OBJ_MAIL_PATH_GET), STRINGA_TextVal);
+        strValue = (STRPTR)iget(OBJ(OBJ_MAIL_PATH_GET), GETFILE_File);
         IUtility->Strlcpy(pMailer->umn_Path, strValue, sizeof(pMailer->umn_Path));
-        strValue = (STRPTR)iget(GAD(OBJ_MAIL_AREXX_STR), STRINGA_TextVal);
+        strValue = (STRPTR)iget(OBJ(OBJ_MAIL_AREXX_STR), STRINGA_TextVal);
         IUtility->Strlcpy(pMailer->umn_Port, strValue, sizeof(pMailer->umn_Port));
-        strValue = (STRPTR)iget(GAD(OBJ_MAIL_SHOW_STR), STRINGA_TextVal);
+        strValue = (STRPTR)iget(OBJ(OBJ_MAIL_SHOW_STR), STRINGA_TextVal);
         IUtility->Strlcpy(pMailer->umn_ShowCmd, strValue, sizeof(pMailer->umn_ShowCmd));
-        strValue = (STRPTR)iget(GAD(OBJ_MAIL_FRONT_STR), STRINGA_TextVal);
+        strValue = (STRPTR)iget(OBJ(OBJ_MAIL_FRONT_STR), STRINGA_TextVal);
         IUtility->Strlcpy(pMailer->umn_ToFrontCmd, strValue, sizeof(pMailer->umn_ToFrontCmd));
-        strValue = (STRPTR)iget(GAD(OBJ_MAIL_WRITE_STR), STRINGA_TextVal);
+        strValue = (STRPTR)iget(OBJ(OBJ_MAIL_WRITE_STR), STRINGA_TextVal);
         IUtility->Strlcpy(pMailer->umn_WriteMailCmd, strValue, sizeof(pMailer->umn_WriteMailCmd));
 
         // now update the ListBrowser attributes
-        IListBrowser->SetListBrowserNodeAttrs((struct Node*)pMailer,   LBNA_Column,    1,
-                                               LBNCA_Text,             pMailer->umn_Name,
-                                               LBNA_Column,            2,
-                                               LBNCA_Text,             pMailer->umn_Path,
-                                               TAG_END);
+        IListBrowser->SetListBrowserNodeAttrs( (struct Node*)pMailer,
+                                              LBNA_Column, 1,
+                                                  LBNCA_Text, pMailer->umn_Name,
+                                              LBNA_Column, 2,
+                                                  LBNCA_Text, pMailer->umn_Path,
+                                             TAG_END);
     }
 }

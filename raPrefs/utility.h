@@ -21,14 +21,17 @@
 #ifndef UTILITY_H
 #define UTILITY_H
 
+
 #include <intuition/classusr.h>
+#include <workbench/workbench.h>
 
 int VARARGS68K RA_Request( Object * pWin, const char * strTitle, const char * strGadgets, const char * strFormat, ... );
 void freeList( struct List * list );
+int32 CFGInteger(struct DiskObject *, CONST_STRPTR attr, int32 def);
 
-#define iget(obj, attr)         ({uint32 b=0; IIntuition->GetAttr(attr, (Object *)(obj), &b); b;})
-#define gadset(obj, win, ...)   IIntuition->SetGadgetAttrs((obj), (win), NULL, __VA_ARGS__, TAG_DONE)
-#define iset(obj, win, ...)     IIntuition->SetAttrs((obj), __VA_ARGS__, TAG_DONE)
+#define iget(obj, attr)         ({uint32 b=0; IIntuition->GetAttr(attr, (obj), &b); b;})
+#define gadset(gad, win, ...)   IIntuition->SetGadgetAttrs((gad), (win), NULL, __VA_ARGS__, TAG_DONE)
+#define iset(obj, ...)          IIntuition->SetAttrs((obj), __VA_ARGS__, TAG_DONE)
+
 
 #endif // UTILITY_H
-

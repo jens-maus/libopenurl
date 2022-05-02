@@ -98,7 +98,7 @@ endif
 
 # common commands
 FLEX    = flex
-FC      = flexcat
+FC      = APPDIR:flexcat
 EXPR    = expr
 DATE    = date
 RM      = delete force
@@ -160,7 +160,7 @@ TARGET   = $(BINDIR)/OpenURL
 WARN     = -W -Wall -Wwrite-strings -Wpointer-arith -Wsign-compare
 OPTFLAGS = -O3 -fomit-frame-pointer
 DEBUG    = -DDEBUG -O0
-DEBUGSYM = -g -gstabs
+DEBUGSYM = -gstabs
 CFLAGS   = -I. -I../include $(CPU) $(WARN) $(OPTFLAGS) $(DEBUG) $(DEBUGSYM) $(USER_CFLAGS)
 LDFLAGS  = $(CPU) $(DEBUGSYM)
 LDLIBS   =
@@ -186,7 +186,7 @@ ifeq ($(OS), os4)
   CFLAGS   += -mcrt=$(CRT) -D__NEW_TIMEVAL_DEFINITION_USED__ -DMENUCLASS \
               $(REDEFINE) -Wa,-mregnames
   LDFLAGS  += -mcrt=$(CRT)
-  LDLIBS   += -lraauto -lauto
+  LDLIBS   += #-lraauto -lauto
 
 else
 ifeq ($(OS), os3)

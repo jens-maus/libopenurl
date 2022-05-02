@@ -22,6 +22,10 @@
 #define CATCOMP_ARRAY
 #include "locale.h"
 struct Catalog         *g_cat = NULL;
+struct LocaleBase      *LocaleBase = NULL;
+#ifdef __amigaos4__
+struct LocaleIFace *ILocale = NULL;
+#endif
 
 #include "SDI_compiler.h"
 

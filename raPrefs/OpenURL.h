@@ -21,8 +21,18 @@
 #ifndef OPENURL_H
 #define OPENURL_H
 
-ULONG storePrefs( BOOL bStorePrefs );
-ULONG loadPrefs( ULONG mode );
+
+uint32 IDCMPFunc(UNUSED struct Hook *hook, UNUSED Object *wobj, struct IntuiMessage *Msg);
+ULONG loadPrefs(ULONG mode);
+ULONG storePrefs(BOOL bStorePrefs);
+void updateFTPWindow(struct URL_FTPNode *pFTP);
+BOOL open_libs(void);
+void close_libs(void);
+void createChooserList(struct List *, CONST_STRPTR popup_s, uint32 *popup_n);
+void freeChooserList(struct List *);
+void createChooserARexxPorts(struct List *);
+void sort_list(struct List *, struct Hook *);
+int CompareNameNodes(UNUSED struct Hook *, struct Node *, struct Node *);
+
 
 #endif // OPENURL_H
-
