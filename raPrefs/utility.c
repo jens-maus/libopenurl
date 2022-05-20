@@ -2,7 +2,7 @@
 
  openurl.library - universal URL display and browser launcher library
  Copyright (C) 1998-2005 by Troels Walsted Hansen, et al.
- Copyright (C) 2005-2022 openurl.library Open Source Team
+ Copyright (C) 2005-2021 openurl.library Open Source Team
 
  This library is free software; it has been placed in the public domain
  and you can freely redistribute it and/or modify it. Please note, however,
@@ -83,6 +83,26 @@ int32 CFGInteger(struct DiskObject *icon, CONST_STRPTR attr, int32 def)
 
 	val = IIcon->FindToolType(icon->do_ToolTypes, attr);
 	if(val) IDOS->StrToLong(val, &def);
+
+	return def;
+}
+
+BOOL CFGBoolean(struct DiskObject *icon, CONST_STRPTR attr, BOOL def)
+{
+	STRPTR val;
+
+	val = IIcon->FindToolType(icon->do_ToolTypes, attr);
+	if(!val) return def;
+
+	if( IIcon->MatchToolValue(val,"NO")  ||
+	    IIcon->MatchToolValue(val,"OFF") ||
+	    IIcon->MatchToolValue(val,"FALSE")
+	  ) return FALSE;
+
+	if( IIcon->MatchToolValue(val,"YES") ||
+	    IIcon->MatchToolValue(val,"ON")  ||
+	    IIcon->MatchToolValue(val,"TRUE")
+	  ) return TRUE;
 
 	return def;
 }

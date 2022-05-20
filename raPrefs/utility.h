@@ -2,7 +2,7 @@
 
  openurl.library - universal URL display and browser launcher library
  Copyright (C) 1998-2005 by Troels Walsted Hansen, et al.
- Copyright (C) 2005-2022 openurl.library Open Source Team
+ Copyright (C) 2005-2021 openurl.library Open Source Team
 
  This library is free software; it has been placed in the public domain
  and you can freely redistribute it and/or modify it. Please note, however,
@@ -28,6 +28,7 @@
 int VARARGS68K RA_Request( Object * pWin, const char * strTitle, const char * strGadgets, const char * strFormat, ... );
 void freeList( struct List * list );
 int32 CFGInteger(struct DiskObject *, CONST_STRPTR attr, int32 def);
+BOOL CFGBoolean(struct DiskObject *, CONST_STRPTR attr, BOOL def);
 
 #define iget(obj, attr)         ({uint32 b=0; IIntuition->GetAttr(attr, (obj), &b); b;})
 #define gadset(gad, win, ...)   IIntuition->SetGadgetAttrs((gad), (win), NULL, __VA_ARGS__, TAG_DONE)
