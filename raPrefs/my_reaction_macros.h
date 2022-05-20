@@ -45,6 +45,13 @@
 #undef RequesterObject
 #define RequesterObject    IIntuition->NewObject(RequesterClass, NULL
 
+#define ButtonH(text,id,hint)         \
+        ButtonObject,           \
+            GA_Text,      text, \
+            GA_ID,        id,   \
+            GA_RelVerify, TRUE, \
+            GA_HintInfo,  hint, \
+        End
 
 //#undef RA_OpenWindow
 //#define RA_OpenWindow(wobj)        (struct Window *)IIntuition->IDoMethod(wobj, WM_OPEN, NULL)

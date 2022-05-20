@@ -2,7 +2,7 @@
 
  openurl.library - universal URL display and browser launcher library
  Copyright (C) 1998-2005 by Troels Walsted Hansen, et al.
- Copyright (C) 2005-2022 openurl.library Open Source Team
+ Copyright (C) 2005-2021 openurl.library Open Source Team
 
  This library is free software; it has been placed in the public domain
  and you can freely redistribute it and/or modify it. Please note, however,
@@ -28,6 +28,7 @@
 
 #include <images/label.h>
 //#include <images/glyph.h>
+#include <images/bitmap.h>
 
 #include <classes/window.h>
 #include <classes/requester.h>
@@ -37,13 +38,12 @@
 #include <gadgets/button.h>
 #include <gadgets/clicktab.h>
 //#include <gadgets/texteditor.h>
-#include <gadgets/scroller.h>
+//#include <gadgets/scroller.h>
 #include <gadgets/checkbox.h>
 #include <gadgets/listbrowser.h>
 #include <gadgets/string.h>
 #include <gadgets/getfile.h>
 #include <gadgets/chooser.h>
-#include <images/bitmap.h>
 
 #include <proto/exec.h>
 #include <proto/dos.h>
@@ -136,6 +136,7 @@ Object *Objects[OBJ_NUM];
 Object *edit_brow_win, *edit_mail_win, *edit_ftp_win;
 
 int32 mimgsize; // Menu images size
+BOOL showhints; // Show hints on gadgets
 
 static STRPTR PageLabels[] =
 {
@@ -233,7 +234,7 @@ void CreateMainMenu(struct Screen *scr)
       MA_Type,T_MENU, MA_Label,getString(MSG_Menu_Project),//"Project",
       MA_AddChild, IIntuition->NewObject(NULL, "menuclass",
         MA_Type,T_ITEM, MA_Label,getString(MSG_Menu_Iconify),//"Iconify",
-        MA_ID,    MSG_Menu_Iconify,//MSG_Menu_Hide,
+        MA_ID,    MSG_Menu_Iconify,// was MSG_Menu_Hide,
         //MA_Key,   "I",
         MA_Image, MenuImage("iconify",scr),
       TAG_END),
@@ -285,6 +286,17 @@ void CreateMainMenu(struct Screen *scr)
         MA_Image, MenuImage("undo",scr),
       TAG_END),
      TAG_END),
+     MA_AddChild, IIntuition->NewObject(NULL, "menuclass",
+      MA_Type,T_MENU, MA_Label,getString(MSG_Menu_Help),//"Help",
+      MA_AddChild, IIntuition->NewObject(NULL, "menuclass",
+        MA_Type,T_ITEM, MA_Label,getString(MSG_Menu_Showhints),//"Show hints?",
+        MA_ID,    MSG_Menu_Showhints,
+        //MA_Key,   "H",
+        MA_Image, MenuImage("helpbubble",scr),
+        MA_Toggle,   TRUE,
+        MA_Selected, showhints,
+      TAG_END),
+     TAG_END),
 
     TAG_END);
 }
@@ -324,7 +336,7 @@ Object *make_window(void)
     struct DiskObject *iconify = NULL;
 
     // reset icon X/Y positions so it iconifies properly on Workbench
-    if( (iconify=IIcon->GetIconTags("OpenURL", ICONGETA_FailIfUnavailable,FALSE, TAG_END)) )
+    if( (iconify=IIcon->GetIconTags("PROGDIR:OpenURL", ICONGETA_FailIfUnavailable,FALSE, TAG_END)) )
     {
      iconify->do_CurrentX = NO_ICON_POSITION;
      iconify->do_CurrentY = NO_ICON_POSITION;
@@ -351,6 +363,7 @@ Object *make_window(void)
                     GA_ID,                      OBJ_LBROWSER_BROW,
            //         GA_Immediate,               TRUE,
                     GA_RelVerify,               TRUE,
+                    GA_HintInfo, getString(MSG_Browser_List_Help),
                     LISTBROWSER_AutoFit,        TRUE,
                     LISTBROWSER_HorizontalProp, TRUE,
                     LISTBROWSER_ShowSelected,   TRUE,
@@ -363,22 +376,24 @@ Object *make_window(void)
             LAYOUT_AddChild,    VLayoutObject,
                 LAYOUT_SpaceOuter,  TRUE,
                 SPACE,
-                LAYOUT_AddChild, Button(getString(MSG_AppList_Add),OBJ_ADD_BROW),
+                LAYOUT_AddChild, ButtonH(getString(MSG_AppList_Add),OBJ_ADD_BROW,getString(MSG_AppList_Add_Help)),
                 CHILD_WeightedHeight,   0,
-                LAYOUT_AddChild, Button(getString(MSG_AppList_Edit),OBJ_EDIT_BROW),
+                LAYOUT_AddChild, ButtonH(getString(MSG_AppList_Edit),OBJ_EDIT_BROW,getString(MSG_AppList_Edit_Help)),
                 CHILD_WeightedHeight,   0,
-                LAYOUT_AddChild, Button(getString(MSG_AppList_Clone),OBJ_CLONE_BROW),
+                LAYOUT_AddChild, ButtonH(getString(MSG_AppList_Clone),OBJ_CLONE_BROW,getString(MSG_AppList_Clone_Help)),
                 CHILD_WeightedHeight,   0,
 
                 LAYOUT_AddChild,     HLayoutObject,
                     LAYOUT_AddChild,    OBJ(OBJ_UP_BROW) = ButtonObject,
                         GA_ID,              OBJ_UP_BROW,
+                        GA_HintInfo, getString(MSG_AppList_MoveUp_Help),
                         BUTTON_AutoButton,  BAG_UPARROW,
                     End,  // Button
                     CHILD_WeightedWidth,   0,
 
                     LAYOUT_AddChild,    OBJ(OBJ_DOWN_BROW) = ButtonObject,
                         GA_ID,              OBJ_DOWN_BROW,
+                        GA_HintInfo, getString(MSG_AppList_MoveDown_Help),
                         BUTTON_AutoButton,  BAG_DNARROW,
                     End,  // Button
                     CHILD_WeightedWidth,   0,
@@ -386,7 +401,7 @@ Object *make_window(void)
                 CHILD_WeightedHeight,   0,
 
                 SPACE,
-                LAYOUT_AddChild, Button(getString(MSG_AppList_Delete),OBJ_DELETE_BROW),
+                LAYOUT_AddChild, ButtonH(getString(MSG_AppList_Delete),OBJ_DELETE_BROW,getString(MSG_AppList_Delete_Help)),
                 CHILD_WeightedHeight,   0,
                 SPACE,
             End,   // VLayout
@@ -405,6 +420,7 @@ Object *make_window(void)
                     GA_ID,                      OBJ_LBROWSER_MAIL,
            //         GA_Immediate,               TRUE,
                     GA_RelVerify,               TRUE,
+                    GA_HintInfo, getString(MSG_Mailer_List_Help),
                     LISTBROWSER_AutoFit,        TRUE,
                     LISTBROWSER_HorizontalProp, TRUE,
                     LISTBROWSER_ShowSelected,   TRUE,
@@ -417,22 +433,24 @@ Object *make_window(void)
             LAYOUT_AddChild,    VLayoutObject,
                 LAYOUT_SpaceOuter,  TRUE,
                 SPACE,
-                LAYOUT_AddChild, Button(getString(MSG_AppList_Add),OBJ_ADD_MAIL),
+                LAYOUT_AddChild, ButtonH(getString(MSG_AppList_Add),OBJ_ADD_MAIL,getString(MSG_AppList_Add_Help)),
                 CHILD_WeightedHeight,   0,
-                LAYOUT_AddChild, Button(getString(MSG_AppList_Edit),OBJ_EDIT_MAIL),
+                LAYOUT_AddChild, ButtonH(getString(MSG_AppList_Edit),OBJ_EDIT_MAIL,getString(MSG_AppList_Edit_Help)),
                 CHILD_WeightedHeight,   0,
-                LAYOUT_AddChild, Button(getString(MSG_AppList_Clone),OBJ_CLONE_MAIL),
+                LAYOUT_AddChild, ButtonH(getString(MSG_AppList_Clone),OBJ_CLONE_MAIL,getString(MSG_AppList_Clone_Help)),
                 CHILD_WeightedHeight,   0,
 
                 LAYOUT_AddChild,     HLayoutObject,
                     LAYOUT_AddChild,    OBJ(OBJ_UP_MAIL) = ButtonObject,
                         GA_ID,              OBJ_UP_MAIL,
+                        GA_HintInfo, getString(MSG_AppList_MoveUp_Help),
                         BUTTON_AutoButton,  BAG_UPARROW,
                     End,  // Button
                     CHILD_WeightedWidth,   0,
 
                     LAYOUT_AddChild,    OBJ(OBJ_DOWN_MAIL) = ButtonObject,
                         GA_ID,              OBJ_DOWN_MAIL,
+                        GA_HintInfo, getString(MSG_AppList_MoveDown_Help),
                         BUTTON_AutoButton,  BAG_DNARROW,
                     End,  // Button
                     CHILD_WeightedWidth,   0,
@@ -440,7 +458,7 @@ Object *make_window(void)
                 CHILD_WeightedHeight,   0,
 
                 SPACE,
-                LAYOUT_AddChild, Button(getString(MSG_AppList_Delete),OBJ_DELETE_MAIL),
+                LAYOUT_AddChild, ButtonH(getString(MSG_AppList_Delete),OBJ_DELETE_MAIL,getString(MSG_AppList_Delete_Help)),
                 CHILD_WeightedHeight,   0,
                 SPACE,
             End,   // VLayout
@@ -458,7 +476,9 @@ Object *make_window(void)
                 LAYOUT_AddChild, OBJ(OBJ_LBROWSER_FTP) = ListBrowserObject,
                     GA_ID,                      OBJ_LBROWSER_FTP,
                     GA_RelVerify,               TRUE,
+                    GA_HintInfo, getString(MSG_FTP_List_Help),
                     LISTBROWSER_AutoFit,        TRUE,
+                    LISTBROWSER_HorizontalProp, TRUE,
                     LISTBROWSER_ShowSelected,   TRUE,
                     LISTBROWSER_Labels,         &list_FTPs,
                     LISTBROWSER_ColumnInfo,     LB_ColInfo,//&FTPsColInfo,
@@ -469,22 +489,24 @@ Object *make_window(void)
             LAYOUT_AddChild,    VLayoutObject,
                 LAYOUT_SpaceOuter,  TRUE,
                 SPACE,
-                LAYOUT_AddChild, Button(getString(MSG_AppList_Add),OBJ_ADD_FTP),
+                LAYOUT_AddChild, ButtonH(getString(MSG_AppList_Add),OBJ_ADD_FTP,getString(MSG_AppList_Add_Help)),
                 CHILD_WeightedHeight,   0,
-                LAYOUT_AddChild, Button(getString(MSG_AppList_Edit),OBJ_EDIT_FTP),
+                LAYOUT_AddChild, ButtonH(getString(MSG_AppList_Edit),OBJ_EDIT_FTP,getString(MSG_AppList_Edit_Help)),
                 CHILD_WeightedHeight,   0,
-                LAYOUT_AddChild, Button(getString(MSG_AppList_Clone),OBJ_CLONE_FTP),
+                LAYOUT_AddChild, ButtonH(getString(MSG_AppList_Clone),OBJ_CLONE_FTP,getString(MSG_AppList_Clone_Help)),
                 CHILD_WeightedHeight,   0,
 
                 LAYOUT_AddChild,     HLayoutObject,
                     LAYOUT_AddChild,    OBJ(OBJ_UP_FTP) = ButtonObject,
                         GA_ID,              OBJ_UP_FTP,
+                        GA_HintInfo, getString(MSG_AppList_MoveUp_Help),
                         BUTTON_AutoButton,  BAG_UPARROW,
                     End,  // Button
                     CHILD_WeightedWidth,   0,
 
                     LAYOUT_AddChild,    OBJ(OBJ_DOWN_FTP) = ButtonObject,
                         GA_ID,              OBJ_DOWN_FTP,
+                        GA_HintInfo, getString(MSG_AppList_MoveDown_Help),
                         BUTTON_AutoButton,  BAG_DNARROW,
                     End,  // Button
                     CHILD_WeightedWidth,   0,
@@ -492,7 +514,7 @@ Object *make_window(void)
                 CHILD_WeightedHeight,   0,
 
                 SPACE,
-                LAYOUT_AddChild, Button(getString(MSG_AppList_Delete),OBJ_DELETE_FTP),
+                LAYOUT_AddChild, ButtonH(getString(MSG_AppList_Delete),OBJ_DELETE_FTP,getString(MSG_AppList_Delete_Help)),
                 CHILD_WeightedHeight,   0,
                 SPACE,
             End,   // VLayout
@@ -513,6 +535,7 @@ Object *make_window(void)
                 GA_RelVerify,        TRUE,
                 GA_Selected,         TRUE,
                 GA_Text,             getString(MSG_Misc_Show),
+                GA_HintInfo, getString(MSG_Misc_Show_Help),
             End,  // CheckBox
 
             LAYOUT_AddChild, OBJ(OBJ_BRING) = CheckBoxObject,
@@ -520,6 +543,7 @@ Object *make_window(void)
                 GA_RelVerify,        TRUE,
                 GA_Selected,         TRUE,
                 GA_Text,             getString(MSG_Misc_Bring),
+                GA_HintInfo, getString(MSG_Misc_Bring_Help),
             End,  // CheckBox
 
             LAYOUT_AddChild, OBJ(OBJ_OPEN) = CheckBoxObject,
@@ -527,6 +551,7 @@ Object *make_window(void)
                 GA_RelVerify,        TRUE,
                 GA_Selected,         FALSE,
                 GA_Text,             getString(MSG_Misc_Open),
+                GA_HintInfo, getString(MSG_Misc_Open_Help),
             End,  // CheckBox
 
             LAYOUT_AddChild, OBJ(OBJ_LAUNCH) = CheckBoxObject,
@@ -534,6 +559,7 @@ Object *make_window(void)
                 GA_RelVerify,        TRUE,
                 GA_Selected,         TRUE,
                 GA_Text,             getString(MSG_Misc_Launch),
+                GA_HintInfo, getString(MSG_Misc_Launch_Help),
             End,  // CheckBox
         End,  // VLayout
 
@@ -546,6 +572,7 @@ Object *make_window(void)
                 GA_RelVerify,        TRUE,
                 GA_Selected,         TRUE,
                 GA_Text,             getString(MSG_Misc_Prepend),
+                GA_HintInfo, getString(MSG_Misc_Prepend_Help),
             End,  // CheckBox
 
             LAYOUT_AddChild, OBJ(OBJ_SEND_MAILTO) = CheckBoxObject,
@@ -553,6 +580,7 @@ Object *make_window(void)
                 GA_RelVerify,        TRUE,
                 GA_Selected,         TRUE,
                 GA_Text,             getString(MSG_Misc_UseMailer),
+                GA_HintInfo, getString(MSG_Misc_UseMailer_Help),
             End,  // CheckBox
 
             LAYOUT_AddChild, OBJ(OBJ_SEND_FTP) = CheckBoxObject,
@@ -560,6 +588,7 @@ Object *make_window(void)
                 GA_RelVerify,        TRUE,
                 GA_Selected,         FALSE,
                 GA_Text,             getString(MSG_Misc_UseFTP),
+                GA_HintInfo, getString(MSG_Misc_UseFTP_Help),
             End,  // CheckBox
 
         End,  // VLayout
@@ -567,13 +596,15 @@ Object *make_window(void)
 
 
     OBJ(OBJ_CLICKTAB) = ClickTabObject,
-        GA_Text,            PageLabels,
+        GA_Text,      PageLabels,
+        GA_ID,        OBJ_CLICKTAB,
+        GA_RelVerify, TRUE,
         CLICKTAB_Current,   0,  // page to open with
         CLICKTAB_PageGroup, PageObject,
-            PAGE_Add,       page1,
-            PAGE_Add,       page2,
-            PAGE_Add,       page3,
-            PAGE_Add,       page4,
+            PAGE_Add, page1,
+            PAGE_Add, page2,
+            PAGE_Add, page3,
+            PAGE_Add, page4,
         PageEnd,
     ClickTabEnd;
 
@@ -590,6 +621,7 @@ Object *make_window(void)
         //WINDOW_IconTitle,      getString(MSG_Win_WinTitle),
         WINDOW_AppPort,        AppPort,
         WINDOW_SharedPort,     AppPort,
+        WINDOW_GadgetHelp,     showhints,
         WINDOW_Position,       WPOS_CENTERSCREEN,
 #ifdef MENUCLASS
         WA_MenuStrip, menustripobj,
@@ -613,16 +645,16 @@ Object *make_window(void)
 
                 LAYOUT_AddChild,        HLayoutObject,
                     LAYOUT_EvenSize,    TRUE,
-                    LAYOUT_AddChild, Button(getString(MSG_Win_Save),OBJ_SAVE),
+                    LAYOUT_AddChild, ButtonH(getString(MSG_Win_Save),OBJ_SAVE,getString(MSG_Win_Save_Help)),
                     CHILD_WeightedWidth,   0,
 
-                    LAYOUT_AddChild, Button(getString(MSG_Win_Use),OBJ_USE),
+                    LAYOUT_AddChild, ButtonH(getString(MSG_Win_Use),OBJ_USE,getString(MSG_Win_Use_Help)),
                     CHILD_WeightedWidth,   0,
 
-                    LAYOUT_AddChild, Button(getString(MSG_Win_Apply),OBJ_APPLY),
+                    LAYOUT_AddChild, ButtonH(getString(MSG_Win_Apply),OBJ_APPLY,getString(MSG_Win_Apply_Help)),
                     CHILD_WeightedWidth,   0,
 
-                    LAYOUT_AddChild, Button(getString(MSG_Win_Cancel),OBJ_CANCEL),
+                    LAYOUT_AddChild, ButtonH(getString(MSG_Win_Cancel),OBJ_CANCEL,getString(MSG_Win_Cancel_Help)),
                     CHILD_WeightedWidth,   0,
                 End,   // HLayout
                 CHILD_WeightedHeight,   0,
@@ -729,11 +761,14 @@ int main(void)
 	localizeStrings(PageLabels);
 
 	mimgsize = 24;
+	showhints = FALSE;
 	/* tooltypes - START */
 	if( (icon=IIcon->GetDiskObjectNew("PROGDIR:OpenURL")) )
 	{
 		mimgsize = CFGInteger(icon, "MENUIMAGESIZE", 24);
 		if(mimgsize < 1) mimgsize = 24;
+
+		showhints = CFGBoolean(icon, "SHOWHINTS", FALSE);
 	}
 	/* tooltypes - END */
 
@@ -780,9 +815,13 @@ int main(void)
 
 		//Localize listbrowser's column titles
 		LB_ColInfo = IListBrowser->AllocLBColumnInfo(3,
-		                              LBCIA_Column,0, LBCIA_Title,getString(MSG_Edit_ListUse),
-		                              LBCIA_Column,1, LBCIA_Title,getString(MSG_Edit_ListName),
-		                              LBCIA_Column,2, LBCIA_Title,getString(MSG_Edit_ListPath),
+		                              LBCIA_Column, 0,
+		                                   LBCIA_Title, getString(MSG_Edit_ListUse),
+		                              LBCIA_Column, 1,
+		                                   LBCIA_Title, getString(MSG_Edit_ListName),
+		                                   LBCIA_DraggableSeparator, TRUE,
+		                              LBCIA_Column, 2,
+		                                   LBCIA_Title, getString(MSG_Edit_ListPath),
 		                           TAG_DONE);
 
 		win = make_window();
@@ -802,12 +841,12 @@ int main(void)
 		iset( OBJ(OBJ_MAIL_ALIGN_T), LAYOUT_AlignLabels,OBJ(OBJ_MAIL_ALIGN_B) );
 		iset( OBJ(OBJ_FTP_ALIGN_T), LAYOUT_AlignLabels,OBJ(OBJ_FTP_ALIGN_B) );
 
-        /*iset(OBJ(OBJ_LBROWSER_FTP), ICA_TARGET, OBJ(OBJ_EDIT_FTP),
-                                    ICA_MAP,    lst2btn);
-        iset(OBJ(OBJ_LBROWSER_MAIL), ICA_TARGET, OBJ(OBJ_EDIT_MAIL),
-                                     ICA_MAP,    lst2btn);
-        iset(OBJ(OBJ_LBROWSER_BROW), ICA_TARGET, OBJ(OBJ_EDIT_BROW),
-                                     ICA_MAP,    lst2btn);*/
+    /*iset(OBJ(OBJ_LBROWSER_FTP), ICA_TARGET, OBJ(OBJ_EDIT_FTP),
+                                  ICA_MAP,    lst2btn);
+      iset(OBJ(OBJ_LBROWSER_MAIL), ICA_TARGET, OBJ(OBJ_EDIT_MAIL),
+                                   ICA_MAP,    lst2btn);
+      iset(OBJ(OBJ_LBROWSER_BROW), ICA_TARGET, OBJ(OBJ_EDIT_BROW),
+                                   ICA_MAP,    lst2btn);*/
 
 		if((window = RA_OpenWindow(win)) != NULL)
 		{
@@ -933,9 +972,9 @@ ULONG loadPrefs(ULONG mode)
     }
 
     /* Browsers */
-	gadset(GAD(OBJ_LBROWSER_BROW), window, LISTBROWSER_Labels, ~0);
-	updateBrowserList(&list_Brow, p->up_BrowserList);
-	gadset(GAD(OBJ_LBROWSER_BROW), window, LISTBROWSER_Labels, &list_Brow, LISTBROWSER_AutoFit, TRUE);
+		gadset(GAD(OBJ_LBROWSER_BROW), window, LISTBROWSER_Labels, ~0);
+		updateBrowserList(&list_Brow, p->up_BrowserList);
+		gadset(GAD(OBJ_LBROWSER_BROW), window, LISTBROWSER_Labels, &list_Brow, LISTBROWSER_AutoFit, TRUE);
 
     /* Mailers */
     gadset(GAD(OBJ_LBROWSER_MAIL), window, LISTBROWSER_Labels, ~0, TAG_DONE);
@@ -943,9 +982,9 @@ ULONG loadPrefs(ULONG mode)
     gadset(GAD(OBJ_LBROWSER_MAIL), window, LISTBROWSER_Labels, &list_Mail, LISTBROWSER_AutoFit, TRUE);
 
     /* FTPs */
-	gadset(GAD(OBJ_LBROWSER_FTP), window, LISTBROWSER_Labels, ~0, TAG_DONE);
-	updateFTPList(&list_FTPs, p->up_FTPList);
-	gadset(GAD(OBJ_LBROWSER_FTP), window, LISTBROWSER_Labels, &list_FTPs, LISTBROWSER_AutoFit, TRUE);
+		gadset(GAD(OBJ_LBROWSER_FTP), window, LISTBROWSER_Labels, ~0, TAG_DONE);
+		updateFTPList(&list_FTPs, p->up_FTPList);
+		gadset(GAD(OBJ_LBROWSER_FTP), window, LISTBROWSER_Labels, &list_FTPs, LISTBROWSER_AutoFit, TRUE);
 
     /* Miscellaneous */
     gadset( GAD(OBJ_PREPEND),     window, GA_Selected, isFlagSet(p->up_Flags,UPF_PREPENDHTTP) );
