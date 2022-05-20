@@ -154,7 +154,7 @@ msgid "L\\0Last saved"
 msgstr "L\\0Last saved"
 
 msgctxt "MSG_Menu_Restore (//)"
-msgid "R\\0Restore"
+msgid "R\\0Restore settings"
 msgstr "R\\0Restore"
 
 msgctxt "MSG_Menu_Defaults (210//)"
@@ -569,7 +569,7 @@ msgctxt "MSG_About_Translation (1120//)"
 msgid "Translated by :"
 msgstr "Translated by :"
 
-#NOTE: left a blank space at beginning of each line/translator
+#NOTE: tanslator's name. Left a blank space at beginning of each line/translator
 msgctxt "MSG_About_Translators (1121//)"
 msgid " (using built-in strings)"
 msgstr " (using built-in strings)"
@@ -605,3 +605,13 @@ msgstr "OpenURL is a shared library for easily sending"
 msgctxt "MSG_Menu_Iconify (1127//)"
 msgid "I\\0Iconify"
 msgstr "I\\0Iconify"
+#
+# 2022.05.03
+#
+msgctxt "MSG_Menu_Help (1128//)"
+msgid "Help"
+msgstr "Help"
+
+msgctxt "MSG_Menu_Showhints (1129//)"
+msgid "H\\0Show hints?"
+msgstr "H\\0Show hints?"

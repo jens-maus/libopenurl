@@ -2,18 +2,21 @@
 # $Id$
 # 
 # version 7
-# language english
-# 
+# revision 0
+# language italian
+#
 # Translators:
-# Samir Hawamdeh <s.hawamdeh@teletu.it>, 2014
+# Samir Hawamdeh <s.hawamdeh@gmail.com> 2014 - 2022
+# Compile: flexcat POFILE openurl.po CATALOG OpenURL.catalog
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenURL\n"
 "Report-Msgid-Bugs-To: http://sf.net/p/openurllib/\n"
 "POT-Creation-Date: 2014-02-23 12:01+0100\n"
-"PO-Revision-Date: 2014-10-25 16:08+0000\n"
-"Last-Translator: Jens Maus <mail@jens-maus.de>\n"
-"Language-Team: Italian (http://www.transifex.com/ato/openurllib/language/it/)\n"
+"PO-Revision-Date: 2022-05-13 11:21+0000\n"
+"Last-Translator: Samir Hawamdeh <s.hawamdeh@gmail.com>\n"
+"Language-Team: Italian (http://www.transifex.com/projects/p/openurllib/language/it/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -91,17 +94,17 @@ msgstr "Impossibile creare la classe PopphClass"
 
 msgctxt "MSG_Err_NoApp (//)"
 msgid "Can't create application object"
-msgstr "Impossibile creare l'applicazione"
+msgstr "Impossibile creare l'oggetto applicazione"
 
 msgctxt "MSG_Err_NoPrefs (//)"
 msgid "Can't obtain prefs from openurl.library"
-msgstr "Impossibile leggere le preferenze di OpenURL"
+msgstr "Impossibile leggere le preferenze di openurl.library"
 
 msgctxt "MSG_Err_BadPrefs (//)"
 msgid ""
 "This version of this program doesn't know how\n"
 "to handle openurl.library prefs version %ld"
-msgstr "La versione di questo programma non è in grado di\ngestire le preferenze OpenURL versione %ld"
+msgstr "Questa versione del programma non è in grado di gestire\nle preferenze di OpenURL.library versione %ld"
 
 msgctxt "MSG_Err_FailedSave (//)"
 msgid "Can't save prefs"
@@ -109,11 +112,11 @@ msgstr "Impossibile salvare le preferenze"
 
 msgctxt "MSG_App_Description (100//)"
 msgid "OpenURL preferences application."
-msgstr "Preferenze applicazione OpenURL."
+msgstr "Preferenze applicazione OpenURL"
 
 msgctxt "MSG_App_Copyright (//)"
 msgid "Public Domain Software"
-msgstr "OpenURL è rilasciato come Software di Pubblico Dominio"
+msgstr "Software di Pubblico Dominio"
 
 msgctxt "MSG_App_ScreenTitle (//)"
 msgid "OpenURL"
@@ -125,11 +128,11 @@ msgstr "Progetto"
 
 msgctxt "MSG_Menu_About (//)"
 msgid "?\\0About..."
-msgstr "?\\0Informazioni su OpenURL..."
+msgstr "?\\0Informazioni..."
 
 msgctxt "MSG_Menu_AboutMUI (//)"
-msgid "!\\0About MUI..."
-msgstr "!\\0Informazioni su MUI..."
+msgid "!\0About MUI..."
+msgstr "!\0Informazioni MUI..."
 
 msgctxt "MSG_Menu_Hide (//)"
 msgid "H\\0Hide"
@@ -144,20 +147,20 @@ msgid "Preferences"
 msgstr "Preferenze"
 
 msgctxt "MSG_Menu_Save (//)"
-msgid "S\\0Save"
-msgstr "S\\0Salva"
+msgid "S\\0Save settings"
+msgstr "S\\0Salva impostazioni"
 
 msgctxt "MSG_Menu_Use (//)"
-msgid "U\\0Use"
-msgstr "U\\0Usa"
+msgid "U\\0Use settings"
+msgstr "U\\0Usa impostazioni"
 
 msgctxt "MSG_Menu_LastSaved (//)"
 msgid "L\\0Last saved"
 msgstr "L\\0Ultimi valori salvati"
 
 msgctxt "MSG_Menu_Restore (//)"
-msgid "R\\0Restore"
-msgstr "R\\0Ripristina"
+msgid "R\\0Restore settings"
+msgstr "R\\0Ripristina impostazioni"
 
 msgctxt "MSG_Menu_Defaults (210//)"
 msgid "D\\0Default settings"
@@ -165,7 +168,7 @@ msgstr "D\\0Valori predefiniti"
 
 msgctxt "MSG_Menu_MUI (212//)"
 msgid "M\\0MUI Setting..."
-msgstr "M\\0MUI..."
+msgstr "M\\0Impostazioni MUI..."
 
 msgctxt "MSG_Win_WinTitle (300//)"
 msgid "OpenURL"
@@ -173,19 +176,19 @@ msgstr "OpenURL"
 
 msgctxt "MSG_Win_Labels_Browsers (//)"
 msgid "Browsers"
-msgstr "Browser"
+msgstr "_1 Browser"
 
 msgctxt "MSG_Win_Labels_Mailers (//)"
 msgid "Mailers"
-msgstr "Mailer"
+msgstr "_2 Mailer"
 
 msgctxt "MSG_Win_Labels_FTPs (//)"
 msgid "FTPs"
-msgstr "FTP"
+msgstr "_3 FTP"
 
 msgctxt "MSG_Win_Labels_Misc (//)"
 msgid "Misc"
-msgstr "Varie"
+msgstr "_4 Varie"
 
 msgctxt "MSG_Win_Save (//)"
 msgid "_Save"
@@ -193,7 +196,7 @@ msgstr "_Salva"
 
 msgctxt "MSG_Win_Save_Help (//)"
 msgid "Save preferences."
-msgstr "Salva le impostazioni."
+msgstr "Salva le impostazioni"
 
 msgctxt "MSG_Win_Use (//)"
 msgid "_Use"
@@ -201,7 +204,7 @@ msgstr "_Usa"
 
 msgctxt "MSG_Win_Use_Help (//)"
 msgid "Use preferences."
-msgstr "Usa le impostazioni."
+msgstr "Usa le impostazioni"
 
 msgctxt "MSG_Win_Apply (//)"
 msgid "_Apply"
@@ -209,7 +212,7 @@ msgstr "A_pplica"
 
 msgctxt "MSG_Win_Apply_Help (//)"
 msgid "Use preferences without closing window."
-msgstr "Usa le impostazioni, senza\nchiudere la finestra."
+msgstr "Usa le impostazioni senza chiudere la finestra"
 
 msgctxt "MSG_Win_Cancel (//)"
 msgid "_Cancel"
@@ -217,7 +220,7 @@ msgstr "_Annulla"
 
 msgctxt "MSG_Win_Cancel_Help (//)"
 msgid "Close window, without using preferences."
-msgstr "Chiude la finestra, senza\nusare le impostazioni."
+msgstr "Chiude la finestra senza usare le impostazioni"
 
 msgctxt "MSG_AppList_Add (400//)"
 msgid "A_dd"
@@ -225,7 +228,7 @@ msgstr "A_ggiungi"
 
 msgctxt "MSG_AppList_Add_Help (//)"
 msgid "Add a new entry."
-msgstr "Aggiunge una voce."
+msgstr "Aggiungi una voce"
 
 msgctxt "MSG_AppList_Edit (//)"
 msgid "_Edit"
@@ -233,7 +236,7 @@ msgstr "_Modifica"
 
 msgctxt "MSG_AppList_Edit_Help (//)"
 msgid "Edit active entry."
-msgstr "Modifica la voce attiva."
+msgstr "Modifica la voce attiva"
 
 msgctxt "MSG_AppList_Clone (//)"
 msgid "C_lone"
@@ -241,7 +244,7 @@ msgstr "C_opia"
 
 msgctxt "MSG_AppList_Clone_Help (//)"
 msgid "Clone active entry."
-msgstr "Copia la voce attiva."
+msgstr "Copia la voce attiva"
 
 msgctxt "MSG_AppList_Delete (//)"
 msgid "Dele_te"
@@ -249,7 +252,7 @@ msgstr "_Cancella"
 
 msgctxt "MSG_AppList_Delete_Help (//)"
 msgid "Delete active entry."
-msgstr "Cancella la voce attiva."
+msgstr "Cancella la voce attiva"
 
 msgctxt "MSG_AppList_Disable (//)"
 msgid "D_isable"
@@ -257,15 +260,15 @@ msgstr "_Disabilita"
 
 msgctxt "MSG_AppList_Disable_Help (//)"
 msgid "Disable active entry."
-msgstr "Disabilita la voce attiva."
+msgstr "Disabilita la voce attiva"
 
 msgctxt "MSG_AppList_MoveUp_Help (//)"
 msgid "Move active entry up."
-msgstr "Sposta la voce attiva in basso."
+msgstr "Sposta la voce attiva in alto"
 
 msgctxt "MSG_AppList_MoveDown_Help (//)"
 msgid "Move active entry down."
-msgstr "Sposta la voce attiva in alto."
+msgstr "Sposta la voce attiva in basso"
 
 msgctxt "MSG_Edit_Use (500//)"
 msgid "_Use"
@@ -273,7 +276,7 @@ msgstr "_Usa"
 
 msgctxt "MSG_Edit_Use_Help (//)"
 msgid "Apply changes."
-msgstr "Applica le impostazioni."
+msgstr "Applica le modifiche"
 
 msgctxt "MSG_Edit_Cancel (//)"
 msgid "_Cancel"
@@ -308,74 +311,77 @@ msgid "Public screen name"
 msgstr "Nome schermo pubblico"
 
 msgctxt "MSG_Edit_Name (//)"
-msgid "_Name"
-msgstr "_Nome"
+msgid "_Name:"
+msgstr "_Nome:"
 
 msgctxt "MSG_Edit_Name_Help (//)"
 msgid "Name of entry."
-msgstr "Nome della voce."
+msgstr "Nome della voce"
 
 msgctxt "MSG_Edit_Path (//)"
-msgid "_Path"
-msgstr "_Percorso"
+msgid "_Path:"
+msgstr "_Percorso:"
 
 msgctxt "MSG_Edit_Path_Help (//)"
 msgid "Complete path to the application."
 msgstr "Percorso completo dell'applicazione"
 
 msgctxt "MSG_Edit_Port (//)"
-msgid "_ARexx port"
-msgstr "P_orta ARexx"
+msgid "_ARexx port:"
+msgstr "P_orta ARexx:"
 
 msgctxt "MSG_Edit_Port_Help (//)"
 msgid ""
-"Name of the application ARexx port\n"
+"Name of the application ARexx port
+"
 "to send commands to."
-msgstr "Nome della porta ARexx dell'applicazione\na cui inviare comandi."
+msgstr "Nome della porta ARexx dell'applicazione a cui inviare i comandi"
 
 msgctxt "MSG_Edit_Show (//)"
-msgid "_Show"
-msgstr "_Mostra"
+msgid "_Show:"
+msgstr "_Mostra:"
 
 msgctxt "MSG_Edit_Show_Help (//)"
 msgid "ARexx command to uniconify the application."
-msgstr "Comando ARexx per deiconificare\nla finestra dell'applicazione."
+msgstr "Comando ARexx per deiconificare la finestra dell'applicazione"
 
 msgctxt "MSG_Edit_Screen (//)"
-msgid "_To front"
-msgstr "_Schermo davanti"
+msgid "_To front:"
+msgstr "_Schermo davanti:"
 
 msgctxt "MSG_Edit_Screen_Help (//)"
 msgid ""
-"ARexx command to move the application\n"
+"ARexx command to move the application
+"
 "screen to front."
-msgstr "Comando ARexx per lo spostamento in primo\npiano dello schermo dell'applicazione."
+msgstr "Comando ARexx per lo spostamento in primo piano dello schermo dell'applicazione"
 
 msgctxt "MSG_Edit_OpenURL (//)"
-msgid "_Open URL"
-msgstr "_Apri URL"
+msgid "_Open URL:"
+msgstr "Ap_ri URL:"
 
 msgctxt "MSG_Edit_OpenURL_Help (//)"
 msgid "ARexx command to reach an URL."
-msgstr "Comando ARexx per l'apertura dell'URL."
+msgstr "Comando ARexx per l'apertura dell'URL"
 
 msgctxt "MSG_Edit_NewWin (//)"
-msgid "N_ew window"
-msgstr "Nuova _finestra."
+msgid "N_ew window:"
+msgstr "Nuova _finestra:"
 
 msgctxt "MSG_Edit_NewWin_Help (//)"
 msgid ""
-"ARexx command to reach an URL\n"
+"ARexx command to reach an URL
+"
 "in a new window (or tab)."
-msgstr "Comando ARexx per l'apertura dell'URL\nin una nuova finestra (o scheda/tab)."
+msgstr "Comando ARexx per l'apertura dell'URL in una nuova finestra o scheda (tab)"
 
 msgctxt "MSG_Browser_List_Help (600//)"
 msgid "List of browsers."
-msgstr "Lista browser."
+msgstr "Lista dei browser"
 
 msgctxt "MSG_Browser_WinTitle (//)"
 msgid "Edit Browser"
-msgstr "Modifica browser"
+msgstr "Modifica Browser"
 
 msgctxt "MSG_Browser_NewBrowser (//)"
 msgid "New browser"
@@ -383,25 +389,26 @@ msgstr "Nuovo browser"
 
 msgctxt "MSG_Mailer_List_Help (700//)"
 msgid "List of Mailers."
-msgstr "Lista mailer."
+msgstr "Lista dei mailer"
 
 msgctxt "MSG_Mailer_WinTitle (//)"
 msgid "Edit Mailer"
-msgstr "Modifica mailer"
+msgstr "Modifica Mailer"
 
 msgctxt "MSG_Mailer_NewMailer (//)"
 msgid "New mailer"
 msgstr "Nuovo mailer"
 
 msgctxt "MSG_Mailer_Write (//)"
-msgid "_Write mail"
-msgstr "S_crivi E-Mail"
+msgid "_Write mail:"
+msgstr "S_crivi mail:"
 
 msgctxt "MSG_Mailer_Write_Help (//)"
 msgid ""
-"ARexx command to open a\n"
-"\"write a new EMail window\"."
-msgstr "Comando ARexx per l'apertura della finestra\n\"scrivi una nuova E-Mail\"."
+"ARexx command to open a
+"
+""write a new EMail window"."
+msgstr "Comando ARexx per l'apertura della finestra "scrivi una nuova mail""
 
 msgctxt "MSG_Mailer_PopAddress (//)"
 msgid "Address"
@@ -421,7 +428,7 @@ msgstr "Testo da file"
 
 msgctxt "MSG_FTP_List_Help (800//)"
 msgid "List of FTP clients."
-msgstr "Lista client FTP"
+msgstr "Lista dei client FTP"
 
 msgctxt "MSG_FTP_WinTitle (//)"
 msgid "Edit FTP client"
@@ -433,13 +440,13 @@ msgstr "Nuovo client FTP"
 
 msgctxt "MSG_FTP_RemoveURLQualifier (//)"
 msgid "Re_move 'ftp://'"
-msgstr "_Rimuovi \"ftp://\""
+msgstr "Rimuo_vi 'ftp://'"
 
 msgctxt "MSG_FTP_RemoveURLQualifier_Help (//)"
 msgid ""
 "If selected, \"ftp://\" is removed\n"
 "from the URL."
-msgstr "Se impostato, lo schema \"ftp://\"\nsarà rimosso dalla URL."
+msgstr "Se impostato lo schema \"ftp://\" verrà rimosso dall'URL"
 
 msgctxt "MSG_Misc_Options (900//)"
 msgid "Options"
@@ -450,75 +457,84 @@ msgid "Defaults"
 msgstr "Valori predefiniti"
 
 msgctxt "MSG_Misc_Prepend (//)"
-msgid "_Prepend \"http://\" to URLs without a scheme"
-msgstr "A_ggiungi \"http://\" alle URL senza schema"
+msgid "_Prepend "http://" to URLs without a scheme"
+msgstr "A_ggiungi "http://" agli URL senza uno schema"
 
 msgctxt "MSG_Misc_Prepend_Help (//)"
 msgid ""
-"If selected, \"http://\" is added to any URL\n"
-"without a scheme, so that it is opened in the\n"
+"If selected, "http://" is added to any URL
+"
+"without a scheme, so that it is opened in the
+"
 "browser."
-msgstr "Se impostato, lo schema \"http://\" sarà aggiunto a\ndegli URL senza schema cosicchè queste siano\naperte nel browser."
+msgstr "Se impostato uno schema di tipo "http://" verrà aggiunto ad ogni URL sprovvisto di questo affinché il link possa essere aperto direttamente nel browser"
 
 msgctxt "MSG_Misc_UseMailer (//)"
 msgid "S_end mailto: URLs to email application"
-msgstr "_Invia URL \"mailto\" al mailer"
+msgstr "_Invia URL con schema "mailto:" al mailer"
 
 msgctxt "MSG_Misc_UseMailer_Help (//)"
 msgid ""
-"If selected, \"mailto:\" URLs are sent to\n"
-"the mailer, otherwise they are sent to the\n"
+"If selected, "mailto:" URLs are sent to
+"
+"the mailer, otherwise they are sent to the
+"
 "browser."
-msgstr "Se impostato le URL con uno schema \"mailto:\" saranno\ninviate al mailer, altrimenti verranno direttamente inviate\nal browser."
+msgstr "Se impostato gli URL con uno schema "mailto:" verranno inviati al mailer, altrimenti verranno inviati direttamente al browser"
 
 msgctxt "MSG_Misc_UseFTP (//)"
-msgid "Se_nd \"ftp://\" URLs to FTP application"
-msgstr "I_nvia URL con schema \"ftp://\" al client FTP"
+msgid "Se_nd "ftp://" URLs to FTP application"
+msgstr "I_nvia URL con schema "ftp://" al client FTP"
 
 msgctxt "MSG_Misc_UseFTP_Help (//)"
 msgid ""
-"If selected, \"ftp://\" URLs are sent to\n"
-"the FTP client, otherwise they are sent to\n"
+"If selected, "ftp://" URLs are sent to
+"
+"the FTP client, otherwise they are sent to
+"
 "the browser."
-msgstr "Se impostato le URL con uno schema \"ftp://\" saranno\ninviate al client FTP, altrimenti verranno direttamente\ninviate al browser."
+msgstr "Se impostato gli URL con uno schema "ftp://" verranno inviati al client FTP, altrimenti verranno inviati direttamente al browser"
 
 msgctxt "MSG_Misc_Show (//)"
 msgid "Un_iconify application"
-msgstr "_Deiconifica l'applicazione"
+msgstr "_Deiconifica applicazione"
 
 msgctxt "MSG_Misc_Show_Help (//)"
 msgid ""
-"If selected, the application is uniconified,\n"
+"If selected, the application is uniconified,
+"
 "before sending the URL to it."
-msgstr "Se impostato, l'applicazione sarà deiconificata\nprima di essere usata."
+msgstr "Se impostato l'applicazione verrà deiconificata prima di essere usata"
 
 msgctxt "MSG_Misc_Bring (//)"
 msgid "_Bring browser screen to front"
-msgstr "P_orta lo schermo in primo piano"
+msgstr "P_orta schermo in primo piano"
 
 msgctxt "MSG_Misc_Bring_Help (//)"
 msgid ""
-"If selected, the application screen is moved\n"
+"If selected, the application screen is moved
+"
 "to front, before sending the URL."
-msgstr "Se impostato, lo schermo dell'applicazione\nsarà portato in primo piano."
+msgstr "Se impostato lo schermo dell'applicazione verrà portato in primo piano prima di inviare l'URL"
 
 msgctxt "MSG_Misc_Open (//)"
 msgid "_Open URL in new client window (or tab)"
-msgstr "Ap_ri URL in una nuova finestra (o scheda/tab)"
+msgstr "A_pri URL in una nuova finestra o scheda (tab)"
 
 msgctxt "MSG_Misc_Open_Help (//)"
 msgid ""
-"If selected, a new application window (or tab)\n"
+"If selected, a new application window (or tab)
+"
 "is opened, before sending the URL."
-msgstr "Se impostato, l'URL sarà aperta in una nuova finestra\n(o scheda/tab)"
+msgstr "Se impostato verrà aperta una nuova finestra o scheda (tab) dell'applicazione prima di inviare l'URL"
 
 msgctxt "MSG_Misc_Launch (//)"
 msgid "_Launch browser if one isn't running"
-msgstr "_Lancia l'applicazione"
+msgstr "_Lancia applicazione se non già avviata"
 
 msgctxt "MSG_Misc_Launch_Help (//)"
 msgid "If selected, a new application is run, if none is found."
-msgstr "Se impostato, quando si deve raggiungere un URL verrà\nlanciata una nuova applicazione nel caso non ce sia un'altra\ngià in funzione."
+msgstr "Se impostato quando si deve raggiungere un URL verrà lanciata una nuova applicazione nel caso non ve ne sia già un'altra in esecuzione"
 
 msgctxt "MSG_About_WinTitle (1100//)"
 msgid "About OpenURL"
@@ -535,4 +551,82 @@ msgid ""
 "and FTP clients.\n"
 "\n"
 "\\33cOpenURL is a Public Domain Software."
-msgstr "\\33bOpenURL\\33n è una libreria condivisa per la gestione e l'apertura\nin maniera semplice e pulita degli URL relativi alle applicazioni\n\n\\33cOpenURL è rilasciato come Software di Pubblico Dominio"
+msgstr "\\33c\\33bOpenURL\\33n è una libreria condivisa per inviare e gestire in\nmodo semplificato indirizzi URL da applicazioni a browser\nweb, programmi di posta elettronica e client FTP\n\n\\33cOpenURL è rilasciato come software di Pubblico Dominio"
+#
+# 2021.01.31
+#
+msgctxt "MSG_About_TabAbout (1113//)"
+msgid "About"
+msgstr "Informazioni"
+
+msgctxt "MSG_About_TabCredits (1114//)"
+msgid "Credits"
+msgstr "Ringraziamenti"
+
+msgctxt "MSG_About_TabLicence (1115//)"
+msgid "Licence"
+msgstr "Licenza"
+
+msgctxt "MSG_About_Developer (1116//)"
+msgid "Developed by :"
+msgstr "Sviluppato da:"
+
+msgctxt "MSG_About_ProjectManagement (1117//)"
+msgid "Project management by :"
+msgstr "Progetto gestito da:"
+
+msgctxt "MSG_About_HelpOf (1118//)"
+msgid "With the help of :"
+msgstr "Con l'aiuto di:"
+
+msgctxt "MSG_About_GfxBy (1119//)"
+msgid "Graphics and icons by :"
+msgstr "Grafica e icone a cura di:"
+
+msgctxt "MSG_About_Translation (1120//)"
+msgid "Translated by :"
+msgstr "Traduzioni a cura di:"
+
+#NOTE: left a blank space at beginning of each line/translator
+msgctxt "MSG_About_Translators (1121//)"
+msgid " (using built-in strings)"
+msgstr " Samir Hawamdeh"
+
+msgctxt "MSG_ASL_Browser (1122//)"
+msgid "Select path to Browser"
+msgstr "Seleziona percorso del Browser"
+
+msgctxt "MSG_ASL_Mailer (1123//)"
+msgid "Select path to Mailer"
+msgstr "Seleziona percorso del Mailer"
+
+msgctxt "MSG_ASL_FTP (1124//)"
+msgid "Select path to FTP"
+msgstr "Seleziona percorso del client FTP"
+
+msgctxt "MSG_Edit_ListUse (1125//)"
+msgid "Use"
+msgstr "Usa"
+
+msgctxt "MSG_About_Descr2 (1126//)"
+msgid ""
+"\\33bOpenURL\\33n is a shared library for easily sending\n"
+"URLs from applications to browsers, mailers\n"
+"and FTP clients.\n"
+"\n"
+"\\33cOpenURL is a Public Domain Software."
+msgstr "\\33c\\33bOpenURL\\33n è una libreria condivisa per inviare e gestire in\nmodo semplificato indirizzi URL da applicazioni a browser\nweb, programmi di posta elettronica e client FTP\n\n\\33cOpenURL è rilasciato come software di Pubblico Dominio"
+
+msgctxt "MSG_Menu_Iconify (1127//)"
+msgid "I\\0Iconify"
+msgstr "I\\0Iconifica"
+#
+# 2022.05.03
+#
+msgctxt "MSG_Menu_Help (1128//)"
+msgid "Help"
+msgstr "Aiuto"
+
+msgctxt "MSG_Menu_Showhints (1129//)"
+msgid "H\\0Show hints?"
+msgstr "H\\0Mostra suggerimenti?"
