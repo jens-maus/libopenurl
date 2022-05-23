@@ -2,7 +2,7 @@
 
  openurl.library - universal URL display and browser launcher library
  Copyright (C) 1998-2005 by Troels Walsted Hansen, et al.
- Copyright (C) 2005-2022 openurl.library Open Source Team
+ Copyright (C) 2005-2021 openurl.library Open Source Team
 
  This library is free software; it has been placed in the public domain
  and you can freely redistribute it and/or modify it. Please note, however,
@@ -63,6 +63,7 @@ extern struct List *popup_www_ftp, *popup_arexxports;
 
 extern struct MsgPort *AppPort;
 //extern struct Hook idcmphook;
+extern BOOL showhints;
 
 struct Window *edit_ftp_window;
 
@@ -81,6 +82,7 @@ Object * make_edit_ftp_win(void)
         WINDOW_SharedPort,     AppPort,
         //WINDOW_IDCMPHook,      &idcmphook,
         //WINDOW_IDCMPHookBits,  IDCMP_IDCMPUPDATE,
+        WINDOW_GadgetHelp,     showhints,
         WINDOW_Position,       WPOS_CENTERSCREEN,
         WINDOW_LockHeight,     TRUE,
         WINDOW_Layout,         VLayoutObject,
@@ -94,6 +96,7 @@ Object * make_edit_ftp_win(void)
                     GA_ID,               OBJ_FTP_NAME_STR,
                     GA_RelVerify,        TRUE,
                     GA_TabCycle,         TRUE,
+                    GA_HintInfo, getString(MSG_Edit_Name_Help),
              //           STRINGA_Buffer,        buffer,
                 End,  // String
                 Label(getString(MSG_Edit_Name)),
@@ -103,12 +106,14 @@ Object * make_edit_ftp_win(void)
                     LAYOUT_AddChild,       OBJ(OBJ_FTP_PATH_GET) = GetFileObject,
                         GA_ID,                 OBJ_FTP_PATH_GET,
                         GA_RelVerify,          TRUE,
+                        GA_HintInfo, getString(MSG_Edit_Path_Help),
                         GETFILE_TitleText,     getString(MSG_ASL_FTP),//"Select Path To Browser",
                     End,  // GetFile
                     LAYOUT_AddChild,    OBJ(OBJ_FTP_PATH_CHOOSE) = ChooserObject,///ButtonObject,
                         GA_ID,              OBJ_FTP_PATH_CHOOSE,
                         GA_RelVerify,       TRUE,
                         //GA_Image,           &chooser_image,
+                        GA_HintInfo, getString(MSG_Edit_Path_Help),
                         CHOOSER_DropDown, TRUE,
                         CHOOSER_Labels,   popup_www_ftp,
                     End,  // Button
@@ -122,12 +127,14 @@ Object * make_edit_ftp_win(void)
                         GA_ID,               OBJ_FTP_AREXX_STR,
                         GA_RelVerify,        TRUE,
                         GA_TabCycle,         TRUE,
+                        GA_HintInfo, getString(MSG_Edit_Port_Help),
              //           STRINGA_Buffer,        buffer,
                     End,  // String
                     LAYOUT_AddChild,    OBJ(OBJ_FTP_AREXX_CHOOSE) = ChooserObject,//ButtonObject,
                         GA_ID,              OBJ_FTP_AREXX_CHOOSE,
                         GA_RelVerify,       TRUE,
                         //GA_Image,           &chooser_image,
+                        GA_HintInfo, getString(MSG_Edit_Port_Help),
                         CHOOSER_DropDown,      TRUE,
                         CHOOSER_Labels,        popup_arexxports,
                         CHOOSER_MaxLabels,     99,
@@ -142,6 +149,7 @@ Object * make_edit_ftp_win(void)
                         GA_ID,               OBJ_FTP_REMOVE,
                         GA_RelVerify,        TRUE,
                         GA_Selected,         FALSE,//TRUE,
+                        GA_HintInfo, getString(MSG_FTP_RemoveURLQualifier_Help),
                         GA_Text,             getString(MSG_FTP_RemoveURLQualifier),
                     End,  // CheckBox
 //                End,   // HLayout
@@ -159,6 +167,7 @@ Object * make_edit_ftp_win(void)
                     GA_ID,                 OBJ_FTP_SHOW_STR,
                     GA_RelVerify,          TRUE,
                     GA_TabCycle,           TRUE,
+                    GA_HintInfo, getString(MSG_Edit_Show_Help),
          //           STRINGA_Buffer,        buffer,
                 End,  // String
                 Label(getString(MSG_Edit_Show)),
@@ -167,6 +176,7 @@ Object * make_edit_ftp_win(void)
                     GA_ID,               OBJ_FTP_FRONT_STR,
                     GA_RelVerify,        TRUE,
                     GA_TabCycle,         TRUE,
+                    GA_HintInfo, getString(MSG_Edit_Screen_Help),
              //           STRINGA_Buffer,        buffer,
                 End,  // String
                 Label(getString(MSG_Edit_Screen)),
@@ -177,12 +187,14 @@ Object * make_edit_ftp_win(void)
                         GA_ID,              OBJ_FTP_OPEN_STR,
                         GA_RelVerify,       TRUE,
                         GA_TabCycle,        TRUE,
+                        GA_HintInfo, getString(MSG_Edit_OpenURL_Help),
              //           STRINGA_Buffer,        buffer,
                     End,  // String
                     LAYOUT_AddChild,    OBJ(OBJ_FTP_OPEN_CHOOSE) = ChooserObject,//ButtonObject,
                             GA_ID,          OBJ_FTP_OPEN_CHOOSE,
                             GA_RelVerify,   TRUE,
                             //GA_Image,       &chooser_image,
+                            GA_HintInfo, getString(MSG_Edit_OpenURL_Help),
                             CHOOSER_DropDown, TRUE,
                             CHOOSER_Labels,   popup_www_ftp,
                         End,  // Button
@@ -196,12 +208,14 @@ Object * make_edit_ftp_win(void)
                         GA_ID,               OBJ_FTP_NEW_STR,
                         GA_RelVerify,        TRUE,
                         GA_TabCycle,         TRUE,
+                        GA_HintInfo, getString(MSG_Edit_NewWin_Help),
              //           STRINGA_Buffer,        buffer,
                     End,  // String
                     LAYOUT_AddChild,    OBJ(OBJ_FTP_NEW_CHOOSE) = ChooserObject,//ButtonObject,
                             GA_ID,          OBJ_FTP_NEW_CHOOSE,
                             GA_RelVerify,   TRUE,
                             //GA_Image,       &chooser_image,
+                            GA_HintInfo, getString(MSG_Edit_NewWin_Help),
                             CHOOSER_DropDown, TRUE,
                             CHOOSER_Labels,   popup_www_ftp,
                         End,  // Button
@@ -218,10 +232,10 @@ Object * make_edit_ftp_win(void)
 
                 LAYOUT_AddChild,     HLayoutObject,
                     LAYOUT_EvenSize,     TRUE,
-                    LAYOUT_AddChild,     Button(getString(MSG_Edit_Use),OBJ_FTP_USE),
+                    LAYOUT_AddChild,     ButtonH(getString(MSG_Edit_Use),OBJ_FTP_USE,getString(MSG_Edit_Use_Help)),
                     CHILD_WeightedWidth,   0,
 
-                    LAYOUT_AddChild, Button(getString(MSG_Edit_Cancel),OBJ_FTP_CANCEL),
+                    LAYOUT_AddChild, ButtonH(getString(MSG_Edit_Cancel),OBJ_FTP_CANCEL,getString(MSG_Edit_Cancel_Help)),
                     CHILD_WeightedWidth,   0,
                 End,   // HLayout
 

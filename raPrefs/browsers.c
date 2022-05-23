@@ -2,7 +2,7 @@
 
  openurl.library - universal URL display and browser launcher library
  Copyright (C) 1998-2005 by Troels Walsted Hansen, et al.
- Copyright (C) 2005-2022 openurl.library Open Source Team
+ Copyright (C) 2005-2021 openurl.library Open Source Team
 
  This library is free software; it has been placed in the public domain
  and you can freely redistribute it and/or modify it. Please note, however,
@@ -58,11 +58,13 @@ extern Class *ChooserClass, *StringClass, *GetFileClass, *LabelClass, *CheckBoxC
 
 extern Object *Objects[OBJ_NUM];
 extern Object *edit_brow_win;
+//extern Object *menustripobj;
 
 extern struct List *popup_www_ftp, *popup_arexxports;
 
 extern struct MsgPort *AppPort;
 //extern struct Hook idcmphook;
+extern BOOL showhints;
 
 struct Window *edit_brow_window;
 
@@ -81,8 +83,14 @@ Object * make_edit_brow_win(void)
         WINDOW_SharedPort,     AppPort,
         //WINDOW_IDCMPHook,      &idcmphook,
         //WINDOW_IDCMPHookBits,  IDCMP_IDCMPUPDATE,
+        WINDOW_GadgetHelp,     showhints,
         WINDOW_Position,       WPOS_CENTERSCREEN,
         WINDOW_LockHeight,     TRUE,
+/*#ifdef MENUCLASS
+        WA_MenuStrip, menustripobj,
+#else
+        WINDOW_NewMenu, menu,
+#endif*/
         WINDOW_Layout,         VLayoutObject,
             LAYOUT_SpaceOuter,  TRUE,
             LAYOUT_AddChild,  OBJ(OBJ_BROW_ALIGN_T) = VLayoutObject,
@@ -94,6 +102,7 @@ Object * make_edit_brow_win(void)
                     GA_ID,               OBJ_BROW_NAME_STR,
                     GA_RelVerify,        TRUE,
                     GA_TabCycle,         TRUE,
+                    GA_HintInfo, getString(MSG_Edit_Name_Help),
              //           STRINGA_Buffer,        buffer,
                 End,  // String
                 Label(getString(MSG_Edit_Name)),
@@ -103,12 +112,14 @@ Object * make_edit_brow_win(void)
                     LAYOUT_AddChild,       OBJ(OBJ_BROW_PATH_GET) = GetFileObject,
                         GA_ID,                 OBJ_BROW_PATH_GET,
                         GA_RelVerify,          TRUE,
+                        GA_HintInfo, getString(MSG_Edit_Path_Help),
                         GETFILE_TitleText,     getString(MSG_ASL_Browser),//"Select Path To Browser",
                     End,  // GetFile
                     LAYOUT_AddChild,    OBJ(OBJ_BROW_PATH_CHOOSE) = ChooserObject,//ButtonObject,
                         GA_ID,              OBJ_BROW_PATH_CHOOSE,
                         GA_RelVerify,       TRUE,
                         //GA_Image,           &chooser_image,
+                        GA_HintInfo, getString(MSG_Edit_Path_Help),
                         CHOOSER_DropDown, TRUE,
                         CHOOSER_Labels,   popup_www_ftp,
                     End,  // Button
@@ -122,12 +133,14 @@ Object * make_edit_brow_win(void)
                         GA_ID,               OBJ_BROW_AREXX_STR,
                         GA_RelVerify,        TRUE,
                         GA_TabCycle,         TRUE,
+                        GA_HintInfo, getString(MSG_Edit_Port_Help),
              //           STRINGA_Buffer,        buffer,
                     End,  // String
                     LAYOUT_AddChild,    OBJ(OBJ_BROW_AREXX_CHOOSE) = ChooserObject,//ButtonObject,
                         GA_ID,              OBJ_BROW_AREXX_CHOOSE,
                         GA_RelVerify,       TRUE,
                         //GA_Image,           &chooser_image,
+                        GA_HintInfo, getString(MSG_Edit_Port_Help),
                         CHOOSER_DropDown,      TRUE,
                         CHOOSER_Labels,        popup_arexxports,
                         CHOOSER_MaxLabels,     99,
@@ -149,6 +162,7 @@ Object * make_edit_brow_win(void)
                     GA_ID,                 OBJ_BROW_SHOW_STR,
                     GA_RelVerify,          TRUE,
                     GA_TabCycle,           TRUE,
+                    GA_HintInfo, getString(MSG_Edit_Show_Help),
          //           STRINGA_Buffer,        buffer,
                 End,  // String
                 Label(getString(MSG_Edit_Show)),
@@ -157,6 +171,7 @@ Object * make_edit_brow_win(void)
                     GA_ID,               OBJ_BROW_FRONT_STR,
                     GA_RelVerify,        TRUE,
                     GA_TabCycle,         TRUE,
+                    GA_HintInfo, getString(MSG_Edit_Screen_Help),
              //           STRINGA_Buffer,        buffer,
                 End,  // String
                 Label(getString(MSG_Edit_Screen)),
@@ -167,12 +182,14 @@ Object * make_edit_brow_win(void)
                         GA_ID,              OBJ_BROW_OPEN_STR,
                         GA_RelVerify,       TRUE,
                         GA_TabCycle,        TRUE,
+                        GA_HintInfo, getString(MSG_Edit_OpenURL_Help),
              //           STRINGA_Buffer,        buffer,
                     End,  // String
                     LAYOUT_AddChild,    OBJ(OBJ_BROW_OPEN_CHOOSE) = ChooserObject,//ButtonObject,
                             GA_ID,          OBJ_BROW_OPEN_CHOOSE,
                             GA_RelVerify,   TRUE,
                             //GA_Image,       &chooser_image,
+                            GA_HintInfo, getString(MSG_Edit_OpenURL_Help),
                             CHOOSER_DropDown, TRUE,
                             CHOOSER_Labels,   popup_www_ftp,
                         End,  // Button
@@ -186,12 +203,14 @@ Object * make_edit_brow_win(void)
                         GA_ID,               OBJ_BROW_NEW_STR,
                         GA_RelVerify,        TRUE,
                         GA_TabCycle,         TRUE,
+                        GA_HintInfo, getString(MSG_Edit_NewWin_Help),
              //           STRINGA_Buffer,        buffer,
                     End,  // String
                     LAYOUT_AddChild,    OBJ(OBJ_BROW_NEW_CHOOSE) = ChooserObject,//ButtonObject,
                             GA_ID,          OBJ_BROW_NEW_CHOOSE,
                             GA_RelVerify,   TRUE,
                             //GA_Image,       &chooser_image,
+                            GA_HintInfo, getString(MSG_Edit_NewWin_Help),
                             CHOOSER_DropDown, TRUE,
                             CHOOSER_Labels,   popup_www_ftp,
                         End,  // Button
@@ -209,10 +228,10 @@ Object * make_edit_brow_win(void)
 
                 LAYOUT_AddChild,     HLayoutObject,
                     LAYOUT_EvenSize,     TRUE,
-                    LAYOUT_AddChild,     Button(getString(MSG_Edit_Use),OBJ_BROW_USE),
+                    LAYOUT_AddChild,     ButtonH(getString(MSG_Edit_Use),OBJ_BROW_USE,getString(MSG_Edit_Use_Help)),
                     CHILD_WeightedWidth,   0,
 
-                    LAYOUT_AddChild, Button(getString(MSG_Edit_Cancel),OBJ_BROW_CANCEL),
+                    LAYOUT_AddChild, ButtonH(getString(MSG_Edit_Cancel),OBJ_BROW_CANCEL,getString(MSG_Edit_Cancel_Help)),
                     CHILD_WeightedWidth,   0,
                 End,   // HLayout
 
