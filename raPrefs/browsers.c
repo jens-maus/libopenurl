@@ -294,13 +294,13 @@ void updateBrowserWindow(struct URL_BrowserNode  * pBrowser)
     if(pBrowser != NULL)
     {
         //iset(edit_brow_win, WINDOW_UserData, pBrowser);
-        gadset(GAD(OBJ_BROW_NAME_STR), edit_brow_window, STRINGA_TextVal, pBrowser->ubn_Name);
-        gadset(GAD(OBJ_BROW_PATH_GET), edit_brow_window, GETFILE_File, pBrowser->ubn_Path);
-        gadset(GAD(OBJ_BROW_AREXX_STR), edit_brow_window, STRINGA_TextVal, pBrowser->ubn_Port);
-        gadset(GAD(OBJ_BROW_SHOW_STR), edit_brow_window,  STRINGA_TextVal, pBrowser->ubn_ShowCmd);
-        gadset(GAD(OBJ_BROW_FRONT_STR), edit_brow_window, STRINGA_TextVal, pBrowser->ubn_ToFrontCmd);
-        gadset(GAD(OBJ_BROW_OPEN_STR), edit_brow_window, STRINGA_TextVal, pBrowser->ubn_OpenURLCmd);
-        gadset(GAD(OBJ_BROW_NEW_STR), edit_brow_window, STRINGA_TextVal, pBrowser->ubn_OpenURLWCmd);
+        gadset(GAD(OBJ_BROW_NAME_STR),  edit_brow_window, STRINGA_TextVal,  pBrowser->ubn_Name);
+        gadset(GAD(OBJ_BROW_PATH_GET),  edit_brow_window, GETFILE_FullFile, pBrowser->ubn_Path);
+        gadset(GAD(OBJ_BROW_AREXX_STR), edit_brow_window, STRINGA_TextVal,  pBrowser->ubn_Port);
+        gadset(GAD(OBJ_BROW_SHOW_STR),  edit_brow_window, STRINGA_TextVal,  pBrowser->ubn_ShowCmd);
+        gadset(GAD(OBJ_BROW_FRONT_STR), edit_brow_window, STRINGA_TextVal,  pBrowser->ubn_ToFrontCmd);
+        gadset(GAD(OBJ_BROW_OPEN_STR),  edit_brow_window, STRINGA_TextVal,  pBrowser->ubn_OpenURLCmd);
+        gadset(GAD(OBJ_BROW_NEW_STR),   edit_brow_window, STRINGA_TextVal,  pBrowser->ubn_OpenURLWCmd);
     }
     else IDOS->Printf("No browser node\n");
 }
@@ -315,7 +315,7 @@ void updateBrowserNode(void)
 
         strValue = (STRPTR)iget(OBJ(OBJ_BROW_NAME_STR), STRINGA_TextVal);
         IUtility->Strlcpy(pBrowser->ubn_Name, strValue, sizeof(pBrowser->ubn_Name));
-        strValue = (STRPTR)iget(OBJ(OBJ_BROW_PATH_GET), GETFILE_File);
+        strValue = (STRPTR)iget(OBJ(OBJ_BROW_PATH_GET), GETFILE_FullFile);//GETFILE_File);
         IUtility->Strlcpy(pBrowser->ubn_Path, strValue, sizeof(pBrowser->ubn_Path));
         strValue = (STRPTR)iget(OBJ(OBJ_BROW_AREXX_STR), STRINGA_TextVal);
         IUtility->Strlcpy(pBrowser->ubn_Port, strValue, sizeof(pBrowser->ubn_Port));

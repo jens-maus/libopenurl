@@ -298,14 +298,14 @@ void updateFTPWindow(struct URL_FTPNode  * pFTP)
     if(pFTP != NULL)
     {
         //iset(edit_ftp_win,  WINDOW_UserData, pFTP);
-        gadset(GAD(OBJ_FTP_NAME_STR), edit_ftp_window, STRINGA_TextVal, pFTP->ufn_Name);
-        gadset(GAD(OBJ_FTP_PATH_GET), edit_ftp_window, GETFILE_File, pFTP->ufn_Path);
-        gadset(GAD(OBJ_FTP_AREXX_STR), edit_ftp_window, STRINGA_TextVal, pFTP->ufn_Port);
-        gadset(GAD(OBJ_FTP_REMOVE), edit_ftp_window, GA_Selected, isFlagSet(pFTP->ufn_Flags, UFNF_REMOVEFTP));
-        gadset(GAD(OBJ_FTP_SHOW_STR), edit_ftp_window, STRINGA_TextVal, pFTP->ufn_ShowCmd);
-        gadset(GAD(OBJ_FTP_FRONT_STR), edit_ftp_window, STRINGA_TextVal, pFTP->ufn_ToFrontCmd);
-        gadset(GAD(OBJ_FTP_OPEN_STR), edit_ftp_window, STRINGA_TextVal, pFTP->ufn_OpenURLCmd);
-        gadset(GAD(OBJ_FTP_NEW_STR), edit_ftp_window, STRINGA_TextVal, pFTP->ufn_OpenURLWCmd);
+        gadset(GAD(OBJ_FTP_NAME_STR),  edit_ftp_window, STRINGA_TextVal,  pFTP->ufn_Name);
+        gadset(GAD(OBJ_FTP_PATH_GET),  edit_ftp_window, GETFILE_FullFile, pFTP->ufn_Path);
+        gadset(GAD(OBJ_FTP_AREXX_STR), edit_ftp_window, STRINGA_TextVal,  pFTP->ufn_Port);
+        gadset(GAD(OBJ_FTP_REMOVE),    edit_ftp_window, GA_Selected,      isFlagSet(pFTP->ufn_Flags, UFNF_REMOVEFTP));
+        gadset(GAD(OBJ_FTP_SHOW_STR),  edit_ftp_window, STRINGA_TextVal,  pFTP->ufn_ShowCmd);
+        gadset(GAD(OBJ_FTP_FRONT_STR), edit_ftp_window, STRINGA_TextVal,  pFTP->ufn_ToFrontCmd);
+        gadset(GAD(OBJ_FTP_OPEN_STR),  edit_ftp_window, STRINGA_TextVal,  pFTP->ufn_OpenURLCmd);
+        gadset(GAD(OBJ_FTP_NEW_STR),   edit_ftp_window, STRINGA_TextVal,  pFTP->ufn_OpenURLWCmd);
     }
 }
 
@@ -319,7 +319,7 @@ void updateFTPNode(void)
 
         strValue = (STRPTR)iget(OBJ(OBJ_FTP_NAME_STR), STRINGA_TextVal);
         IUtility->Strlcpy(pFTP->ufn_Name, strValue, sizeof(pFTP->ufn_Name));
-        strValue = (STRPTR)iget(OBJ(OBJ_FTP_PATH_GET), GETFILE_File);
+        strValue = (STRPTR)iget(OBJ(OBJ_FTP_PATH_GET), GETFILE_FullFile);//GETFILE_File);
         IUtility->Strlcpy(pFTP->ufn_Path, strValue, sizeof(pFTP->ufn_Path));
         strValue = (STRPTR)iget(OBJ(OBJ_FTP_AREXX_STR), STRINGA_TextVal);
         IUtility->Strlcpy(pFTP->ufn_Port, strValue, sizeof(pFTP->ufn_Port));

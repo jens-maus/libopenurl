@@ -270,12 +270,12 @@ void updateMailerWindow(struct URL_MailerNode  * pMailer)
     if(pMailer != NULL)
     {
         //iset(edit_mail_win,  WINDOW_UserData, pMailer);
-        gadset(GAD(OBJ_MAIL_NAME_STR), edit_mail_window, STRINGA_TextVal, pMailer->umn_Name);
-        gadset(GAD(OBJ_MAIL_PATH_GET), edit_mail_window, GETFILE_File, pMailer->umn_Path);
-        gadset(GAD(OBJ_MAIL_AREXX_STR), edit_mail_window, STRINGA_TextVal, pMailer->umn_Port);
-        gadset(GAD(OBJ_MAIL_SHOW_STR), edit_mail_window, STRINGA_TextVal, pMailer->umn_ShowCmd);
-        gadset(GAD(OBJ_MAIL_FRONT_STR), edit_mail_window, STRINGA_TextVal, pMailer->umn_ToFrontCmd);
-        gadset(GAD(OBJ_MAIL_WRITE_STR), edit_mail_window, STRINGA_TextVal, pMailer->umn_WriteMailCmd);
+        gadset(GAD(OBJ_MAIL_NAME_STR),  edit_mail_window, STRINGA_TextVal,  pMailer->umn_Name);
+        gadset(GAD(OBJ_MAIL_PATH_GET),  edit_mail_window, GETFILE_FullFile, pMailer->umn_Path);
+        gadset(GAD(OBJ_MAIL_AREXX_STR), edit_mail_window, STRINGA_TextVal,  pMailer->umn_Port);
+        gadset(GAD(OBJ_MAIL_SHOW_STR),  edit_mail_window, STRINGA_TextVal,  pMailer->umn_ShowCmd);
+        gadset(GAD(OBJ_MAIL_FRONT_STR), edit_mail_window, STRINGA_TextVal,  pMailer->umn_ToFrontCmd);
+        gadset(GAD(OBJ_MAIL_WRITE_STR), edit_mail_window, STRINGA_TextVal,  pMailer->umn_WriteMailCmd);
     }
 }
 
@@ -289,7 +289,7 @@ void updateMailerNode()
 
         strValue = (STRPTR)iget(OBJ(OBJ_MAIL_NAME_STR), STRINGA_TextVal);
         IUtility->Strlcpy(pMailer->umn_Name, strValue, sizeof(pMailer->umn_Name));
-        strValue = (STRPTR)iget(OBJ(OBJ_MAIL_PATH_GET), GETFILE_File);
+        strValue = (STRPTR)iget(OBJ(OBJ_MAIL_PATH_GET), GETFILE_FullFile);//GETFILE_File);
         IUtility->Strlcpy(pMailer->umn_Path, strValue, sizeof(pMailer->umn_Path));
         strValue = (STRPTR)iget(OBJ(OBJ_MAIL_AREXX_STR), STRINGA_TextVal);
         IUtility->Strlcpy(pMailer->umn_Port, strValue, sizeof(pMailer->umn_Port));
