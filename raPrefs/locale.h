@@ -181,6 +181,8 @@
 #define MSG_Edit_ListUse 1125
 #define MSG_About_Descr2 1126
 #define MSG_Menu_Iconify 1127
+#define MSG_Menu_Help 1128
+#define MSG_Menu_Showhints 1129
 
 #endif /* CATCOMP_NUMBERS */
 
@@ -221,7 +223,7 @@
 #define MSG_Menu_Save_STR "S\000Save settings"
 #define MSG_Menu_Use_STR "U\000Use settings"
 #define MSG_Menu_LastSaved_STR "L\000Last saved"
-#define MSG_Menu_Restore_STR "R\000Restore"
+#define MSG_Menu_Restore_STR "R\000Restore settings"
 #define MSG_Menu_Defaults_STR "D\000Default settings"
 #define MSG_Menu_MUI_STR "M\000MUI Setting..."
 #define MSG_Win_WinTitle_STR "OpenURL"
@@ -324,6 +326,8 @@
 #define MSG_Edit_ListUse_STR "Use"
 #define MSG_About_Descr2_STR "OpenURL is a shared library for easily sending URLs from applications to browsers, mailers and FTP clients.\n\n\033cOpenURL is a Public Domain Software."
 #define MSG_Menu_Iconify_STR "I\000Iconify"
+#define MSG_Menu_Help_STR "Help"
+#define MSG_Menu_Showhints_STR "H\000Show hints?"
 
 #endif /* CATCOMP_STRINGS */
 
@@ -475,6 +479,8 @@ static const struct CatCompArrayType CatCompArray[] =
     {MSG_Edit_ListUse,(STRPTR)MSG_Edit_ListUse_STR},
     {MSG_About_Descr2,(STRPTR)MSG_About_Descr2_STR},
     {MSG_Menu_Iconify,(STRPTR)MSG_Menu_Iconify_STR},
+    {MSG_Menu_Help,(STRPTR)MSG_Menu_Help_STR},
+    {MSG_Menu_Showhints,(STRPTR)MSG_Menu_Showhints_STR},
 };
 
 #endif /* CATCOMP_ARRAY */
