@@ -98,7 +98,7 @@ endif
 
 # common commands
 FLEX    = flex
-FC      = APPDIR:flexcat
+FC      = flexcat
 EXPR    = expr
 DATE    = date
 RM      = delete force
