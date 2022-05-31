@@ -28,7 +28,6 @@
 #define LIB_REVISION   19
 #define LIB_DATE       "16.01.2018"
 #define LIB_COPYRIGHT  "Copyright (C) 2005-2022 openurl.library Open Source Team"
-#endif
 
 // set the LIB_REV_STRING
 #define LIB_REV_STRING STR(LIB_VERSION) "." STR(LIB_REVISION)
